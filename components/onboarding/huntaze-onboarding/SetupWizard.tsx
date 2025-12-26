@@ -105,7 +105,11 @@ const TONES = [
 export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
   const [step, setStep] = React.useState(0);
   const [data, setData] = React.useState<WizardData>({});
-  const [startTime] = React.useState(Date.now());
+  const startTimeRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    startTimeRef.current = performance.now();
+  }, []);
 
   const handleSelect = (key: keyof WizardData, value: string) => {
     setData(prev => ({ ...prev, [key]: value }));
@@ -134,7 +138,8 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
       ai_tone: data.ai_tone || ('professional' as Tone),
     };
     
-    const timeToComplete = Math.round((Date.now() - startTime) / 1000);
+    const startTime = startTimeRef.current ?? 0;
+    const timeToComplete = Math.round((performance.now() - startTime) / 1000);
     
     onComplete({
       ...finalData,
@@ -149,7 +154,8 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
       ai_tone: data.ai_tone || ('professional' as Tone),
     };
     
-    const timeToComplete = Math.round((Date.now() - startTime) / 1000);
+    const startTime = startTimeRef.current ?? 0;
+    const timeToComplete = Math.round((performance.now() - startTime) / 1000);
     
     onComplete({
       ...finalData,

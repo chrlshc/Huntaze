@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ConversationsRepository, MessagesRepository } from '@/lib/db/repositories';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { resolveUserId } from '../../../_lib/auth';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
 import { z } from 'zod';
 
@@ -21,14 +21,9 @@ async function getHandler(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) {
+    const { userId } = await resolveUserId(request);
+    if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    const userId = parseInt(user.userId, 10);
-    if (isNaN(userId)) {
-      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
     const resolvedParams = await context.params; const conversationId = parseInt(resolvedParams.id, 10);
@@ -44,20 +39,22 @@ async function getHandler(
 
     // Get pagination params
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '100', 10);
-    const offset = parseInt(searchParams.get('offset') || '0', 10);
+    const limit = Math.min(parseInt(searchParams.get('limit') || '100', 10), 200);
+    const offset = Math.max(parseInt(searchParams.get('offset') || '0', 10), 0);
+    const orderParam = searchParams.get('order');
+    const order = orderParam === 'asc' || orderParam === 'desc' ? orderParam : 'desc';
 
-    // Get messages
-    const allMessages = await MessagesRepository.listMessages(userId, conversationId);
-    
-    // Apply pagination
-    const messages = allMessages.slice(offset, offset + limit);
+    const [messages, total] = await Promise.all([
+      MessagesRepository.listMessages(userId, conversationId, { limit, offset, order }),
+      MessagesRepository.countMessages(userId, conversationId),
+    ]);
 
     return NextResponse.json({
       messages,
-      total: allMessages.length,
+      total,
       limit,
       offset,
+      order,
     });
   } catch (error) {
     console.error('Failed to list messages:', error);
@@ -80,14 +77,9 @@ async function postHandler(
       return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
 
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) {
+    const { userId } = await resolveUserId(request);
+    if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    const userId = parseInt(user.userId, 10);
-    if (isNaN(userId)) {
-      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
     const resolvedParams = await context.params; const conversationId = parseInt(resolvedParams.id, 10);

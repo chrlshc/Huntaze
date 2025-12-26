@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 /**
  * Fan context data model
@@ -127,8 +128,7 @@ export function FanContextSidebar({ fan, loading = false }: FanContextSidebarPro
       <div className="px-4 py-4 border-b border-slate-200 flex items-center gap-3">
         <div className="h-11 w-11 rounded-full overflow-hidden bg-slate-100 shrink-0">
           {fan.avatar ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={fan.avatar} alt={fan.name} className="h-full w-full object-cover" />
+            <Image src={fan.avatar} alt={fan.name} width={44} height={44} className="h-full w-full object-cover" />
           ) : (
             <div className="h-full w-full flex items-center justify-center bg-slate-200 text-sm font-semibold text-slate-600">
               {fan.name.charAt(0).toUpperCase()}

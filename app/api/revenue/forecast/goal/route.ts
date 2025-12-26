@@ -1,5 +1,6 @@
-import { NextRequest } from 'next/server';
-import { auth } from '@/lib/auth/config';;
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth/config';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 /**
  * POST /api/revenue/forecast/goal
@@ -10,8 +11,8 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth();
     
-    if (!session) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -19,14 +20,14 @@ export async function POST(request: NextRequest) {
 
     // Validation
     if (!creatorId || !goalAmount || !targetMonth) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'creatorId, goalAmount, and targetMonth are required' },
         { status: 400 }
       );
     }
 
     if (typeof goalAmount !== 'number' || goalAmount <= 0) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'goalAmount must be a positive number' },
         { status: 400 }
       );
@@ -34,7 +35,14 @@ export async function POST(request: NextRequest) {
 
     // Verify creator owns this data
     if (session.user.id !== creatorId) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Forecast goals are not available in real mode yet' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
     }
 
     const correlationId = request.headers.get('X-Correlation-ID');
@@ -45,9 +53,6 @@ export async function POST(request: NextRequest) {
       correlationId,
       timestamp: new Date().toISOString(),
     });
-
-    // TODO: Replace with actual backend service call
-    // const result = await backendForecastService.setGoal(creatorId, goalAmount, targetMonth);
 
     const recommendations = [
       {
@@ -71,13 +76,13 @@ export async function POST(request: NextRequest) {
       recommendationCount: recommendations.length,
     });
 
-    return Response.json({
+    return NextResponse.json({
       success: true,
       recommendations,
     });
   } catch (error) {
     console.error('[API] Set goal error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );

@@ -16,7 +16,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { ShopifyPageLayout } from '@/components/layout/ShopifyPageLayout';
 import { ShopifyBanner } from '@/components/ui/shopify/ShopifyBanner';
 import { ShopifyButton } from '@/components/ui/shopify/ShopifyButton';
@@ -32,13 +32,15 @@ import {
 } from 'lucide-react';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 import { SearchInput } from '@/components/ui/SearchInput';
-import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { getCsrfToken } from '@/lib/utils/csrf-client';
 
 interface ConnectionStatus {
   isConnected: boolean;
   username: string | null;
   lastSync: Date | null;
   status: 'connected' | 'disconnected' | 'error';
+  accountId?: string | null;
 }
 
 interface AIQuotaSettings {
@@ -66,60 +68,108 @@ interface AutomationSettings {
   aiAssistance: boolean;
 }
 
-const MOCK_TEMPLATES = [
-  {
-    id: '1',
-    category: 'Welcome',
-    title: 'New Subscriber Welcome',
-    preview:
-      'Hey babe! 💕 Thanks so much for subscribing! I post exclusive content daily and love chatting with my fans. What kind of content would you like to see?',
-  },
-  {
-    id: '2',
-    category: 'PPV',
-    title: 'PPV Content Tease',
-    preview:
-      'Just shot something special for you 🔥 Check your DMs for an exclusive preview. This one is 🌶️🌶️🌶️',
-  },
-  {
-    id: '3',
-    category: 'Re-engagement',
-    title: 'Inactive Fan Check-in',
-    preview:
-      "Hey! I noticed you haven't been around lately. Missing you! 💙 I have some new content I think you'd love...",
-  },
-  {
-    id: '4',
-    category: 'Upsell',
-    title: 'Premium Tier Promotion',
-    preview:
-      'Want even more exclusive access? My VIP tier gets daily custom content, priority messaging, and special surprises 🎁',
-  },
-];
+interface IntegrationStatusItem {
+  provider: string;
+  accountId: string;
+  accountName?: string;
+  status?: 'connected' | 'expired';
+  updatedAt?: string;
+}
 
-const MOCK_RECOMMENDATIONS = [
-  {
-    id: '1',
-    insight: 'Response time is slower than average',
-    impact: 'Fans who get replies within 2 hours are 3x more likely to purchase PPV',
-    metric: '+47% conversion',
-    metricColor: 'success' as const,
-  },
-  {
-    id: '2',
-    insight: 'Low engagement on recent posts',
-    impact: 'Posts with questions get 2.5x more comments and drive more DM conversations',
-    metric: '+156% engagement',
-    metricColor: 'info' as const,
-  },
-  {
-    id: '3',
-    insight: 'PPV pricing below optimal range',
-    impact: 'Similar creators charge $15-25 for this content type with higher conversion',
-    metric: '+$340/month',
-    metricColor: 'success' as const,
-  },
-];
+interface IntegrationsStatusResponse {
+  success: boolean;
+  data?: {
+    integrations?: IntegrationStatusItem[];
+  };
+}
+
+interface UserProfile {
+  metadata?: unknown;
+}
+
+interface TemplateItem {
+  id: string;
+  category: string;
+  title: string;
+  preview: string;
+}
+
+interface RecommendationItem {
+  id: string;
+  insight: string;
+  impact: string;
+  metric: string;
+  metricColor?: 'success' | 'warning' | 'info';
+}
+
+const getDefaultConnection = (): ConnectionStatus => ({
+  isConnected: false,
+  username: null,
+  lastSync: null,
+  status: 'disconnected',
+  accountId: null,
+});
+
+const getDefaultQuota = (): AIQuotaSettings => ({
+  plan: 'starter',
+  limit: 10,
+  spent: 0,
+  remaining: 10,
+  percentUsed: 0,
+  resetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+});
+
+const normalizeMetadata = (value: unknown): Record<string, any> => {
+  if (!value) return {};
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value) as Record<string, any>;
+    } catch {
+      return {};
+    }
+  }
+  if (typeof value === 'object') {
+    return value as Record<string, any>;
+  }
+  return {};
+};
+
+const normalizeQuotaSettings = (raw: unknown): AIQuotaSettings => {
+  const defaults = getDefaultQuota();
+
+  if (!raw || typeof raw !== 'object') return defaults;
+
+  const maybe = raw as {
+    plan?: string;
+    limit?: number;
+    spent?: number;
+    remaining?: number;
+    percentUsed?: number;
+    resetDate?: string | number | Date;
+  };
+
+  const plan =
+    typeof maybe.plan === 'string' && maybe.plan.length > 0 ? maybe.plan : defaults.plan;
+  const toNumber = (value: unknown, fallback: number) =>
+    typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+
+  const resetDateValue = maybe.resetDate;
+  const resetDate =
+    resetDateValue instanceof Date
+      ? resetDateValue
+      : typeof resetDateValue === 'string' || typeof resetDateValue === 'number'
+        ? new Date(resetDateValue)
+        : defaults.resetDate;
+
+  return {
+    plan,
+    limit: toNumber(maybe.limit, defaults.limit),
+    spent: toNumber(maybe.spent, defaults.spent),
+    remaining: toNumber(maybe.remaining, defaults.remaining),
+    percentUsed: toNumber(maybe.percentUsed, defaults.percentUsed),
+    resetDate,
+  };
+};
 
 export default function OnlyFansSettingsPage() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus | null>(null);
@@ -142,8 +192,10 @@ export default function OnlyFansSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [profileMetadata, setProfileMetadata] = useState<Record<string, any>>({});
   const quotaPlan = quotaSettings?.plan ?? 'starter';
   const quotaPlanLabel =
     typeof quotaPlan === 'string' && quotaPlan.length > 0
@@ -152,8 +204,8 @@ export default function OnlyFansSettingsPage() {
 
   usePerformanceMonitoring({ componentName: 'onlyfans-settings' });
 
-  const templates = ENABLE_MOCK_DATA ? MOCK_TEMPLATES : [];
-  const recommendations = ENABLE_MOCK_DATA ? MOCK_RECOMMENDATIONS : [];
+  const templates = useMemo<TemplateItem[]>(() => [], []);
+  const recommendations = useMemo<RecommendationItem[]>(() => [], []);
 
   const filteredTemplates = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -204,69 +256,62 @@ export default function OnlyFansSettingsPage() {
     // TODO: Implement dismiss functionality
   };
 
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const normalizeQuotaSettings = (raw: unknown): AIQuotaSettings => {
-    const defaults = getDefaultQuota();
-    if (!raw || typeof raw !== 'object') return defaults;
-
-    const maybe = raw as Partial<Record<keyof AIQuotaSettings, unknown>>;
-    const plan =
-      maybe.plan === 'starter' || maybe.plan === 'pro' || maybe.plan === 'business'
-        ? maybe.plan
-        : defaults.plan;
-
-    const toNumber = (value: unknown, fallback: number) =>
-      typeof value === 'number' && Number.isFinite(value) ? value : fallback;
-
-    const resetDateValue = maybe.resetDate;
-    const resetDate =
-      resetDateValue instanceof Date
-        ? resetDateValue
-        : typeof resetDateValue === 'string' || typeof resetDateValue === 'number'
-          ? new Date(resetDateValue)
-          : defaults.resetDate;
-
-    return {
-      plan,
-      limit: toNumber(maybe.limit, defaults.limit),
-      spent: toNumber(maybe.spent, defaults.spent),
-      remaining: toNumber(maybe.remaining, defaults.remaining),
-      percentUsed: toNumber(maybe.percentUsed, defaults.percentUsed),
-      resetDate,
-    };
-  };
-
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
-      setLoadError(null);
-      const response = await fetch('/api/onlyfans/connection');
-      if (response.ok) {
-        const data = await response.json();
-        setConnectionStatus(data.connection || getDefaultConnection());
+      const [integrationResult, quotaResult, profileResult] = await Promise.allSettled([
+        internalApiFetch<IntegrationsStatusResponse>('/api/integrations/status'),
+        internalApiFetch<{ quota?: unknown }>('/api/ai/quota'),
+        internalApiFetch<UserProfile>('/api/users/profile'),
+      ]);
+
+      if (integrationResult.status === 'fulfilled') {
+        const integrations = integrationResult.value?.data?.integrations ?? [];
+        const onlyfansIntegration = integrations.find((item) => item.provider === 'onlyfans');
+        if (onlyfansIntegration) {
+          const isConnected = onlyfansIntegration.status === 'connected';
+          setConnectionStatus({
+            isConnected,
+            username: onlyfansIntegration.accountName || onlyfansIntegration.accountId || null,
+            lastSync: onlyfansIntegration.updatedAt ? new Date(onlyfansIntegration.updatedAt) : null,
+            status: isConnected ? 'connected' : 'error',
+            accountId: onlyfansIntegration.accountId,
+          });
+        } else {
+          setConnectionStatus(getDefaultConnection());
+        }
       } else {
         setConnectionStatus(getDefaultConnection());
       }
 
-      const quotaResponse = await fetch('/api/ai/quota');
-      if (quotaResponse.ok) {
-        const quotaData = await quotaResponse.json();
-        setQuotaSettings(normalizeQuotaSettings(quotaData.quota));
+      if (quotaResult.status === 'fulfilled') {
+        setQuotaSettings(normalizeQuotaSettings(quotaResult.value?.quota));
       } else {
         setQuotaSettings(getDefaultQuota());
       }
 
-      const prefsResponse = await fetch('/api/user/preferences');
-      if (prefsResponse.ok) {
-        const prefsData = await prefsResponse.json();
-        if (prefsData.notifications && typeof prefsData.notifications === 'object') {
-          setNotifications((current) => ({ ...current, ...prefsData.notifications }));
+      if (profileResult.status === 'fulfilled') {
+        const metadata = normalizeMetadata(profileResult.value?.metadata);
+        setProfileMetadata(metadata);
+        const onlyfansPrefs = (metadata.onlyfans || {}) as {
+          notifications?: Partial<NotificationSettings>;
+          automation?: Partial<AutomationSettings>;
+        };
+        if (onlyfansPrefs.notifications) {
+          setNotifications((current) => ({ ...current, ...onlyfansPrefs.notifications }));
         }
-        if (prefsData.automation && typeof prefsData.automation === 'object') {
-          setAutomation((current) => ({ ...current, ...prefsData.automation }));
+        if (onlyfansPrefs.automation) {
+          setAutomation((current) => ({ ...current, ...onlyfansPrefs.automation }));
         }
+      }
+
+      const hadFailure =
+        integrationResult.status === 'rejected' ||
+        quotaResult.status === 'rejected' ||
+        profileResult.status === 'rejected';
+      if (hadFailure) {
+        setLoadError('Some settings failed to load. Please try again.');
       }
     } catch (error) {
       setLoadError(error instanceof Error ? error.message : 'Failed to load settings');
@@ -275,36 +320,37 @@ export default function OnlyFansSettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const getDefaultConnection = (): ConnectionStatus => ({
-    isConnected: false,
-    username: null,
-    lastSync: null,
-    status: 'disconnected',
-  });
-
-  const getDefaultQuota = (): AIQuotaSettings => ({
-    plan: 'starter',
-    limit: 10,
-    spent: 0,
-    remaining: 10,
-    percentUsed: 0,
-    resetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-  });
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
 
   const connectOnlyFans = async () => {
     setConnecting(true);
     try {
-      const response = await fetch('/api/onlyfans/connect', { method: 'POST' });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.authUrl) {
-          window.location.href = data.authUrl;
+      setSaveError(null);
+      const csrfToken = await getCsrfToken();
+      const response = await internalApiFetch<{ data?: { authUrl?: string } }>(
+        '/api/integrations/connect/onlyfans',
+        {
+          method: 'POST',
+          headers: {
+            'x-csrf-token': csrfToken,
+          },
+          body: {
+            redirectUrl: window.location.href,
+          },
         }
+      );
+      const authUrl = response?.data?.authUrl;
+      if (authUrl) {
+        window.location.href = authUrl;
+      } else {
+        setSaveError('Unable to start OnlyFans connection.');
       }
     } catch (error) {
-      console.error('Failed to connect OnlyFans:', error);
+      setSaveError(error instanceof Error ? error.message : 'Failed to connect OnlyFans');
     } finally {
       setConnecting(false);
     }
@@ -313,12 +359,22 @@ export default function OnlyFansSettingsPage() {
   const disconnectOnlyFans = async () => {
     if (!confirm('Are you sure you want to disconnect your OnlyFans account?')) return;
     try {
-      const response = await fetch('/api/onlyfans/disconnect', { method: 'POST' });
-      if (response.ok) {
-        setConnectionStatus(getDefaultConnection());
+      setSaveError(null);
+      const accountId = connectionStatus?.accountId;
+      if (!accountId) {
+        setSaveError('No connected account found to disconnect.');
+        return;
       }
+      const csrfToken = await getCsrfToken();
+      await internalApiFetch(`/api/integrations/disconnect/onlyfans/${accountId}`, {
+        method: 'DELETE',
+        headers: {
+          'x-csrf-token': csrfToken,
+        },
+      });
+      setConnectionStatus(getDefaultConnection());
     } catch (error) {
-      console.error('Failed to disconnect OnlyFans:', error);
+      setSaveError(error instanceof Error ? error.message : 'Failed to disconnect OnlyFans');
     }
   };
 
@@ -326,17 +382,30 @@ export default function OnlyFansSettingsPage() {
     setSaving(true);
     setSaveSuccess(false);
     try {
-      const response = await fetch('/api/user/preferences', {
+      setSaveError(null);
+      const csrfToken = await getCsrfToken();
+      const nextMetadata = {
+        ...profileMetadata,
+        onlyfans: {
+          ...(profileMetadata.onlyfans || {}),
+          notifications,
+          automation,
+        },
+      };
+      await internalApiFetch<UserProfile>('/api/users/profile', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notifications, automation }),
+        headers: {
+          'x-csrf-token': csrfToken,
+        },
+        body: {
+          metadata: nextMetadata,
+        },
       });
-      if (response.ok) {
-        setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 3000);
-      }
+      setProfileMetadata(nextMetadata);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
-      console.error('Failed to save settings:', error);
+      setSaveError(error instanceof Error ? error.message : 'Failed to save settings');
     } finally {
       setSaving(false);
     }
@@ -395,6 +464,15 @@ export default function OnlyFansSettingsPage() {
                 void loadSettings();
               },
             }}
+          />
+        </div>
+      )}
+      {saveError && (
+        <div style={{ marginBottom: 'var(--of-card-gap)' }}>
+          <ShopifyBanner
+            status="critical"
+            title="Action failed"
+            description={saveError}
           />
         </div>
       )}

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mediaAssetsRepository } from '@/lib/db/repositories/mediaAssetsRepository';
 import { imageEditService } from '@/lib/services/imageEditService';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 export const runtime = 'nodejs';
 
@@ -50,7 +52,33 @@ export async function POST(
     const { crop, resize, rotate, flip, adjustments, filters } = body;
 
     // Fetch original image
-    const imageResponse = await fetch(media.originalUrl);
+    let imageResponse: Response;
+    try {
+      imageResponse = await externalFetch(media.originalUrl, {
+        service: 'media-storage',
+        operation: 'download',
+        method: 'GET',
+        cache: 'no-store',
+        timeoutMs: 20_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
+      });
+    } catch (error) {
+      if (isExternalServiceError(error)) {
+        return NextResponse.json(
+          { error: { code: 'MEDIA_UNAVAILABLE', message: 'Media storage unavailable' } },
+          { status: 502 }
+        );
+      }
+      throw error;
+    }
+
+    if (!imageResponse.ok) {
+      return NextResponse.json(
+        { error: { code: 'MEDIA_UNAVAILABLE', message: 'Failed to download media' } },
+        { status: 502 }
+      );
+    }
+
     const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
 
     // Apply edits

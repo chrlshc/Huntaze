@@ -9,7 +9,10 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import type { z } from 'zod';
 import type { AutomationStep } from '@/lib/automations/types';
+import { automationBuilderResponseSchema } from '@/lib/schemas/api-responses';
 
 interface AIFlowGeneratorProps {
   onFlowGenerated: (name: string, description: string, steps: AutomationStep[]) => void;
@@ -22,6 +25,8 @@ const examplePrompts = [
   'Tag VIP fans who spend over $100 and send them a thank you message',
   'Send a reminder message 3 days before subscription expires',
 ];
+
+type AutomationBuilderResponse = z.infer<typeof automationBuilderResponseSchema>;
 
 export function AIFlowGenerator({ onFlowGenerated }: AIFlowGeneratorProps) {
   const [prompt, setPrompt] = useState('');
@@ -46,22 +51,24 @@ export function AIFlowGenerator({ onFlowGenerated }: AIFlowGeneratorProps) {
     setGeneratedFlow(null);
 
     try {
-      const response = await fetch('/api/ai/automation-builder', {
+      const data = await internalApiFetch<AutomationBuilderResponse>('/api/ai/automation-builder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: prompt }),
+        body: { action: 'build_flow', description: prompt },
+        schema: automationBuilderResponseSchema,
       });
 
-      const data = await response.json();
-
-      if (data.success) {
-        setGeneratedFlow(data.data);
+      if (data.success && data.data) {
+        const normalizedSteps: AutomationStep[] = data.data.steps.map((step) => ({
+          ...step,
+          config: step.config ?? {},
+        }));
+        setGeneratedFlow({ ...data.data, steps: normalizedSteps });
       } else {
-        setError(data.error || 'Failed to generate automation');
+        setError(data.error?.message || 'Failed to generate automation');
       }
     } catch (err) {
       console.error('Error generating flow:', err);
-      setError('Failed to connect to AI service');
+      setError(err instanceof Error ? err.message : 'Failed to connect to AI service');
     } finally {
       setLoading(false);
     }

@@ -482,9 +482,9 @@ export default function ContentSchedulerPage() {
                   </label>
                   <div className="flex gap-2">
                     {['instagram', 'twitter', 'tiktok', 'onlyfans', 'reddit', 'threads'].map((platform) => (
-                      <Button variant="secondary">
-  <PlatformIcon platform={platform} className="w-5 h-5" />
-</Button>
+                      <Button key={platform} variant="secondary">
+                        <PlatformIcon platform={platform} className="w-5 h-5" />
+                      </Button>
                     ))}
                   </div>
                 </div>

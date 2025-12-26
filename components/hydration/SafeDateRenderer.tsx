@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
+import { useIsClient } from '@/hooks/useIsClient';
 
 /**
  * SafeDateRenderer Component
@@ -22,49 +23,37 @@ export function SafeDateRenderer({
   locale = 'en-US',
   className = '',
 }: SafeDateRendererProps) {
-  const [formattedDate, setFormattedDate] = useState<string | null>(null);
-
-  useEffect(() => {
+  const isClient = useIsClient();
+  const formattedDate = useMemo(() => {
+    if (!isClient) return null;
     const dateObj = date instanceof Date ? date : new Date(date);
-    
-    let formatted: string;
-    
+
     switch (format) {
       case 'full':
-        formatted = dateObj.toLocaleDateString(locale, {
+        return dateObj.toLocaleDateString(locale, {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
         });
-        break;
-      
       case 'short':
-        formatted = dateObj.toLocaleDateString(locale, {
+        return dateObj.toLocaleDateString(locale, {
           year: 'numeric',
           month: 'short',
           day: 'numeric',
         });
-        break;
-      
       case 'time':
-        formatted = dateObj.toLocaleTimeString(locale, {
+        return dateObj.toLocaleTimeString(locale, {
           hour: '2-digit',
           minute: '2-digit',
         });
-        break;
-      
       case 'relative':
-        formatted = getRelativeTime(dateObj);
-        break;
-      
+        return getRelativeTime(dateObj);
       default:
-        formatted = dateObj.toLocaleDateString(locale);
+        return dateObj.toLocaleDateString(locale);
     }
-    
-    setFormattedDate(formatted);
-  }, [date, format, locale]);
+  }, [date, format, isClient, locale]);
 
   // Server-side: render ISO string as fallback
   if (formattedDate === null) {

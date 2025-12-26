@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Test Instagram OAuth service
-    let serviceTest = {
+    const serviceTest = {
       canInstantiate: false,
       canGenerateUrl: false,
       error: null as string | null,
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user has existing Instagram connection
-    let connectionStatus = {
+    const connectionStatus = {
       hasConnection: false,
       username: null as string | null,
       error: null as string | null,

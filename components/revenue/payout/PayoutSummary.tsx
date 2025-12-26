@@ -24,6 +24,7 @@ export function PayoutSummary({
 }: PayoutSummaryProps) {
   const [isEditingTaxRate, setIsEditingTaxRate] = useState(false);
   const [tempTaxRate, setTempTaxRate] = useState(taxRate * 100);
+  const [now] = useState(() => Date.now());
 
   const formatCurrency = (value: number) => {
     return `$${value.toLocaleString(undefined, {
@@ -40,9 +41,9 @@ export function PayoutSummary({
     });
   };
 
-  const getDaysUntil = (date: Date) => {
+  const getDaysUntil = (date: Date, currentTime: number) => {
     const days = Math.ceil(
-      (new Date(date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+      (new Date(date).getTime() - currentTime) / (1000 * 60 * 60 * 24)
     );
     if (days < 0) return 'Overdue';
     if (days === 0) return 'Today';
@@ -82,7 +83,7 @@ export function PayoutSummary({
               {formatCurrency(nextPayoutAmount)}
             </div>
             <div className="text-sm text-blue-700 mt-1">
-              {formatDate(nextPayoutDate)} • {getDaysUntil(nextPayoutDate)}
+              {formatDate(nextPayoutDate)} • {getDaysUntil(nextPayoutDate, now)}
             </div>
           </div>
         </div>

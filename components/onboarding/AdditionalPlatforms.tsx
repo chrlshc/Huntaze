@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { CheckCircle2, ExternalLink, Loader2, Gift } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { connectOnboardingPlatform } from '@/lib/services/onboarding';
 
 interface Platform {
   id: string;
@@ -48,16 +49,9 @@ export function AdditionalPlatforms({ onComplete, onSkip }: AdditionalPlatformsP
   const handleConnect = async (platformId: string) => {
     setConnecting(platformId);
     try {
-      const res = await fetch('/api/onboarding/connect-platform', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ platform: platformId, action: 'connect' })
-      });
-
-      if (!res.ok) throw new Error(`Failed to initialize connection (${res.status})`);
-      const data = await res.json();
+      const data = await connectOnboardingPlatform(platformId, 'connect');
       const target = data?.authUrl || (platformId === 'onlyfans' ? '/of-connect' : `/api/auth/${platformId}`);
-      window.location.href = target;
+      window.location.assign(target);
     } catch (error) {
       console.error('Failed to connect platform:', error);
       setConnecting(null);

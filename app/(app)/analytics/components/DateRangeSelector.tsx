@@ -1,11 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-type DateRangePreset = 'today' | '7d' | '30d' | '12m';
-
-type DateRange = 
-  | { type: 'preset'; preset: DateRangePreset }
-  | { type: 'custom'; from: Date; to: Date };
+import type { DateRange, DateRangePreset } from '@/lib/dashboard/types';
 
 interface DateRangeSelectorProps {
   value: DateRange;
@@ -47,8 +43,8 @@ export function DateRangeSelector({ value, onChange }: DateRangeSelectorProps) {
     if (customFrom && customTo) {
       onChange({
         type: 'custom',
-        from: new Date(customFrom),
-        to: new Date(customTo),
+        from: customFrom,
+        to: customTo,
       });
       setIsOpen(false);
     }
@@ -58,8 +54,8 @@ export function DateRangeSelector({ value, onChange }: DateRangeSelectorProps) {
     if (value.type === 'preset') {
       return PRESETS.find((p) => p.value === value.preset)?.label || 'Select period';
     }
-    const from = value.from.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const to = value.to.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const from = new Date(value.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const to = new Date(value.to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     return `${from} - ${to}`;
   };
 

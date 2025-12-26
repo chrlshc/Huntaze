@@ -10,6 +10,12 @@ import { AIConfiguration } from './AIConfiguration';
 import { AdditionalPlatforms } from './AdditionalPlatforms';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import {
+  completeOnboardingStep,
+  fetchOnboardingStatus,
+  forceCompleteOnboarding,
+  skipOnboardingStep,
+} from '@/lib/services/onboarding';
 
 interface OnboardingWizardProps {
   userId: string;
@@ -49,13 +55,12 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
 
   const loadProgress = async () => {
     try {
-      const response = await fetch('/api/onboarding/status');
-      const result = await response.json();
+      const result = await fetchOnboardingStatus();
       
-      if (result.success) {
-        setCurrentStep(result.data.currentStep);
-        setProgress(result.data.progress);
-        setCompletedSteps(result.data.completedSteps);
+      if (result.success && result.data) {
+        setCurrentStep(result.data.currentStep ?? 'welcome');
+        setProgress(result.data.progress ?? result.data.progressPercentage ?? 0);
+        setCompletedSteps(result.data.completedSteps ?? []);
       }
     } catch (error) {
       console.error('Failed to load progress:', error);
@@ -66,20 +71,16 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
 
   const handleStepComplete = async (stepId: string, data?: any) => {
     try {
-      const response = await fetch(`/api/onboarding/step/${stepId}/complete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data })
-      });
-
-      const result = await response.json().catch(() => ({} as any));
+      const result = await completeOnboardingStep(stepId, data);
 
       // Always update local progress even if backend returns non-success in staging/demo
       const updatedCompleted = completedSteps.includes(stepId)
         ? completedSteps
         : [...completedSteps, stepId];
       setCompletedSteps(updatedCompleted);
-      setProgress(typeof result?.data?.progress === 'number' ? result.data.progress : Math.min(100, progress + 15));
+      setProgress(
+        typeof result?.data?.progress === 'number' ? result.data.progress : Math.min(100, progress + 15),
+      );
 
       const idx = orderedSteps.indexOf(stepId as any);
       const nextId = result?.data?.nextStep?.id || orderedSteps[Math.min(idx + 1, orderedSteps.length - 1)];
@@ -101,11 +102,7 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
 
   const handleStepSkip = async (stepId: string) => {
     try {
-      const response = await fetch(`/api/onboarding/step/${stepId}/skip`, {
-        method: 'POST'
-      });
-
-      const result = await response.json().catch(() => ({} as any));
+      const result = await skipOnboardingStep(stepId);
       const idx = orderedSteps.indexOf(stepId as any);
       const nextId = result?.data?.nextStep?.id || orderedSteps[Math.min(idx + 1, orderedSteps.length - 1)];
       if (nextId) setCurrentStep(nextId);
@@ -182,7 +179,7 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
                   variant="primary" 
                   onClick={async () => {
                     try {
-                      await fetch('/api/force-complete-onboarding');
+                      await forceCompleteOnboarding();
                     } catch {}
                     onComplete?.();
                   }}

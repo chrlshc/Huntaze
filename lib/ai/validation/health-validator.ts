@@ -7,6 +7,8 @@
  */
 
 import type { HealthCheckResult, AIRouterHealthValidator } from './types';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 const HEALTH_CHECK_TIMEOUT_MS = 1000;
 const ACCESSIBILITY_TIMEOUT_MS = 5000;
@@ -30,18 +32,16 @@ export class RouterHealthValidator implements AIRouterHealthValidator {
     const startTime = Date.now();
     
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), HEALTH_CHECK_TIMEOUT_MS);
-      
-      const response = await fetch(`${this.routerUrl}/health`, {
+      const response = await externalFetch(`${this.routerUrl}/health`, {
+        service: 'ai-router',
+        operation: 'health.check',
         method: 'GET',
-        signal: controller.signal,
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
+        timeoutMs: HEALTH_CHECK_TIMEOUT_MS,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
       });
-      
-      clearTimeout(timeoutId);
       
       const responseTimeMs = Date.now() - startTime;
       
@@ -56,7 +56,7 @@ export class RouterHealthValidator implements AIRouterHealthValidator {
         };
       }
       
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       
       return {
         healthy: data.status === 'healthy' || data.healthy === true,
@@ -68,7 +68,7 @@ export class RouterHealthValidator implements AIRouterHealthValidator {
     } catch (error) {
       const responseTimeMs = Date.now() - startTime;
       
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error) && error.code === 'TIMEOUT') {
         return {
           healthy: false,
           responseTimeMs,
@@ -96,16 +96,14 @@ export class RouterHealthValidator implements AIRouterHealthValidator {
    */
   async checkEndpointAccessibility(): Promise<boolean> {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), ACCESSIBILITY_TIMEOUT_MS);
-      
-      const response = await fetch(`${this.routerUrl}/health`, {
+      const response = await externalFetch(`${this.routerUrl}/health`, {
+        service: 'ai-router',
+        operation: 'health.accessibility',
         method: 'GET',
-        signal: controller.signal,
+        timeoutMs: ACCESSIBILITY_TIMEOUT_MS,
+        retry: { maxRetries: 0, retryMethods: ['GET'] },
       });
-      
-      clearTimeout(timeoutId);
-      
+
       return response.ok;
     } catch {
       return false;

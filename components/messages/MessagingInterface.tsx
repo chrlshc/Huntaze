@@ -1,658 +1,183 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import type { ComponentProps } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+import useSWR from 'swr';
 import { TailAdminCard } from '@/components/ui/tailadmin/TailAdminCard';
 import { FanList } from './FanList';
 import { FanCardProps } from './FanCard';
 import { ChatContainer, ChatMessage } from './ChatContainer';
 import { ContextPanel } from './ContextPanel';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import type { Message, MessageThread, UnifiedMessagesResponse } from '@/lib/types/messages';
+import type { Fan } from '@/lib/services/crmData';
+import { useMarkMessageRead } from '@/hooks/messages/useMarkMessageRead';
 import './messaging-interface.css';
 
-// Mock data for demonstration
-const mockConversations: FanCardProps[] = [
-  {
-    id: '1',
-    name: 'Sophie Martin',
-    avatarUrl: 'https://i.pravatar.cc/150?img=1',
-    lastMessage: 'Thanks for the exclusive content! 😍',
-    timestamp: '2m',
-    unreadCount: 3,
-    isOnline: true,
-    tags: ['VIP', 'Loyal'],
-  },
-  {
-    id: '2',
-    name: 'Lucas Dubois',
-    avatarUrl: 'https://i.pravatar.cc/150?img=2',
-    lastMessage: 'When are you posting new content?',
-    timestamp: '15m',
-    unreadCount: 1,
-    isOnline: false,
-    tags: ['New'],
-  },
-  {
-    id: '3',
-    name: 'Emma Bernard',
-    avatarUrl: 'https://i.pravatar.cc/150?img=3',
-    lastMessage: 'Love your style! 💕',
-    timestamp: '1h',
-    unreadCount: 0,
-    isOnline: true,
-    tags: ['VIP', 'Top Fan'],
-  },
-  {
-    id: '4',
-    name: 'Thomas Petit',
-    avatarUrl: 'https://i.pravatar.cc/150?img=4',
-    lastMessage: 'Can you send more photos?',
-    timestamp: '2h',
-    unreadCount: 0,
-    isOnline: false,
-    tags: [],
-  },
-  {
-    id: '5',
-    name: 'Chloé Moreau',
-    avatarUrl: 'https://i.pravatar.cc/150?img=5',
-    lastMessage: 'Great content as always!',
-    timestamp: '3h',
-    unreadCount: 2,
-    isOnline: true,
-    tags: ['Loyal'],
-  },
-  {
-    id: '6',
-    name: 'Nina Lefèvre',
-    avatarUrl: 'https://i.pravatar.cc/150?img=6',
-    lastMessage: 'Je viens de m’abonner ✨',
-    timestamp: '4h',
-    unreadCount: 1,
-    isOnline: true,
-    tags: ['New'],
-  },
-  {
-    id: '7',
-    name: 'Camille Laurent',
-    avatarUrl: 'https://i.pravatar.cc/150?img=7',
-    lastMessage: 'Your stories are really great 🙌',
-    timestamp: '6h',
-    unreadCount: 0,
-    isOnline: false,
-    tags: ['Loyal'],
-  },
-  {
-    id: '8',
-    name: 'Adrien Morel',
-    avatarUrl: 'https://i.pravatar.cc/150?img=8',
-    lastMessage: 'Can\'t wait to see your next set 🔥',
-    timestamp: '8h',
-    unreadCount: 4,
-    isOnline: true,
-    tags: ['Top Fan'],
-  },
-  {
-    id: '9',
-    name: 'Julie Caron',
-    avatarUrl: 'https://i.pravatar.cc/150?img=9',
-    lastMessage: 'Thanks for your quick response 😊',
-    timestamp: '10h',
-    unreadCount: 0,
-    isOnline: false,
-    tags: ['VIP'],
-  },
-  {
-    id: '10',
-    name: 'Sarah Robin',
-    avatarUrl: 'https://i.pravatar.cc/150?img=10',
-    lastMessage: 'Can you post more on weekends?',
-    timestamp: '12h',
-    unreadCount: 1,
-    isOnline: false,
-    tags: [],
-  },
-  {
-    id: '11',
-    name: 'Léna Garnier',
-    avatarUrl: 'https://i.pravatar.cc/150?img=11',
-    lastMessage: 'J’adore tes vidéos backstage 🎬',
-    timestamp: '1j',
-    unreadCount: 0,
-    isOnline: true,
-    tags: ['Loyal', 'Top Fan'],
-  },
-  {
-    id: '12',
-    name: 'Mélanie Renault',
-    avatarUrl: 'https://i.pravatar.cc/150?img=12',
-    lastMessage: 'Thanks for the personal content 💌',
-    timestamp: '1d',
-    unreadCount: 3,
-    isOnline: false,
-    tags: ['VIP'],
-  },
-  {
-    id: '13',
-    name: 'Clara Marchand',
-    avatarUrl: 'https://i.pravatar.cc/150?img=13',
-    lastMessage: 'Can we schedule a live soon?',
-    timestamp: '2d',
-    unreadCount: 0,
-    isOnline: false,
-    tags: ['New'],
-  },
-  {
-    id: '14',
-    name: 'Paul Chevalier',
-    avatarUrl: 'https://i.pravatar.cc/150?img=14',
-    lastMessage: 'I recommend your account to my friends 😄',
-    timestamp: '2d',
-    unreadCount: 0,
-    isOnline: true,
-    tags: ['Ambassador'],
-  },
-  {
-    id: '15',
-    name: 'Anna Blanchard',
-    avatarUrl: 'https://i.pravatar.cc/150?img=15',
-    lastMessage: 'Your responses are always super fast 🙏',
-    timestamp: '3d',
-    unreadCount: 0,
-    isOnline: false,
-    tags: ['Loyal'],
-  },
-];
+type ContextPanelProps = ComponentProps<typeof ContextPanel>;
+type FanContext = NonNullable<ContextPanelProps['fanContext']>;
 
-// Mock fan context data
-const mockFanContext = {
-  '1': {
-    fanId: '1',
-    name: 'Sophie Martin',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    status: 'vip' as const,
-    joinDate: new Date('2023-06-15'),
-    lastActive: new Date(),
-    totalSpent: 450.00,
-    subscriptionTier: 'Premium',
-    notes: [
-      {
-        id: 'n1',
-        content: 'Very engaged fan, loves exclusive content',
-        createdAt: new Date('2024-01-10'),
-        author: 'Me',
-        category: 'engagement' as const,
-      },
-      {
-        id: 'n2',
-        content: 'Requested personalized content',
-        createdAt: new Date('2024-01-15'),
-        author: 'Me',
-        category: 'demandes' as const,
-      },
-    ],
-    tags: [
-      { id: 't1', label: 'VIP', color: 'warning' as const },
-      { id: 't2', label: 'Loyal', color: 'primary' as const },
-      { id: 't3', label: 'Top Fan', color: 'success' as const },
-    ],
-  },
-  '2': {
-    fanId: '2',
-    name: 'Lucas Dubois',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-    status: 'active' as const,
-    joinDate: new Date('2024-01-20'),
-    lastActive: new Date(Date.now() - 900000),
-    totalSpent: 89.99,
-    subscriptionTier: 'Standard',
-    notes: [
-      {
-        id: 'n3',
-        content: 'New fan, very interested',
-        createdAt: new Date('2024-01-20'),
-        author: 'Me',
-        category: 'engagement' as const,
-      },
-    ],
-    tags: [
-      { id: 't3', label: 'New', color: 'success' as const },
-      { id: 't4', label: 'Active', color: 'info' as const },
-    ],
-  },
-  '3': {
-    fanId: '3',
-    name: 'Emma Bernard',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    status: 'vip' as const,
-    joinDate: new Date('2023-08-10'),
-    lastActive: new Date(),
-    totalSpent: 780.50,
-    subscriptionTier: 'Premium Plus',
-    notes: [
-      {
-        id: 'n4',
-        content: 'Top fan, always positive',
-        createdAt: new Date('2023-12-01'),
-        author: 'Me',
-        category: 'engagement' as const,
-      },
-      {
-        id: 'n5',
-        content: 'Loves lifestyle photos',
-        createdAt: new Date('2024-01-05'),
-        author: 'Me',
-        category: 'demandes' as const,
-      },
-      {
-        id: 'n6',
-        content: 'Recommended my content to others',
-        createdAt: new Date('2024-01-18'),
-        author: 'Me',
-        category: 'risques' as const,
-      },
-    ],
-    tags: [
-      { id: 't5', label: 'VIP', color: 'warning' as const },
-      { id: 't6', label: 'Top Fan', color: 'danger' as const },
-      { id: 't7', label: 'Ambassador', color: 'success' as const },
-    ],
-  },
-  '4': {
-    fanId: '4',
-    name: 'Thomas Petit',
-    avatar: 'https://i.pravatar.cc/150?img=4',
-    status: 'active' as const,
-    joinDate: new Date('2023-09-01'),
-    lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    totalSpent: 120.0,
-    subscriptionTier: 'Standard',
-    notes: [
-      {
-        id: 'n7',
-        content: 'Interested in more photo content',
-        createdAt: new Date('2024-02-01'),
-        author: 'Me',
-        category: 'demandes' as const,
-      },
-    ],
-    tags: [
-      { id: 't8', label: 'Active', color: 'info' as const },
-    ],
-  },
-  '5': {
-    fanId: '5',
-    name: 'Chloé Moreau',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    status: 'vip' as const,
-    joinDate: new Date('2023-11-20'),
-    lastActive: new Date(Date.now() - 3 * 60 * 60 * 1000),
-    totalSpent: 320.5,
-    subscriptionTier: 'Premium',
-    notes: [
-      {
-        id: 'n8',
-        content: 'Always present on new posts',
-        createdAt: new Date('2024-01-25'),
-        author: 'Me',
-        category: 'engagement' as const,
-      },
-    ],
-    tags: [
-      { id: 't9', label: 'Loyal', color: 'primary' as const },
-    ],
-  },
-  '6': {
-    fanId: '6',
-    name: 'Nina Lefèvre',
-    avatar: 'https://i.pravatar.cc/150?img=6',
-    status: 'active' as const,
-    joinDate: new Date('2024-02-10'),
-    lastActive: new Date(Date.now() - 4 * 60 * 60 * 1000),
-    totalSpent: 45.0,
-    subscriptionTier: 'Standard',
-    notes: [],
-    tags: [
-      { id: 't10', label: 'New', color: 'success' as const },
-    ],
-  },
-  '7': {
-    fanId: '7',
-    name: 'Camille Laurent',
-    avatar: 'https://i.pravatar.cc/150?img=7',
-    status: 'active' as const,
-    joinDate: new Date('2023-10-05'),
-    lastActive: new Date(Date.now() - 6 * 60 * 60 * 1000),
-    totalSpent: 210.0,
-    subscriptionTier: 'Standard',
-    notes: [
-      {
-        id: 'n9',
-        content: 'Reacts a lot to stories',
-        createdAt: new Date('2024-01-30'),
-        author: 'Me',
-        category: 'engagement' as const,
-      },
-    ],
-    tags: [
-      { id: 't11', label: 'Loyal', color: 'primary' as const },
-    ],
-  },
-  '8': {
-    fanId: '8',
-    name: 'Adrien Morel',
-    avatar: 'https://i.pravatar.cc/150?img=8',
-    status: 'vip' as const,
-    joinDate: new Date('2023-05-18'),
-    lastActive: new Date(Date.now() - 8 * 60 * 60 * 1000),
-    totalSpent: 980.9,
-    subscriptionTier: 'Premium Plus',
-    notes: [
-      {
-        id: 'n10',
-        content: 'Often buys bundles',
-        createdAt: new Date('2023-11-10'),
-        author: 'Me',
-        category: 'engagement' as const,
-      },
-    ],
-    tags: [
-      { id: 't12', label: 'Top Fan', color: 'danger' as const },
-    ],
-  },
-  '9': {
-    fanId: '9',
-    name: 'Julie Caron',
-    avatar: 'https://i.pravatar.cc/150?img=9',
-    status: 'active' as const,
-    joinDate: new Date('2024-03-01'),
-    lastActive: new Date(Date.now() - 10 * 60 * 60 * 1000),
-    totalSpent: 60.0,
-    subscriptionTier: 'Standard',
-    notes: [],
-    tags: [
-      { id: 't13', label: 'VIP', color: 'warning' as const },
-    ],
-  },
-  '10': {
-    fanId: '10',
-    name: 'Sarah Robin',
-    avatar: 'https://i.pravatar.cc/150?img=10',
-    status: 'inactive' as const,
-    joinDate: new Date('2023-04-12'),
-    lastActive: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    totalSpent: 150.0,
-    subscriptionTier: 'Standard',
-    notes: [
-      {
-        id: 'n11',
-        content: 'Less active lately',
-        createdAt: new Date('2024-01-15'),
-        author: 'Me',
-        category: 'risques' as const,
-      },
-    ],
-    tags: [],
-  },
-  '11': {
-    fanId: '11',
-    name: 'Léna Garnier',
-    avatar: 'https://i.pravatar.cc/150?img=11',
-    status: 'vip' as const,
-    joinDate: new Date('2023-07-22'),
-    lastActive: new Date(),
-    totalSpent: 650.0,
-    subscriptionTier: 'Premium',
-    notes: [
-      {
-        id: 'n12',
-        content: 'Very engaged with backstage videos',
-        createdAt: new Date('2024-02-05'),
-        author: 'Me',
-        category: 'engagement' as const,
-      },
-    ],
-    tags: [
-      { id: 't14', label: 'Top Fan', color: 'success' as const },
-    ],
-  },
-  '12': {
-    fanId: '12',
-    name: 'Mélanie Renault',
-    avatar: 'https://i.pravatar.cc/150?img=12',
-    status: 'vip' as const,
-    joinDate: new Date('2023-09-14'),
-    lastActive: new Date(Date.now() - 12 * 60 * 60 * 1000),
-    totalSpent: 540.0,
-    subscriptionTier: 'Premium',
-    notes: [
-      {
-        id: 'n13',
-        content: 'Particularly appreciates personalized content',
-        createdAt: new Date('2024-02-08'),
-        author: 'Me',
-        category: 'demandes' as const,
-      },
-    ],
-    tags: [
-      { id: 't15', label: 'VIP', color: 'warning' as const },
-    ],
-  },
-  '13': {
-    fanId: '13',
-    name: 'Clara Marchand',
-    avatar: 'https://i.pravatar.cc/150?img=13',
-    status: 'active' as const,
-    joinDate: new Date('2024-01-05'),
-    lastActive: new Date(Date.now() - 18 * 60 * 60 * 1000),
-    totalSpent: 70.0,
-    subscriptionTier: 'Standard',
-    notes: [],
-    tags: [
-      { id: 't16', label: 'New', color: 'success' as const },
-    ],
-  },
-  '14': {
-    fanId: '14',
-    name: 'Paul Chevalier',
-    avatar: 'https://i.pravatar.cc/150?img=14',
-    status: 'active' as const,
-    joinDate: new Date('2023-06-02'),
-    lastActive: new Date(Date.now() - 5 * 60 * 60 * 1000),
-    totalSpent: 300.0,
-    subscriptionTier: 'Standard',
-    notes: [
-      {
-        id: 'n14',
-        content: 'Often recommends the account',
-        createdAt: new Date('2024-02-02'),
-        author: 'Me',
-        category: 'engagement' as const,
-      },
-    ],
-    tags: [
-      { id: 't17', label: 'Ambassador', color: 'success' as const },
-    ],
-  },
-  '15': {
-    fanId: '15',
-    name: 'Anna Blanchard',
-    avatar: 'https://i.pravatar.cc/150?img=15',
-    status: 'active' as const,
-    joinDate: new Date('2023-12-10'),
-    lastActive: new Date(Date.now() - 22 * 60 * 60 * 1000),
-    totalSpent: 95.0,
-    subscriptionTier: 'Standard',
-    notes: [
-      {
-        id: 'n15',
-        content: 'Appreciates quick responses',
-        createdAt: new Date('2024-02-10'),
-        author: 'Me',
-        category: 'engagement' as const,
-      },
-    ],
-    tags: [
-      { id: 't18', label: 'Loyal', color: 'primary' as const },
-    ],
-  },
-};
+const MINUTE_MS = 60_000;
+const HOUR_MS = 3_600_000;
+const DAY_MS = 86_400_000;
+const ACTIVE_WINDOW_MS = 30 * DAY_MS;
 
-// Helpers to generate long mock conversations with multiple days & groupings
-const fanMessageTemplates = [
-  "Hi! I just discovered your content 🌟",
-  "I love your style, it's exactly what I was looking for 😍",
-  "Are you posting new content soon?",
-  "Can you send more photos?",
-  "Thanks for your response, it makes me so happy 😊",
-  "Could you do a live this weekend?",
-  "Your last post is incredible 🔥",
-  "I want a bit more personalized content 🙏",
-  "I just subscribed to your OnlyFans ✨",
-  "Your stories are really great 🙌",
-];
+function formatRelativeTimestamp(value?: string | Date | null): string {
+  if (!value) return '';
+  const date = typeof value === 'string' ? new Date(value) : value;
+  const timestamp = date.getTime();
+  if (!Number.isFinite(timestamp)) return '';
 
-const creatorMessageTemplates = [
-  "Thank you so much for your support, it means a lot 💕",
-  "I'm actually preparing new content coming soon 🎉",
-  "Tell me what you'd like to see as a priority 🙂",
-  "We can plan a live this weekend, good idea 😉",
-  "Thanks for your message, it motivates me even more 🙏",
-  "I'm noting your request, thanks for the inspiration!",
-  "Stay tuned, there's a big surprise coming 😏",
-  "I can prepare something more personalized for you 💌",
-];
+  const diffMs = Math.max(0, Date.now() - timestamp);
 
-function generateMockMessagesForConversation(
-  fanId: string,
-  fanName: string,
-  fanAvatar: string,
-  count: number,
-): ChatMessage[] {
-  const messages: ChatMessage[] = [];
-  // Start a few days ago to force multiple date separators
-  let currentTime = Date.now() - 5 * 24 * 60 * 60 * 1000;
-
-  for (let i = 0; i < count; i++) {
-    // Pattern to create sequences: 3 fan messages, 2 creator, 1 fan, etc.
-    const pattern = i % 6;
-    const fromFan = pattern === 0 || pattern === 1 || pattern === 2 || pattern === 5;
-
-    const sender = fromFan
-      ? {
-          id: fanId,
-          name: fanName,
-          avatar: fanAvatar,
-          type: 'fan' as const,
-        }
-      : {
-          id: 'creator',
-          name: 'Creator',
-          avatar: 'https://i.pravatar.cc/150?img=10',
-          type: 'creator' as const,
-        };
-
-    const content = fromFan
-      ? fanMessageTemplates[i % fanMessageTemplates.length]
-      : creatorMessageTemplates[i % creatorMessageTemplates.length];
-
-    const statusPool: ChatMessage['status'][] = ['sent', 'delivered', 'read'];
-    const status = statusPool[i % statusPool.length];
-
-    messages.push({
-      id: `${fanId}_m_${i}`,
-      content,
-      timestamp: new Date(currentTime),
-      sender,
-      status,
-    });
-
-    // Advance time for next message
-    const minutesStep = 3 + (i % 5); // entre 3 et 7 minutes
-    currentTime += minutesStep * 60 * 1000;
-
-    // Every ~25 messages, skip a day to force multiple days
-    if (i > 0 && i % 25 === 0) {
-      currentTime += 12 * 60 * 60 * 1000;
-    }
+  if (diffMs < MINUTE_MS) return '1m';
+  if (diffMs < HOUR_MS) {
+    return `${Math.max(1, Math.floor(diffMs / MINUTE_MS))}m`;
   }
-
-  return messages;
+  if (diffMs < DAY_MS) {
+    return `${Math.floor(diffMs / HOUR_MS)}h`;
+  }
+  return `${Math.floor(diffMs / DAY_MS)}d`;
 }
 
-function generateOlderMockMessagesForConversation(
-  fanId: string,
-  fanName: string,
-  fanAvatar: string,
-  count: number,
-  beforeTimestampMs: number,
-  page: number,
-): ChatMessage[] {
-  const messages: ChatMessage[] = [];
-  let currentTime = beforeTimestampMs - 3 * 60 * 1000;
-
-  for (let i = 0; i < count; i++) {
-    const pattern = (page * 1000 + i) % 6;
-    const fromFan = pattern === 0 || pattern === 1 || pattern === 2 || pattern === 5;
-
-    const sender = fromFan
-      ? {
-          id: fanId,
-          name: fanName,
-          avatar: fanAvatar,
-          type: 'fan' as const,
-        }
-      : {
-          id: 'creator',
-          name: 'Creator',
-          avatar: 'https://i.pravatar.cc/150?img=10',
-          type: 'creator' as const,
-        };
-
-    const content = fromFan
-      ? fanMessageTemplates[(page + i) % fanMessageTemplates.length]
-      : creatorMessageTemplates[(page + i) % creatorMessageTemplates.length];
-
-    const statusPool: ChatMessage['status'][] = ['sent', 'delivered', 'read'];
-    const status = statusPool[(page + i) % statusPool.length];
-
-    messages.push({
-      id: `${fanId}_m_old_${page}_${i}`,
-      content,
-      timestamp: new Date(currentTime),
-      sender,
-      status,
-    });
-
-    const minutesStep = 3 + ((page + i) % 5);
-    currentTime -= minutesStep * 60 * 1000;
-
-    if (i > 0 && i % 25 === 0) {
-      currentTime -= 12 * 60 * 60 * 1000;
-    }
+function normalizeTagList(tags: Fan['tags']): string[] {
+  if (!tags) return [];
+  if (Array.isArray(tags)) {
+    return tags.map((tag) => String(tag)).filter((tag) => tag.trim().length > 0);
   }
-
-  return messages.reverse();
+  if (typeof tags === 'string') {
+    try {
+      const parsed = JSON.parse(tags);
+      if (Array.isArray(parsed)) {
+        return parsed.map((tag) => String(tag)).filter((tag) => tag.trim().length > 0);
+      }
+    } catch {
+      // noop - fall through to comma split
+    }
+    return tags
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+  }
+  return [];
 }
 
-// Mock messages for demonstration - enough to force internal scroll (not page scroll)
-const MOCK_INITIAL_MESSAGES_PER_CONVERSATION = 48;
-const MOCK_LOAD_MORE_BATCH_SIZE = 32;
-const MOCK_LOAD_MORE_MAX_PAGES = 6;
+function tagToColor(label: string): FanContext['tags'][number]['color'] {
+  const normalized = label.toLowerCase();
+  if (normalized.includes('vip')) return 'warning';
+  if (normalized.includes('top')) return 'success';
+  if (normalized.includes('loyal')) return 'primary';
+  if (normalized.includes('new')) return 'info';
+  if (normalized.includes('risk')) return 'danger';
+  return 'info';
+}
 
-const mockMessages: Record<string, ChatMessage[]> = mockConversations.reduce(
-  (acc, conversation) => {
-    acc[conversation.id] = generateMockMessagesForConversation(
-      conversation.id,
-      conversation.name,
-      conversation.avatarUrl || '',
-      MOCK_INITIAL_MESSAGES_PER_CONVERSATION,
-    );
-    return acc;
-  },
-  {} as Record<string, ChatMessage[]>,
-);
+function buildFanContext(fan: Fan | undefined, thread?: MessageThread | null): FanContext | null {
+  if (!fan && !thread) return null;
 
-interface MessagingInterfaceProps {
+  const fallbackId = thread?.sender.id ?? 'fan';
+  const fallbackName = thread?.sender.name ?? 'Fan';
+  const fallbackAvatar = thread?.sender.avatar ?? '';
+  const tags = normalizeTagList(fan?.tags);
+  if (tags.length === 0 && thread?.sender.tier) {
+    tags.push(thread.sender.tier);
+  }
+
+  const createdAt = fan?.createdAt ? new Date(fan.createdAt) : new Date();
+  const lastActive = fan?.lastSeenAt
+    ? new Date(fan.lastSeenAt)
+    : fan?.updatedAt
+      ? new Date(fan.updatedAt)
+      : createdAt;
+  const lastActiveMs = lastActive.getTime();
+  const isActive = Number.isFinite(lastActiveMs) && Date.now() - lastActiveMs <= ACTIVE_WINDOW_MS;
+  const isVip = tags.some((tag) => tag.toLowerCase() === 'vip');
+  const totalSpent =
+    typeof fan?.valueCents === 'number' && Number.isFinite(fan.valueCents)
+      ? fan.valueCents / 100
+      : 0;
+
+  const notes: FanContext['notes'] = [];
+  if (fan?.notes && typeof fan.notes === 'string' && fan.notes.trim()) {
+    notes.push({
+      id: `note-${fan.id}`,
+      content: fan.notes,
+      createdAt,
+      author: 'System',
+      category: 'engagement',
+    });
+  }
+
+  return {
+    fanId: String(fan?.id ?? fallbackId),
+    name: fan?.name ?? fallbackName,
+    avatar: fan?.avatar ?? fallbackAvatar,
+    status: isVip ? 'vip' : isActive ? 'active' : 'inactive',
+    joinDate: createdAt,
+    lastActive,
+    totalSpent,
+    subscriptionTier: isVip ? 'VIP' : 'Standard',
+    notes,
+    tags: tags.map((tag, index) => ({
+      id: `${fan?.id ?? fallbackId}-${index}`,
+      label: tag,
+      color: tagToColor(tag),
+    })),
+  };
+}
+
+function mapThreadToConversation(thread: MessageThread): FanCardProps {
+  const timestampSource = thread.lastMessage?.timestamp || thread.updatedAt;
+  const lastMessageText = thread.lastMessage?.content?.trim() || 'No messages yet';
+  const diffMs = timestampSource ? Date.now() - new Date(timestampSource).getTime() : Number.POSITIVE_INFINITY;
+
+  return {
+    id: thread.id,
+    name: thread.sender.name,
+    avatarUrl: thread.sender.avatar,
+    lastMessage: lastMessageText,
+    timestamp: formatRelativeTimestamp(timestampSource),
+    unreadCount: thread.unreadCount || 0,
+    isOnline: Number.isFinite(diffMs) && diffMs >= 0 && diffMs < 5 * MINUTE_MS,
+    tags: thread.sender.tier ? [thread.sender.tier] : [],
+  };
+}
+
+function mapMessageStatus(status?: Message['status']): ChatMessage['status'] {
+  if (!status) return undefined;
+  if (status === 'read') return 'read';
+  if (status === 'replied') return 'delivered';
+  if (status === 'unread') return 'sent';
+  return 'sent';
+}
+
+function mapMessageToChatMessage(
+  message: Message,
+  creatorId: string | undefined,
+  thread?: MessageThread | null
+): ChatMessage {
+  const senderId = message.sender?.id || '';
+  const isCreator = creatorId ? senderId === creatorId : false;
+  const senderName = message.sender?.name || (isCreator ? 'You' : thread?.sender.name || 'Fan');
+  const senderAvatar = message.sender?.avatar || (isCreator ? '' : thread?.sender.avatar || '');
+
+  return {
+    id: message.id,
+    content: message.content || '',
+    timestamp: message.timestamp,
+    sender: {
+      id: senderId || (isCreator ? creatorId || 'creator' : thread?.sender.id || 'fan'),
+      name: senderName,
+      avatar: senderAvatar || '',
+      type: isCreator ? 'creator' : 'fan',
+    },
+    status: isCreator ? mapMessageStatus(message.status) : undefined,
+  };
+}
+export interface MessagingInterfaceProps {
   className?: string;
 }
 
@@ -685,58 +210,137 @@ export function MessagingInterface({
   const searchParams = useSearchParams();
   const requestedConversationId = searchParams.get('conversation');
 
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(() => {
-    if (
-      requestedConversationId &&
-      mockConversations.some((conversation) => conversation.id === requestedConversationId)
-    ) {
-      return requestedConversationId;
-    }
+  const { data: session } = useSession();
+  const creatorId = session?.user?.id;
+  const { markAsRead } = useMarkMessageRead();
 
-    return '1';
-  });
+  const {
+    data: threadsData,
+    error: threadsError,
+    isLoading: threadsLoading,
+    mutate: mutateThreads,
+  } = useSWR<UnifiedMessagesResponse>(
+    creatorId ? `/api/messages/unified?creatorId=${creatorId}` : null,
+    (url) => internalApiFetch<UnifiedMessagesResponse>(url),
+  );
+
+  const threads = useMemo(() => threadsData?.threads ?? [], [threadsData]);
+  const conversations = useMemo(() => threads.map(mapThreadToConversation), [threads]);
+
+  const { data: fansData } = useSWR<{ fans: Fan[] }>(
+    creatorId && threads.length > 0 ? '/api/crm/fans' : null,
+    (url) => internalApiFetch<{ fans: Fan[] }>(url),
+  );
+
+  const fanById = useMemo(() => {
+    const map = new Map<string, Fan>();
+    for (const fan of fansData?.fans ?? []) {
+      if (fan?.id !== undefined && fan?.id !== null) {
+        map.set(String(fan.id), fan);
+      }
+    }
+    return map;
+  }, [fansData]);
+
+  const [userSelectedConversation, setUserSelectedConversation] = useState<string | null>(null);
   const [showContext, setShowContext] = useState(false);
   const [mobileView, setMobileView] = useState<MobileView>('list');
-  const [messages, setMessages] = useState<Record<string, ChatMessage[]>>(mockMessages);
-  const [isTyping, setIsTyping] = useState(false);
-  const loadPageByConversationRef = useRef<Record<string, number>>({});
-  const [isLoadingMoreByConversation, setIsLoadingMoreByConversation] = useState<Record<string, boolean>>({});
-  const [hasMoreByConversation, setHasMoreByConversation] = useState<Record<string, boolean>>(() => {
-    const initial: Record<string, boolean> = {};
-    for (const conversation of mockConversations) {
-      initial[conversation.id] = true;
-    }
-    return initial;
+  const [optimisticMessagesByConversation, setOptimisticMessagesByConversation] = useState<Record<string, ChatMessage[]>>({});
+  const [sendError, setSendError] = useState<{ conversationId: string | null; message: string | null }>({
+    conversationId: null,
+    message: null,
   });
 
+  const selectedConversation = useMemo(() => {
+    if (!threads.length) return null;
+    const threadIds = new Set(threads.map((thread) => thread.id));
+    if (requestedConversationId && threadIds.has(requestedConversationId)) {
+      return requestedConversationId;
+    }
+    if (userSelectedConversation && threadIds.has(userSelectedConversation)) {
+      return userSelectedConversation;
+    }
+    return threads[0].id;
+  }, [requestedConversationId, threads, userSelectedConversation]);
+
+  const effectiveMobileView: MobileView = threads.length ? mobileView : 'list';
+  const effectiveShowContext = threads.length ? showContext : false;
+  const activeSendError = sendError.conversationId === selectedConversation ? sendError.message : null;
+
+  const selectedThread = useMemo(
+    () => threads.find((thread) => thread.id === selectedConversation) || null,
+    [threads, selectedConversation],
+  );
+
+  const selectedFan = useMemo(
+    () => conversations.find((conversation) => conversation.id === selectedConversation) || null,
+    [conversations, selectedConversation],
+  );
+
+  const currentFanContext = useMemo(
+    () => buildFanContext(selectedThread ? fanById.get(selectedThread.sender.id) : undefined, selectedThread),
+    [fanById, selectedThread],
+  );
+
+  const {
+    data: messagesData,
+    error: messagesError,
+    isLoading: messagesLoading,
+    mutate: mutateMessages,
+  } = useSWR<{ messages: Message[] }>(
+    selectedConversation && creatorId ? `/api/messages/${selectedConversation}?creatorId=${creatorId}` : null,
+    (url) => internalApiFetch<{ messages: Message[] }>(url),
+  );
+
+  const apiMessages = useMemo(
+    () => (messagesData?.messages ?? []).map((message) => mapMessageToChatMessage(message, creatorId, selectedThread)),
+    [messagesData, creatorId, selectedThread],
+  );
+
+  const optimisticMessages = useMemo(
+    () => (selectedConversation ? optimisticMessagesByConversation[selectedConversation] || [] : []),
+    [optimisticMessagesByConversation, selectedConversation],
+  );
+
+  const currentMessages = useMemo(
+    () => [...apiMessages, ...optimisticMessages],
+    [apiMessages, optimisticMessages],
+  );
   // Refs for focus management
   const fanListRef = useRef<HTMLDivElement>(null);
-  const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!requestedConversationId) return;
-    if (!mockConversations.some((conversation) => conversation.id === requestedConversationId)) return;
+    if (!selectedConversation || !selectedThread?.unreadCount) return;
 
-    setSelectedConversation(requestedConversationId);
-  }, [requestedConversationId]);
+    void markAsRead({ threadId: selectedConversation });
+    mutateThreads((current) => {
+      if (!current) return current;
+      return {
+        ...current,
+        threads: current.threads.map((thread) =>
+          thread.id === selectedConversation
+            ? { ...thread, unreadCount: 0, status: 'read', priority: 'normal' }
+            : thread
+        ),
+      };
+    }, false);
+  }, [markAsRead, mutateThreads, selectedConversation, selectedThread?.unreadCount]);
 
-  // Get current fan context
-  const currentFanContext = selectedConversation 
-    ? mockFanContext[selectedConversation as keyof typeof mockFanContext] || null
-    : null;
+  const isTyping = false;
 
   // Build grid class names based on state
   const gridClasses = [
     'messaging-grid',
     selectedConversation && 'conversation-selected',
-    showContext && 'show-context',
-    `mobile-view-${mobileView}`,
+    effectiveShowContext && 'show-context',
+    `mobile-view-${effectiveMobileView}`,
   ].filter(Boolean).join(' ');
 
   // Handle mobile conversation selection - go to chat view
   const handleConversationSelect = useCallback((conversationId: string) => {
-    setSelectedConversation(conversationId);
+    setUserSelectedConversation(conversationId);
+    setSendError({ conversationId, message: null });
     setMobileView('chat');
   }, []);
 
@@ -776,7 +380,7 @@ export function MessagingInterface({
       // Escape: Clear selection on mobile
       if (e.key === 'Escape') {
         if (window.innerWidth < 768) {
-          setSelectedConversation(null);
+          setUserSelectedConversation(null);
           setShowContext(false);
         }
       }
@@ -790,132 +394,78 @@ export function MessagingInterface({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleLoadMore = useCallback(async () => {
-    if (!selectedConversation) return;
+  const handleSendMessage = useCallback(
+    async (content: string) => {
+      if (!selectedConversation || !creatorId) return;
 
-    const conversationId = selectedConversation;
-    if (isLoadingMoreByConversation[conversationId]) return;
-    if (hasMoreByConversation[conversationId] === false) return;
+      const optimisticId = `temp-${Date.now()}`;
+      const optimisticMessage: ChatMessage = {
+        id: optimisticId,
+        content,
+        timestamp: new Date().toISOString(),
+        sender: {
+          id: creatorId,
+          name: session?.user?.name || 'You',
+          avatar: session?.user?.image || '',
+          type: 'creator',
+        },
+        status: 'sending',
+      };
 
-    setIsLoadingMoreByConversation(prev => ({ ...prev, [conversationId]: true }));
+      setSendError({ conversationId: selectedConversation, message: null });
+      setOptimisticMessagesByConversation((prev) => ({
+        ...prev,
+        [selectedConversation]: [...(prev[selectedConversation] || []), optimisticMessage],
+      }));
 
-    const fan = mockConversations.find(c => c.id === conversationId);
-    const fanName = fan?.name ?? 'Fan';
-    const fanAvatar = fan?.avatarUrl ?? '';
-    const nextPage = (loadPageByConversationRef.current[conversationId] ?? 0) + 1;
-    loadPageByConversationRef.current[conversationId] = nextPage;
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 350));
-
-      setMessages(prev => {
-        const existing = prev[conversationId] || [];
-        const earliestTime = existing.reduce((min, msg) => {
-          const ts = typeof msg.timestamp === 'string'
-            ? new Date(msg.timestamp).getTime()
-            : msg.timestamp.getTime();
-          return Math.min(min, ts);
-        }, Date.now());
-
-        const olderMessages = generateOlderMockMessagesForConversation(
-          conversationId,
-          fanName,
-          fanAvatar,
-          MOCK_LOAD_MORE_BATCH_SIZE,
-          earliestTime,
-          nextPage,
+      try {
+        const response = await internalApiFetch<{ message: Message }>(
+          `/api/messages/${selectedConversation}/send`,
+          {
+            method: 'POST',
+            body: { creatorId, content },
+          },
         );
 
-        return {
+        setOptimisticMessagesByConversation((prev) => ({
           ...prev,
-          [conversationId]: [...olderMessages, ...existing],
-        };
-      });
-
-      if (nextPage >= MOCK_LOAD_MORE_MAX_PAGES) {
-        setHasMoreByConversation(prev => ({ ...prev, [conversationId]: false }));
-      }
-    } finally {
-      setIsLoadingMoreByConversation(prev => ({ ...prev, [conversationId]: false }));
-    }
-  }, [hasMoreByConversation, isLoadingMoreByConversation, selectedConversation]);
-
-  const handleSendMessage = useCallback((content: string) => {
-    if (!selectedConversation) return;
-
-    const newMessage: ChatMessage = {
-      id: `m${Date.now()}`,
-      content,
-      timestamp: new Date(),
-      sender: {
-        id: 'creator',
-        name: 'Creator',
-        avatar: 'https://i.pravatar.cc/150?img=10',
-        type: 'creator',
-      },
-      status: 'sending',
-    };
-
-    // Add message optimistically
-    setMessages(prev => ({
-      ...prev,
-      [selectedConversation]: [
-        ...(prev[selectedConversation] || []),
-        newMessage,
-      ],
-    }));
-
-    // Simulate sending delay
-    setTimeout(() => {
-      setMessages(prev => ({
-        ...prev,
-        [selectedConversation]: prev[selectedConversation].map(msg =>
-          msg.id === newMessage.id ? { ...msg, status: 'sent' as const } : msg
-        ),
-      }));
-    }, 500);
-
-    // Simulate fan typing response
-    setTimeout(() => {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        // Add mock fan response
-        const fanResponse: ChatMessage = {
-          id: `m${Date.now()}-response`,
-          content: 'Thanks for your response! 😊',
-          timestamp: new Date(),
-          sender: {
-            id: selectedConversation,
-            name: mockConversations.find(c => c.id === selectedConversation)?.name || 'Fan',
-            avatar: mockConversations.find(c => c.id === selectedConversation)?.avatarUrl || '',
-            type: 'fan',
-          },
-          status: 'delivered',
-        };
-        setMessages(prev => ({
-          ...prev,
-          [selectedConversation]: [
-            ...(prev[selectedConversation] || []),
-            fanResponse,
-          ],
+          [selectedConversation]: (prev[selectedConversation] || []).filter(
+            (message) => message.id !== optimisticId,
+          ),
         }));
-      }, 2000);
-    }, 1000);
-  }, [selectedConversation, mockConversations]);
+
+        if (response?.message) {
+          mutateMessages(
+            (current) => ({
+              ...current,
+              messages: [...(current?.messages || []), response.message],
+            }),
+            false,
+          );
+        } else {
+          void mutateMessages();
+        }
+
+        void mutateThreads();
+      } catch (error) {
+        setOptimisticMessagesByConversation((prev) => ({
+          ...prev,
+          [selectedConversation]: (prev[selectedConversation] || []).filter(
+            (message) => message.id !== optimisticId,
+          ),
+        }));
+        setSendError({
+          conversationId: selectedConversation,
+          message: error instanceof Error ? error.message : 'Failed to send message',
+        });
+      }
+    },
+    [creatorId, mutateMessages, mutateThreads, selectedConversation, session?.user?.image, session?.user?.name],
+  );
 
   const handleAttachFile = useCallback(() => {
     // TODO: Implement file attachment
   }, []);
-
-  const selectedFan = mockConversations.find(c => c.id === selectedConversation);
-  const currentMessages = selectedConversation ? messages[selectedConversation] || [] : [];
-  const isLoadingMore = selectedConversation
-    ? Boolean(isLoadingMoreByConversation[selectedConversation])
-    : false;
-  const hasMore = selectedConversation
-    ? hasMoreByConversation[selectedConversation] !== false
-    : true;
 
   const handleAddNote = useCallback(() => {
     // TODO: Implement add note modal
@@ -957,10 +507,43 @@ export function MessagingInterface({
             padding="none"
             className="flex-1 min-h-0 overflow-hidden messaging-interface__fan-list-card"
           >
+            {threadsError && (
+              <div
+                role="alert"
+                style={{
+                  padding: '8px 12px',
+                  borderBottom: '1px solid #fecaca',
+                  background: '#fee2e2',
+                  color: '#991b1b',
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '8px',
+                }}
+              >
+                <span>Failed to load conversations.</span>
+                <button
+                  type="button"
+                  onClick={() => void mutateThreads()}
+                  style={{
+                    border: '1px solid #fca5a5',
+                    borderRadius: '999px',
+                    padding: '2px 8px',
+                    fontSize: '11px',
+                    background: '#fff1f2',
+                    color: '#991b1b',
+                  }}
+                >
+                  Retry
+                </button>
+              </div>
+            )}
             <FanList
-              conversations={mockConversations}
+              conversations={conversations}
               activeConversationId={selectedConversation || undefined}
               onConversationSelect={handleConversationSelect}
+              isLoading={threadsLoading}
             />
           </TailAdminCard>
         </aside>
@@ -988,11 +571,17 @@ export function MessagingInterface({
               
               {selectedFan && (
                 <>
-                  <img 
-                    src={selectedFan.avatarUrl || ''} 
-                    alt={selectedFan.name}
-                    className="mobile-header-avatar"
-                  />
+                  {selectedFan.avatarUrl ? (
+                    <Image
+                      src={selectedFan.avatarUrl}
+                      alt={selectedFan.name}
+                      width={36}
+                      height={36}
+                      className="mobile-header-avatar"
+                    />
+                  ) : (
+                    <div className="mobile-header-avatar bg-gray-200" aria-hidden="true" />
+                  )}
                   <div className="mobile-header-info">
                     <div className="mobile-header-name">{selectedFan.name}</div>
                     <div className="mobile-header-status">
@@ -1013,21 +602,69 @@ export function MessagingInterface({
           </div>
           <TailAdminCard padding="none" className="flex-1 min-h-0 overflow-hidden">
             {selectedConversation && selectedFan ? (
-              <ChatContainer
-                conversationId={selectedConversation}
-                fanName={selectedFan.name}
-                fanAvatar={selectedFan.avatarUrl || ''}
-                fanStatus={selectedFan.isOnline ? 'Online' : 'Offline'}
-                messages={currentMessages}
-                isTyping={isTyping}
-                onSendMessage={handleSendMessage}
-                onAttachFile={handleAttachFile}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={isLoadingMore}
-                hasMore={hasMore}
-                onToggleNotes={handleShowNotes}
-                showNotes={showContext}
-              />
+              <>
+                {(messagesError || activeSendError) && (
+                  <div
+                    role="alert"
+                    style={{
+                      padding: '8px 12px',
+                      borderBottom: '1px solid #fed7aa',
+                      background: '#ffedd5',
+                      color: '#9a3412',
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '8px',
+                    }}
+                  >
+                    <span>
+                      {messagesError
+                        ? 'Failed to load messages.'
+                        : activeSendError || 'Failed to send message.'}
+                    </span>
+                    {messagesError && (
+                      <button
+                        type="button"
+                        onClick={() => void mutateMessages()}
+                        style={{
+                          border: '1px solid #fdba74',
+                          borderRadius: '999px',
+                          padding: '2px 8px',
+                          fontSize: '11px',
+                          background: '#ffedd5',
+                          color: '#9a3412',
+                        }}
+                      >
+                        Retry
+                      </button>
+                    )}
+                  </div>
+                )}
+                {messagesLoading && currentMessages.length === 0 ? (
+                  <div
+                    className="flex flex-col items-center justify-center h-full text-gray-500 p-8"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <h3 className="text-lg font-semibold mb-2">Loading messages</h3>
+                    <p>Fetching the latest conversation...</p>
+                  </div>
+                ) : (
+                  <ChatContainer
+                    conversationId={selectedConversation}
+                    fanName={selectedFan.name}
+                    fanAvatar={selectedFan.avatarUrl || ''}
+                    fanStatus={selectedFan.isOnline ? 'Online' : 'Offline'}
+                    messages={currentMessages}
+                    isTyping={isTyping}
+                    onSendMessage={handleSendMessage}
+                    onAttachFile={handleAttachFile}
+                    onToggleNotes={handleShowNotes}
+                    showNotes={effectiveShowContext}
+                  />
+                )}
+              </>
             ) : (
               <div 
                 className="flex flex-col items-center justify-center h-full text-gray-500 p-8"

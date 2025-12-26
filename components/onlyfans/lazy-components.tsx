@@ -10,8 +10,12 @@
 
 'use client';
 
+import type { ComponentType } from 'react';
 import { lazyLoadComponent } from '@/lib/performance/onlyfans-optimization';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { MessagingInterfaceProps } from '@/components/messages/MessagingInterface';
+import type { RevenueChartProps } from '@/app/(app)/analytics/components/RevenueChart';
+import type { SegmentCardProps } from '@/components/fans/SegmentCard';
 
 /**
  * Loading fallback for metric cards
@@ -89,8 +93,11 @@ export const LazyShopifyEmptyState = lazyLoadComponent(
 /**
  * Lazy-loaded messaging components
  */
-export const LazyMessagingInterface = lazyLoadComponent(
-  () => import('@/components/messages/MessagingInterface'),
+export const LazyMessagingInterface = lazyLoadComponent<MessagingInterfaceProps>(
+  () =>
+    import('@/components/messages/MessagingInterface').then((mod) => ({
+      default: mod.MessagingInterface as ComponentType<MessagingInterfaceProps>,
+    })),
   {
     loading: () => (
       <div className="flex h-screen">
@@ -124,27 +131,12 @@ export const LazyMessagingInterface = lazyLoadComponent(
 /**
  * Lazy-loaded chart components
  */
-export const LazyRevenueChart = lazyLoadComponent(
-  () => import('@/components/analytics/RevenueChart').then(mod => ({ default: mod.RevenueChart })),
+export const LazyRevenueChart = lazyLoadComponent<RevenueChartProps>(
+  () =>
+    import('@/app/(app)/analytics/components/RevenueChart').then((mod) => ({
+      default: mod.RevenueChart as ComponentType<RevenueChartProps>,
+    })),
   { loading: () => <Skeleton className="h-64 w-full rounded-lg" /> }
-);
-
-export const LazyEngagementChart = lazyLoadComponent(
-  () => import('@/components/analytics/EngagementChart').then(mod => ({ default: mod.EngagementChart })),
-  { loading: () => <Skeleton className="h-64 w-full rounded-lg" /> }
-);
-
-/**
- * Lazy-loaded form components
- */
-export const LazyPPVForm = lazyLoadComponent(
-  () => import('@/components/ppv/PPVForm').then(mod => ({ default: mod.PPVForm })),
-  { loading: CardSkeleton }
-);
-
-export const LazyMessageTemplateForm = lazyLoadComponent(
-  () => import('@/components/messages/MessageTemplateForm').then(mod => ({ default: mod.MessageTemplateForm })),
-  { loading: CardSkeleton }
 );
 
 /**
@@ -171,25 +163,18 @@ export const LazyAIInsightsDashboard = lazyLoadComponent(
 /**
  * Lazy-loaded settings components
  */
-export const LazyConnectionSettings = lazyLoadComponent(
-  () => import('@/components/settings/ConnectionSettings').then(mod => ({ default: mod.ConnectionSettings })),
-  { loading: CardSkeleton }
-);
-
 export const LazyNotificationSettings = lazyLoadComponent(
-  () => import('@/components/settings/NotificationSettings').then(mod => ({ default: mod.NotificationSettings })),
+  () => import('@/components/NotificationSettings'),
   { loading: CardSkeleton }
 );
 
 /**
  * Lazy-loaded fan components
  */
-export const LazyFanSegmentCard = lazyLoadComponent(
-  () => import('@/components/fans/SegmentCard'),
+export const LazyFanSegmentCard = lazyLoadComponent<SegmentCardProps>(
+  () =>
+    import('@/components/fans/SegmentCard').then((mod) => ({
+      default: mod.SegmentCard as ComponentType<SegmentCardProps>,
+    })),
   { loading: CardSkeleton }
-);
-
-export const LazyFanProfilePanel = lazyLoadComponent(
-  () => import('@/components/fans/FanProfilePanel').then(mod => ({ default: mod.FanProfilePanel })),
-  { loading: () => <Skeleton className="h-screen w-full" /> }
 );

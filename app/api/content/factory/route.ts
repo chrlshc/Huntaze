@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 export type SourceType = 'upload' | 'link';
 export type JobStatus = 'queued' | 'processing' | 'needs_review' | 'ready' | 'failed';
@@ -65,6 +66,13 @@ const jobs: Map<string, ProductionJob> = new Map();
 
 export async function POST(request: NextRequest) {
   try {
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Content factory demo is only available in dev mode' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
     const body: ProductionJobInput = await request.json();
 
     // Validate required fields
@@ -145,6 +153,13 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Content factory demo is only available in dev mode' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const limit = parseInt(searchParams.get('limit') || '50', 10);

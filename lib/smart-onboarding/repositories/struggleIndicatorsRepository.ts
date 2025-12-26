@@ -158,7 +158,7 @@ export class StruggleIndicatorsRepository extends CachedRepository<StruggleIndic
     const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
     
     let baseCondition = 'WHERE detected_at >= $1';
-    let params: any[] = [startDate];
+    const params: any[] = [startDate];
     
     if (userId) {
       baseCondition += ' AND user_id = $2';
@@ -295,7 +295,7 @@ export class StruggleIndicatorsRepository extends CachedRepository<StruggleIndic
     const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
     
     let baseCondition = 'WHERE detected_at >= $1';
-    let params: any[] = [startDate];
+    const params: any[] = [startDate];
     
     if (userId) {
       baseCondition += ' AND user_id = $2';

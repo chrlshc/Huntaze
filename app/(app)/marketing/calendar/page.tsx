@@ -14,7 +14,7 @@ import {
   ChevronLeft, 
   ChevronRight,
   Calendar as CalendarIcon,
-  Image,
+  Image as ImageIcon,
   Video,
   FileText,
   Sparkles,
@@ -318,7 +318,7 @@ export default function MarketingCalendarPage() {
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           color: content.mediaType === 'video' ? '#D97706' : '#2563EB'
                         }}>
-                          {content.mediaType === 'image' && <Image size={16} />}
+                          {content.mediaType === 'image' && <ImageIcon size={16} />}
                           {content.mediaType === 'video' && <Video size={16} />}
                           {content.mediaType === 'text' && <FileText size={16} />}
                         </div>

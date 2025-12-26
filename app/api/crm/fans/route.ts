@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FansRepository } from '@/lib/db/repositories';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { resolveUserId } from '../_lib/auth';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 async function getHandler(request: NextRequest) {
   try {
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    
-    const userId = parseInt(user.userId, 10);
-    if (isNaN(userId)) return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    const { userId } = await resolveUserId(request);
+    if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     
     const fans = await FansRepository.listFans(userId);
     return NextResponse.json({ fans });
@@ -28,11 +25,8 @@ async function postHandler(request: NextRequest) {
     const rl = await checkRateLimit({ id: ident.id, limit: 60, windowSec: 60 })
     if (!rl.allowed) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
 
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    
-    const userId = parseInt(user.userId, 10);
-    if (isNaN(userId)) return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    const { userId } = await resolveUserId(request);
+    if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     
     const body = await request.json();
     const fan = await FansRepository.createFan(userId, body || {});

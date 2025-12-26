@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import useSWR from 'swr';
 import '@/styles/polaris-analytics.css';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
-import { Plus, Edit, MoreHorizontal, Copy, Archive, BarChart3, Image, Video, RefreshCw, Send, DollarSign, ShoppingCart, Percent, ArrowUpRight } from 'lucide-react';
+import { DashboardErrorState, DashboardLoadingState } from '@/components/ui/DashboardLoadingState';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Plus, Edit, MoreHorizontal, Copy, Archive, BarChart3, Image as ImageIcon, Video, RefreshCw, Send, DollarSign, ShoppingCart, Percent, ArrowUpRight } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 
 type Tab = 'library' | 'campaigns';
 type DateRange = '7d' | '30d' | 'all';
@@ -40,6 +45,21 @@ interface PPVCampaign {
   purchaseCount: number;
   revenue: number;
 }
+
+interface IntegrationStatus {
+  provider: string;
+  status?: string;
+  isConnected?: boolean;
+}
+
+interface IntegrationsStatusResponse {
+  data?: {
+    integrations?: IntegrationStatus[];
+  };
+  integrations?: IntegrationStatus[];
+}
+
+const fetcher = (url: string) => internalApiFetch<IntegrationsStatusResponse>(url);
 
 function KPICard({ label, value, icon: Icon, change, trend }: { 
   label: string; 
@@ -90,42 +110,56 @@ function StatusBadge({ status }: { status: PPVStatus | CampaignStatus }) {
 export default function OnlyFansPPVPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<Tab>('library');
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState<Tab>(() =>
+    tabParam === 'campaigns' ? 'campaigns' : 'library'
+  );
   const [dateRange, setDateRange] = useState<DateRange>('30d');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const {
+    data: integrationsData,
+    error: integrationsError,
+    isLoading: integrationsLoading,
+    mutate: refreshIntegrations,
+  } = useSWR('/api/integrations/status', fetcher);
+
+  const integrations = integrationsData?.data?.integrations ?? integrationsData?.integrations ?? [];
+  const onlyFansIntegration = integrations.find((integration) => integration.provider === 'onlyfans');
+  const isOnlyFansConnected = Boolean(
+    onlyFansIntegration && (onlyFansIntegration.status === 'connected' || onlyFansIntegration.isConnected)
+  );
+
   useEffect(() => {
     if (searchParams.get('create') === '1') router.replace('/onlyfans/ppv/create', { scroll: false });
-    if (searchParams.get('tab') === 'campaigns') setActiveTab('campaigns');
   }, [router, searchParams]);
 
-  const ppvTemplates: PPVTemplate[] = [
-    { id: '1', title: 'Exclusive Holiday Content 🎄', description: 'Special holiday-themed content!', price: 25, mediaType: 'video', mediaCount: 3, thumbnail: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400', status: 'ready', tags: ['Holiday'], createdAt: '2025-11-10' },
-    { id: '2', title: 'Behind the Scenes Photos 📸', description: 'Exclusive BTS photos', price: 15, mediaType: 'image', mediaCount: 12, thumbnail: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400', status: 'ready', tags: ['BTS'], createdAt: '2025-11-08' },
-    { id: '3', title: 'Weekend Special Content', description: 'Special weekend content', price: 20, mediaType: 'video', mediaCount: 2, thumbnail: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400', status: 'draft', tags: ['Weekend'], createdAt: '2025-11-12' },
-    { id: '4', title: 'Summer Vibes Collection ☀️', description: 'Hot summer content', price: 18, mediaType: 'image', mediaCount: 8, thumbnail: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', status: 'ready', tags: ['Summer'], createdAt: '2025-10-15' },
-  ];
-
-  const ppvCampaigns: PPVCampaign[] = [
-    { id: 'c1', templateId: '1', templateTitle: 'Exclusive Holiday Content 🎄', thumbnail: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400', price: 25, status: 'sent', sentAt: '2025-11-10T14:30:00', recipientsCount: 156, sentCount: 156, openedCount: 89, purchaseCount: 23, revenue: 575 },
-    { id: 'c2', templateId: '2', templateTitle: 'Behind the Scenes Photos 📸', thumbnail: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400', price: 15, status: 'sent', sentAt: '2025-11-08T10:00:00', recipientsCount: 203, sentCount: 203, openedCount: 134, purchaseCount: 45, revenue: 675 },
-    { id: 'c3', templateId: '1', templateTitle: 'Exclusive Holiday Content 🎄', thumbnail: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400', price: 25, status: 'sent', sentAt: '2025-10-28T16:00:00', recipientsCount: 189, sentCount: 189, openedCount: 156, purchaseCount: 67, revenue: 1675 },
-  ];
+  const ppvTemplates = useMemo<PPVTemplate[]>(() => [], []);
+  const ppvCampaigns = useMemo<PPVCampaign[]>(() => [], []);
 
   const totals = useMemo(() => {
     const base = ppvCampaigns.reduce((acc, c) => ({ revenue: acc.revenue + c.revenue, sent: acc.sent + c.sentCount, purchased: acc.purchased + c.purchaseCount }), { revenue: 0, sent: 0, purchased: 0 });
     return { ...base, conversion: base.sent > 0 ? Math.round((base.purchased / base.sent) * 100) : 0 };
-  }, []);
+  }, [ppvCampaigns]);
 
-  const filteredTemplates = useMemo(() => ppvTemplates.filter(t => t.title.toLowerCase().includes(searchTerm.toLowerCase()) && (statusFilter === 'all' || t.status === statusFilter)), [searchTerm, statusFilter]);
-  const filteredCampaigns = useMemo(() => ppvCampaigns.filter(c => c.templateTitle.toLowerCase().includes(searchTerm.toLowerCase())), [searchTerm]);
+  const filteredTemplates = useMemo(
+    () => ppvTemplates.filter(t => t.title.toLowerCase().includes(searchTerm.toLowerCase()) && (statusFilter === 'all' || t.status === statusFilter)),
+    [ppvTemplates, searchTerm, statusFilter],
+  );
+  const filteredCampaigns = useMemo(
+    () => ppvCampaigns.filter(c => c.templateTitle.toLowerCase().includes(searchTerm.toLowerCase())),
+    [ppvCampaigns, searchTerm],
+  );
 
   const handleSend = useCallback((id: string) => router.push('/onlyfans/messages?compose=ppv&mode=mass&ppvId=' + id), [router]);
   const handleEdit = useCallback((id: string) => router.push('/onlyfans/ppv/' + id + '/edit'), [router]);
-  const handleRefresh = () => { setLoading(true); setTimeout(() => setLoading(false), 500); };
+  const handleRefresh = () => {
+    setLoading(true);
+    Promise.resolve(refreshIntegrations()).finally(() => setLoading(false));
+  };
 
   useEffect(() => {
     if (menuOpen) {
@@ -134,6 +168,46 @@ export default function OnlyFansPPVPage() {
       return () => document.removeEventListener('click', close);
     }
   }, [menuOpen]);
+
+  if (integrationsLoading) {
+    return (
+      <ContentPageErrorBoundary pageName="PPV">
+        <div className="polaris-analytics" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <DashboardLoadingState viewType="ppv" />
+        </div>
+      </ContentPageErrorBoundary>
+    );
+  }
+
+  if (integrationsError) {
+    return (
+      <ContentPageErrorBoundary pageName="PPV">
+        <div className="polaris-analytics" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <DashboardErrorState
+            message={integrationsError instanceof Error ? integrationsError.message : 'Failed to load PPV data'}
+            onRetry={() => void refreshIntegrations()}
+          />
+        </div>
+      </ContentPageErrorBoundary>
+    );
+  }
+
+  if (!isOnlyFansConnected) {
+    return (
+      <ContentPageErrorBoundary pageName="PPV">
+        <div className="polaris-analytics">
+          <div className="content-wrapper">
+            <EmptyState
+              variant="no-data"
+              title="Connect OnlyFans to manage PPV"
+              description="Link your OnlyFans account to sync PPV campaigns."
+              action={{ label: 'Go to integrations', onClick: () => (window.location.href = '/integrations') }}
+            />
+          </div>
+        </div>
+      </ContentPageErrorBoundary>
+    );
+  }
 
   return (
     <ContentPageErrorBoundary pageName="PPV">
@@ -208,7 +282,13 @@ export default function OnlyFansPPVPage() {
                       <div key={t.id} className="breakdown-item" style={{ padding: 16 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
                           <div style={{ width: 48, height: 48, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: '#F1F1F1' }}>
-                            <img src={t.thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <Image
+                              src={t.thumbnail}
+                              alt=""
+                              width={48}
+                              height={48}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
                           </div>
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: 14, fontWeight: 500, color: '#303030', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.title}</div>
@@ -238,7 +318,7 @@ export default function OnlyFansPPVPage() {
                   </div>
                 ) : (
                   <div style={{ padding: 48, textAlign: 'center' }}>
-                    <div style={{ width: 48, height: 48, margin: '0 auto 16px', background: '#F1F1F1', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Image size={24} style={{ color: '#616161' }} /></div>
+                    <div style={{ width: 48, height: 48, margin: '0 auto 16px', background: '#F1F1F1', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ImageIcon size={24} style={{ color: '#616161' }} /></div>
                     <h3 style={{ fontSize: 16, fontWeight: 600, color: '#303030', marginBottom: 8 }}>No PPV templates yet</h3>
                     <p style={{ fontSize: 14, color: '#616161', marginBottom: 16 }}>Create your first PPV to start earning.</p>
                     <Link href="/onlyfans/ppv/create"><button className="filter-pill" style={{ background: '#303030', color: '#fff', border: 'none', padding: '10px 20px' }}><Plus size={14} /> Create PPV</button></Link>
@@ -251,7 +331,13 @@ export default function OnlyFansPPVPage() {
                       <div key={c.id} className="breakdown-item" style={{ padding: 16 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
                           <div style={{ width: 48, height: 48, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: '#F1F1F1' }}>
-                            <img src={c.thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <Image
+                              src={c.thumbnail}
+                              alt=""
+                              width={48}
+                              height={48}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
                           </div>
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: 14, fontWeight: 500, color: '#303030', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.templateTitle}</div>

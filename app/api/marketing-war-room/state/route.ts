@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { isMockApiMode } from '@/config/api-mode';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 /**
  * GET /api/marketing-war-room/state
@@ -173,7 +173,7 @@ async function getTrends(): Promise<Trend[]> {
 
 export async function GET() {
   try {
-    if (!isMockApiMode()) {
+    if (!ENABLE_MOCK_DATA) {
       const state: WarRoomState = {
         queue: [],
         automations: {},

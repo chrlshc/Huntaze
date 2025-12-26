@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
-import { FixedSizeList as List } from 'react-window';
+import { List } from 'react-window';
+import type { RowComponentProps } from 'react-window';
 import { Column } from '@/components/ui/IndexTable';
 
 /**
@@ -38,19 +39,15 @@ interface VirtualizedTableProps<T> {
 /**
  * Row component for virtualized list
  */
-interface RowProps<T> {
-  index: number;
-  style: React.CSSProperties;
-  data: {
-    items: T[];
-    columns: Column<T>[];
-    keyField: keyof T;
-  };
+interface RowData<T> {
+  items: T[];
+  columns: Column<T>[];
+  keyField: keyof T;
 }
 
-function Row<T>({ index, style, data }: RowProps<T>) {
-  const { items, columns, keyField } = data;
+function Row<T>({ index, style, ariaAttributes, items, columns, keyField }: RowComponentProps<RowData<T>>) {
   const item = items[index];
+  const rowKey = String(item[keyField]);
   
   return (
     <div
@@ -63,7 +60,8 @@ function Row<T>({ index, style, data }: RowProps<T>) {
         transition: 'background-color 150ms ease',
       }}
       className="virtualized-table-row"
-      data-testid={`table-row-${item[keyField]}`}
+      data-testid={`table-row-${rowKey}`}
+      {...ariaAttributes}
       onMouseEnter={(e) => {
         e.currentTarget.style.backgroundColor = 'var(--dashboard-card-hover-bg, #F3F4FF)';
       }}
@@ -72,14 +70,15 @@ function Row<T>({ index, style, data }: RowProps<T>) {
       }}
     >
       {columns.map((column, colIndex) => {
-        const value = item[column.key as keyof T];
+        const columnKey = String(column.key);
+        const value = item[column.key];
         const content = column.render 
           ? column.render(value, item, index)
-          : String(value);
+          : String(value ?? '');
         
         return (
           <div
-            key={`${item[keyField]}-${column.key}`}
+            key={`${rowKey}-${columnKey}`}
             style={{
               width: column.width || 'auto',
               flex: column.width ? 'none' : 1,
@@ -89,7 +88,7 @@ function Row<T>({ index, style, data }: RowProps<T>) {
               textOverflow: column.truncate ? 'ellipsis' : 'clip',
               whiteSpace: column.truncate ? 'nowrap' : 'normal',
             }}
-            data-testid={`table-cell-${column.key}`}
+            data-testid={`table-cell-${columnKey}`}
           >
             {content}
           </div>
@@ -109,6 +108,9 @@ export function VirtualizedTable<T>({
   className = '',
   emptyState,
 }: VirtualizedTableProps<T>) {
+  const headerHeight = 45;
+  const listHeight = Math.max(height - headerHeight, rowHeight);
+
   // Memoize item data to prevent unnecessary re-renders
   const itemData = useMemo(() => ({
     items: data,
@@ -118,7 +120,7 @@ export function VirtualizedTable<T>({
   
   // Memoize row renderer
   const RowRenderer = useCallback(
-    (props: RowProps<T>) => <Row {...props} />,
+    (props: RowComponentProps<RowData<T>>) => <Row<T> {...props} />,
     []
   );
   
@@ -191,7 +193,7 @@ export function VirtualizedTable<T>({
       >
         {columns.map((column) => (
           <div
-            key={column.key}
+            key={String(column.key)}
             style={{
               width: column.width || 'auto',
               flex: column.width ? 'none' : 1,
@@ -206,14 +208,13 @@ export function VirtualizedTable<T>({
       
       {/* Virtualized List */}
       <List
-        height={height - 45} // Subtract header height
-        itemCount={data.length}
-        itemSize={rowHeight}
-        width="100%"
-        itemData={itemData}
-      >
-        {RowRenderer}
-      </List>
+        defaultHeight={listHeight}
+        rowCount={data.length}
+        rowHeight={rowHeight}
+        rowProps={itemData}
+        rowComponent={RowRenderer}
+        style={{ height: listHeight, width: '100%' }}
+      />
     </div>
   );
 }

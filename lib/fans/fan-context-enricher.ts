@@ -207,7 +207,7 @@ export function extractPotentialNotes(
   for (const { pattern, category, confidence } of allPatterns) {
     const match = message.match(pattern);
     if (match && match[1]) {
-      let content = match[1].trim();
+      const content = match[1].trim();
       
       // VALIDATION 1: Longueur
       if (content.length < 3 || content.length > 100) {

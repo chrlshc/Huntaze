@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Eye, EyeOff, Check } from 'lucide-react';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -18,21 +18,16 @@ function AuthContent() {
   const [rememberMe, setRememberMe] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  // Check for error messages in URL params (e.g., session expiration)
-  useEffect(() => {
+  const [error, setError] = useState(() => {
     const errorParam = searchParams.get('error');
     if (errorParam === 'session_expired') {
-      setError('Your session has expired. Please log in again.');
-    } else if (errorParam === 'unauthorized') {
-      setError('Authentication required. Please log in.');
+      return 'Your session has expired. Please log in again.';
     }
-    // If coming from registration pending, default to login tab
-    if (searchParams.get('pending')) {
-      setIsLogin(true);
+    if (errorParam === 'unauthorized') {
+      return 'Authentication required. Please log in.';
     }
-  }, [searchParams]);
+    return '';
+  });
 
   // Calculer la force du mot de passe
   const getPasswordStrength = () => {

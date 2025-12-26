@@ -307,7 +307,7 @@ export default function ContentPage() {
     } finally {
       setProduceBusy(false);
     }
-  }, [canLaunch, file, tiktokUrl, targets, settings, generatedHooks, generatedCaptions]);
+  }, [canLaunch, file, tiktokUrl, targets, settings, generatedHooks, generatedCaptions, missionIdea, missionHook, missionCta]);
 
   const generateIdeas = useCallback(async () => {
     setIdeasBusy(true);

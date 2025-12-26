@@ -347,7 +347,7 @@ export function useCachedFetch(url: string, options?: RequestInit) {
     } finally {
       setLoading(false);
     }
-  }, [url]);
+  }, [options, url]);
 
   useEffect(() => {
     let cancelled = false;
@@ -402,7 +402,7 @@ export function useCachedFetch(url: string, options?: RequestInit) {
     return () => {
       cancelled = true;
     };
-  }, [url]);
+  }, [options, url]);
 
   return { data, loading, error, refresh };
 }

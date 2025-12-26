@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 interface ScriptRequest {
   idea: string;
@@ -23,6 +24,16 @@ export async function POST(request: NextRequest) {
         { error: 'Idea is required' },
         { status: 400 }
       );
+    }
+
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json({
+        variants: [],
+        metadata: {
+          lastUpdated: new Date().toISOString(),
+          source: 'empty',
+        },
+      });
     }
 
     // TODO: Replace with actual AI generation (Azure OpenAI, etc.)

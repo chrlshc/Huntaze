@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -11,10 +11,6 @@ export default function ConnectOfLanding() {
   const token = sp.get("token") || "";
   const user = sp.get("user") || "";
   const auto = sp.get("auto") === "1";
-
-  const [opened, setOpened] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
 
   const deepLink = useMemo(() => {
     try {
@@ -27,31 +23,26 @@ export default function ConnectOfLanding() {
     }
   }, [token, user]);
 
-  // Env detection
-  useEffect(() => {
-    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
-    const ios = /iPhone|iPad|iPod/i.test(ua) ||
-      (typeof navigator !== "undefined" && (navigator as any).platform === "MacIntel" && (navigator as any).maxTouchPoints > 1);
-    setIsIOS(!!ios);
-
-    const standalone = typeof window !== "undefined" && (
-      window.matchMedia?.("(display-mode: standalone)").matches || (navigator as any).standalone === true
-    );
-    setIsStandalone(!!standalone);
-  }, []);
+  const nav = typeof navigator !== "undefined" ? navigator : undefined;
+  const ua = nav?.userAgent || "";
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) ||
+    (nav && (nav as any).platform === "MacIntel" && (nav as any).maxTouchPoints > 1);
+  const isStandalone = typeof window !== "undefined" && (
+    window.matchMedia?.("(display-mode: standalone)").matches || (nav as any)?.standalone === true
+  );
+  const shouldAutoOpen = Boolean(auto && isIOS && isStandalone && deepLink && token);
 
   // iOS PWA: auto deep-link only if explicitly requested via ?auto=1
   useEffect(() => {
-    if (!token) return;
-    if (auto && isIOS && isStandalone && deepLink) {
-      try {
-        window.location.href = deepLink;
-        setOpened(true);
-      } catch {
-        // ignore; user stays on this page
-      }
+    if (!shouldAutoOpen) return;
+    try {
+      window.location.href = deepLink;
+    } catch {
+      // ignore; user stays on this page
     }
-  }, [auto, isIOS, isStandalone, deepLink, token]);
+  }, [shouldAutoOpen, deepLink]);
+
+  const opened = shouldAutoOpen;
 
   const openInApp = () => {
     if (deepLink) window.location.href = deepLink;

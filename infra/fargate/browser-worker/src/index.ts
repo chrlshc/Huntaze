@@ -7,12 +7,17 @@ import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-sec
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { createBreaker } from './circuit';
 
+// NEW: Import scrapers for financials, fans, and content
+import { scrapeFinancials, scrapeFans, scrapeContentStats } from './scrapers';
+
 const REGION = process.env.AWS_REGION || 'eu-west-3';
 const TABLE_SESSIONS = process.env.OF_DDB_SESSIONS_TABLE!;
 const TABLE_MESSAGES = process.env.OF_DDB_MESSAGES_TABLE!;
 const TABLE_THREADS = process.env.OF_DDB_THREADS_TABLE!;
+const TABLE_ANALYTICS = process.env.OF_DDB_ANALYTICS_TABLE || 'HuntazeOfAnalytics';
+const TABLE_FANS = process.env.OF_DDB_FANS_TABLE || 'HuntazeOfFans';
 const KMS_KEY_ID = process.env.OF_KMS_KEY_ID!;
-const ACTION = process.env.ACTION || 'login'; // 'login' | 'send' | 'inbox'
+const ACTION = process.env.ACTION || 'login'; // 'login' | 'send' | 'inbox' | 'scrape_financials' | 'scrape_fans' | 'scrape_content'
 const USER_ID = process.env.USER_ID!;
 const CONVERSATION_ID = process.env.CONVERSATION_ID;
 const CONTENT_TEXT = process.env.CONTENT_TEXT;
@@ -654,6 +659,175 @@ async function run() {
       }));
       console.log(JSON.stringify({ type: 'send', ok: true }));
       await metric('MessagesSent', 1);
+      return;
+    }
+
+    // ========================================================================
+    // NEW SCRAPER ACTIONS - JSON Sniffing approach (budget-friendly)
+    // ========================================================================
+
+    if (ACTION === 'scrape_financials') {
+      console.info('[ACTION] scrape_financials');
+      
+      // Guard: ensure session is valid
+      if (!(await ensureConnected(page, context))) {
+        await setLinkState(USER_ID, 'LOGIN_REQUIRED');
+        await reportState(USER_ID, 'LOGIN_REQUIRED');
+        throw new Error('LOGIN_REQUIRED');
+      }
+
+      // Block media to save bandwidth (budget $23!)
+      await page.route('**/*', (route) => {
+        const type = route.request().resourceType();
+        if (['image', 'media', 'font', 'stylesheet'].includes(type)) {
+          return route.abort();
+        }
+        return route.continue();
+      });
+
+      const result = await scrapeFinancials(page);
+      
+      // Persist to DynamoDB
+      if (result.success && result.data) {
+        try {
+          const nowIso = new Date().toISOString();
+          const dateKey = nowIso.split('T')[0]; // YYYY-MM-DD
+          
+          await brDDB.exec(() => ddb.send(new PutItemCommand({
+            TableName: TABLE_ANALYTICS,
+            Item: {
+              userId: { S: USER_ID },
+              date: { S: dateKey },
+              type: { S: 'financials' },
+              data: { S: JSON.stringify(result.data) },
+              updatedAt: { S: nowIso },
+            },
+          })));
+          console.info('[SCRAPE_FINANCIALS] ✅ Persisted to DynamoDB');
+        } catch (e) {
+          console.warn('[SCRAPE_FINANCIALS] DynamoDB persist failed:', e);
+        }
+      }
+
+      console.log(JSON.stringify(result));
+      await metric('ScrapeFinancialsSuccess', result.success ? 1 : 0);
+      await metricWith('ScrapeFinancialsCount', 1, 'Count', { Action: 'scrape_financials' });
+      return;
+    }
+
+    if (ACTION === 'scrape_fans') {
+      console.info('[ACTION] scrape_fans');
+      
+      // Guard: ensure session is valid
+      if (!(await ensureConnected(page, context))) {
+        await setLinkState(USER_ID, 'LOGIN_REQUIRED');
+        await reportState(USER_ID, 'LOGIN_REQUIRED');
+        throw new Error('LOGIN_REQUIRED');
+      }
+
+      // Block media to save bandwidth
+      await page.route('**/*', (route) => {
+        const type = route.request().resourceType();
+        if (['image', 'media', 'font', 'stylesheet'].includes(type)) {
+          return route.abort();
+        }
+        return route.continue();
+      });
+
+      // Limit to 100 fans for beta (budget conscious)
+      const maxFans = Number(process.env.SCRAPE_FANS_LIMIT || '100');
+      const result = await scrapeFans(page, { maxCount: maxFans, type: 'active' });
+      
+      // Persist fans to DynamoDB
+      if (result.success && result.fans.length > 0) {
+        try {
+          const nowIso = new Date().toISOString();
+          
+          // Batch write fans (chunks of 25)
+          type PutReq = { PutRequest: { Item: Record<string, any> } };
+          const chunk = <T>(arr: T[], n = 25) => arr.reduce<T[][]>((a, c, i) => { (a[Math.floor(i / n)] ||= []).push(c); return a; }, []);
+          
+          const fanReqs: PutReq[] = result.fans.map((fan) => ({
+            PutRequest: {
+              Item: {
+                creatorId: { S: USER_ID },
+                fanId: { S: fan.id },
+                username: { S: fan.username || fan.name || 'unknown' },
+                subscribedAt: fan.subscribedAt ? { S: fan.subscribedAt } : { NULL: true },
+                totalSpent: { N: String(fan.totalSpent || 0) },
+                tipsSum: { N: String(fan.tipsSum || 0) },
+                status: { S: 'active' },
+                rawData: { S: JSON.stringify(fan.raw || {}) },
+                updatedAt: { S: nowIso },
+              }
+            }
+          }));
+
+          for (const group of chunk(fanReqs, 25)) {
+            await brDDB.exec(() => ddb.send(new BatchWriteItemCommand({
+              RequestItems: { [TABLE_FANS]: group }
+            })));
+          }
+          console.info(`[SCRAPE_FANS] ✅ Persisted ${result.fans.length} fans to DynamoDB`);
+        } catch (e) {
+          console.warn('[SCRAPE_FANS] DynamoDB persist failed:', e);
+        }
+      }
+
+      console.log(JSON.stringify({ type: result.type, count: result.count, success: result.success }));
+      await metric('ScrapeFansSuccess', result.success ? 1 : 0);
+      await metricWith('ScrapeFansCount', result.count, 'Count', { Action: 'scrape_fans' });
+      return;
+    }
+
+    if (ACTION === 'scrape_content') {
+      console.info('[ACTION] scrape_content');
+      
+      // Guard: ensure session is valid
+      if (!(await ensureConnected(page, context))) {
+        await setLinkState(USER_ID, 'LOGIN_REQUIRED');
+        await reportState(USER_ID, 'LOGIN_REQUIRED');
+        throw new Error('LOGIN_REQUIRED');
+      }
+
+      // Block media to save bandwidth
+      await page.route('**/*', (route) => {
+        const type = route.request().resourceType();
+        if (['image', 'media', 'font', 'stylesheet'].includes(type)) {
+          return route.abort();
+        }
+        return route.continue();
+      });
+
+      const maxPosts = Number(process.env.SCRAPE_CONTENT_LIMIT || '50');
+      const result = await scrapeContentStats(page, { maxCount: maxPosts });
+      
+      // Persist to DynamoDB (analytics table)
+      if (result.success && result.posts.length > 0) {
+        try {
+          const nowIso = new Date().toISOString();
+          const dateKey = nowIso.split('T')[0];
+          
+          await brDDB.exec(() => ddb.send(new PutItemCommand({
+            TableName: TABLE_ANALYTICS,
+            Item: {
+              userId: { S: USER_ID },
+              date: { S: `content#${dateKey}` },
+              type: { S: 'content_stats' },
+              data: { S: JSON.stringify(result.posts) },
+              count: { N: String(result.count) },
+              updatedAt: { S: nowIso },
+            },
+          })));
+          console.info(`[SCRAPE_CONTENT] ✅ Persisted ${result.count} posts to DynamoDB`);
+        } catch (e) {
+          console.warn('[SCRAPE_CONTENT] DynamoDB persist failed:', e);
+        }
+      }
+
+      console.log(JSON.stringify({ type: result.type, count: result.count, success: result.success }));
+      await metric('ScrapeContentSuccess', result.success ? 1 : 0);
+      await metricWith('ScrapeContentCount', result.count, 'Count', { Action: 'scrape_content' });
       return;
     }
 

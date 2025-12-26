@@ -7,13 +7,15 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { aiQuotaResponseSchema } from '@/lib/schemas/api-responses';
 
 type QuotaData = {
   limit: number;
   spent: number;
   remaining: number;
   percentUsed: number;
-  plan: 'starter' | 'pro' | 'business';
+  plan?: 'starter' | 'pro' | 'business';
 };
 
 type UseAIQuotaReturn = {
@@ -35,14 +37,17 @@ export function useAIQuota(autoRefresh = false, refreshInterval = 60000): UseAIQ
       setLoading(true);
       setError(null);
 
-      const res = await fetch('/api/ai/quota');
+      const data = await internalApiFetch<{
+        success: boolean;
+        quota?: QuotaData | null;
+        error?: string;
+      }>('/api/ai/quota', { schema: aiQuotaResponseSchema });
 
-      if (!res.ok) {
-        throw new Error('Failed to fetch quota');
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch quota');
       }
 
-      const data = await res.json();
-      setQuota(data.data);
+      setQuota(data.quota ?? null);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load quota';
       setError(errorMessage);

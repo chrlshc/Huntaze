@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ServiceBusClient } from '@azure/service-bus';
+import { getServiceBusClient } from '@/lib/servicebus/client';
 
-const client = new ServiceBusClient(process.env.SERVICEBUS_CONNECTION_SEND!);
+export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
     }
     
     const jobId = `job_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    const client = getServiceBusClient();
     const sender = client.createSender('huntaze-jobs');
     
     await sender.sendMessages({
@@ -30,7 +31,24 @@ export async function POST(req: NextRequest) {
     
     return NextResponse.json({ success: true, jobId });
   } catch (error: any) {
+    const message =
+      typeof error?.message === 'string' && error.message.trim()
+        ? error.message
+        : String(error);
+    const safeMessage =
+      message && message !== '[object Object]' ? message : 'Service Bus request failed';
+
+    if (error?.code === 'MISSING_ENV') {
+      return NextResponse.json(
+        { error: safeMessage, code: 'MISSING_ENV' },
+        { status: 500 }
+      );
+    }
+
     console.error('Failed to queue job:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: safeMessage, code: 'SERVICEBUS_ERROR' },
+      { status: 503 }
+    );
   }
 }

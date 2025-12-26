@@ -12,6 +12,7 @@ import type {
   AcquisitionResponse,
   DateRange
 } from './types';
+import { internalApiFetch, InternalApiError } from '@/lib/api/client/internal-api-client';
 
 /**
  * API Error class for dashboard fetch errors
@@ -75,27 +76,15 @@ async function fetchDashboardData<T>(
     : `/api/dashboard/${endpoint}`;
   
   try {
-    const response = await fetch(url, {
+    return await internalApiFetch<T>(url, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // Disable caching for real-time data
-      cache: 'no-store'
+      cache: 'no-store',
+      timeoutMs: 15000,
     });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new DashboardAPIError(
-        errorData.error || `HTTP ${response.status}: ${response.statusText}`,
-        response.status,
-        endpoint
-      );
-    }
-    
-    const data = await response.json();
-    return data as T;
   } catch (error) {
+    if (error instanceof InternalApiError) {
+      throw new DashboardAPIError(error.message, error.status, endpoint);
+    }
     if (error instanceof DashboardAPIError) {
       throw error;
     }

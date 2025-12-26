@@ -1,5 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSession, validateOwnership } from '@/lib/auth/session';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 import type { PayoutScheduleResponse } from '@/lib/services/revenue/types';
 
 /**
@@ -12,14 +13,14 @@ export async function GET(request: NextRequest) {
     const session = await getSession();
     
     if (!session) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const creatorId = searchParams.get('creatorId');
 
     if (!creatorId) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'creatorId is required' },
         { status: 400 }
       );
@@ -27,7 +28,14 @@ export async function GET(request: NextRequest) {
 
     // Verify creator owns this data
     if (!validateOwnership(session, creatorId)) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Payout schedule is not available in real mode yet' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
     }
 
     const correlationId = request.headers.get('X-Correlation-ID');
@@ -37,10 +45,6 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
 
-    // TODO: Replace with actual backend service call
-    // const payouts = await backendPayoutService.getPayoutSchedule(creatorId);
-
-    // Mock data
     const response: PayoutScheduleResponse = {
       payouts: [
         {
@@ -97,10 +101,10 @@ export async function GET(request: NextRequest) {
       connectedPlatforms: response.platforms.filter(p => p.connected).length,
     });
 
-    return Response.json(response);
+    return NextResponse.json(response);
   } catch (error) {
     console.error('[API] Payouts error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );

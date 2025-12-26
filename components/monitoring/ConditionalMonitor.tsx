@@ -14,12 +14,9 @@ interface ConditionalMonitorProps {
 }
 
 export function ConditionalMonitor({ children }: ConditionalMonitorProps) {
-  const [shouldRender, setShouldRender] = useState(false);
+  const [shouldRender] = useState(() => productionSafeMonitoring.shouldMonitor());
 
   useEffect(() => {
-    // Check if monitoring should be enabled
-    setShouldRender(productionSafeMonitoring.shouldMonitor());
-
     // Cleanup: flush metrics on unmount
     return () => {
       productionSafeMonitoring.forceFlush();
@@ -42,11 +39,7 @@ export function withConditionalMonitoring<P extends object>(
   displayName?: string
 ) {
   const WrappedComponent = (props: P) => {
-    const [shouldRender, setShouldRender] = useState(false);
-
-    useEffect(() => {
-      setShouldRender(productionSafeMonitoring.shouldMonitor());
-    }, []);
+    const [shouldRender] = useState(() => productionSafeMonitoring.shouldMonitor());
 
     if (!shouldRender) {
       return null;

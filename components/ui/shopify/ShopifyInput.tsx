@@ -3,7 +3,7 @@
 import React, { forwardRef, useId } from 'react';
 import { cn } from '@/lib/utils';
 
-export interface ShopifyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+export interface ShopifyInputProps extends Omit<React.ComponentPropsWithoutRef<'input'>, 'size' | 'prefix'> {
   /** Label text for the input */
   label?: string;
   /** Helper text below the input */
@@ -32,7 +32,7 @@ export interface ShopifyInputProps extends Omit<React.InputHTMLAttributes<HTMLIn
  * - Proper accessibility with ARIA attributes
  * - Rounded corners (tokenized)
  */
-export const ShopifyInput = forwardRef<HTMLInputElement, ShopifyInputProps>(
+export const ShopifyInput = forwardRef<React.ElementRef<'input'>, ShopifyInputProps>(
   function ShopifyInput(
     {
       label,

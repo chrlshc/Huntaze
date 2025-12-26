@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useSyncExternalStore } from 'react'
 
 type Theme = 'light' | 'dark' | 'system'
 type ResolvedTheme = 'light' | 'dark'
@@ -16,25 +16,41 @@ interface ThemeManagerContextType {
 const ThemeManagerContext = createContext<ThemeManagerContextType | undefined>(undefined)
 
 export function ThemeManager({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('system')
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light')
-  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>('light')
-  const [mounted, setMounted] = useState(false)
-
-  // Initialize theme on mount
-  useEffect(() => {
-    setMounted(true)
-    
-    // Get stored theme preference
-    const stored = localStorage.getItem('theme-preference') as Theme | null
-    if (stored) {
-      setThemeState(stored)
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'system'
+    try {
+      return (localStorage.getItem('theme-preference') as Theme | null) || 'system'
+    } catch {
+      return 'system'
     }
-    
-    // Get system theme
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    setSystemTheme(mediaQuery.matches ? 'dark' : 'light')
-  }, [])
+  })
+
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
+
+  const systemTheme = useSyncExternalStore(
+    (callback) => {
+      if (typeof window === 'undefined') return () => {}
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const handler = () => callback()
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', handler)
+        return () => mediaQuery.removeEventListener('change', handler)
+      }
+      mediaQuery.addListener(handler)
+      return () => mediaQuery.removeListener(handler)
+    },
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light',
+    () => 'light'
+  )
+  const resolvedTheme: ResolvedTheme = theme === 'system' ? systemTheme : theme
 
   // Apply theme to document
   const applyTheme = useCallback((isDark: boolean) => {
@@ -61,32 +77,18 @@ export function ThemeManager({ children }: { children: React.ReactNode }) {
 
   // Update theme
   useEffect(() => {
-    if (!mounted) return
-    
-    const isDark = theme === 'dark' || (theme === 'system' && systemTheme === 'dark')
-    setResolvedTheme(isDark ? 'dark' : 'light')
+    if (!isClient) return
+    const isDark = resolvedTheme === 'dark'
     applyTheme(isDark)
-    
+
     // Store preference
     localStorage.setItem('theme-preference', theme)
-    
+
     // Broadcast to other tabs
     window.dispatchEvent(new CustomEvent('theme-change', { 
-      detail: { theme, resolved: isDark ? 'dark' : 'light' } 
+      detail: { theme, resolved: resolvedTheme } 
     }))
-  }, [theme, systemTheme, mounted, applyTheme])
-
-  // Listen for system theme changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      setSystemTheme(e.matches ? 'dark' : 'light')
-    }
-    
-    mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
-  }, [])
+  }, [theme, resolvedTheme, applyTheme, isClient])
 
   // Listen for theme changes from other tabs
   useEffect(() => {
@@ -125,7 +127,7 @@ export function ThemeManager({ children }: { children: React.ReactNode }) {
   }, [theme, systemTheme, setTheme])
 
   // Prevent flash of incorrect theme
-  if (!mounted) {
+  if (!isClient) {
     return null
   }
 

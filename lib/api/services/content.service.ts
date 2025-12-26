@@ -222,7 +222,7 @@ export class ContentService {
         offset,
       });
 
-      const where: any = { userId };
+      const where: any = { user_id: userId };
       if (status) where.status = status;
       if (platform) where.platform = platform;
       if (type) where.type = type;
@@ -552,8 +552,21 @@ export class ContentService {
 
       // Update publishedAt if status changes to published
       const updateData: any = { ...data };
+      if (data.mediaIds !== undefined) {
+        updateData.media_ids = data.mediaIds;
+        delete updateData.mediaIds;
+      }
+      if (data.scheduledAt !== undefined) {
+        updateData.scheduled_at = data.scheduledAt;
+        delete updateData.scheduledAt;
+      }
+      if (data.publishedAt !== undefined) {
+        updateData.published_at = data.publishedAt;
+        delete updateData.publishedAt;
+      }
+
       if (data.status === 'published' && content.status !== 'published') {
-        updateData.publishedAt = new Date();
+        updateData.published_at = new Date();
         logger.info('Setting publishedAt timestamp', {
           correlationId,
           contentId,

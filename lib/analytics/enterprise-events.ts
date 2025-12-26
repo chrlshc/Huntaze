@@ -221,9 +221,11 @@ export const shouldRecordSession = (events: string[]) => {
 }
 
 // Export for use in components
-export default {
+const enterpriseEvents = {
   track: trackEnterpriseEvent,
   events: trackingEvents,
   calculateLeadScore,
   shouldRecordSession
 }
+
+export default enterpriseEvents;

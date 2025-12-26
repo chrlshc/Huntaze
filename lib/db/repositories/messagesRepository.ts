@@ -1,9 +1,35 @@
 import { getPool } from '../index';
 import type { Message } from '@/lib/services/crmData';
 
+type ListMessagesOptions = {
+  limit?: number;
+  offset?: number;
+  order?: 'asc' | 'desc';
+};
+
 export class MessagesRepository {
-  static async listMessages(userId: number, conversationId: number): Promise<Message[]> {
+  static async listMessages(
+    userId: number,
+    conversationId: number,
+    options: ListMessagesOptions = {}
+  ): Promise<Message[]> {
+    const { limit, offset, order = 'asc' } = options;
     const pool = getPool();
+    const direction = order === 'desc' ? 'DESC' : 'ASC';
+
+    const values: Array<number> = [userId, conversationId];
+    let limitOffsetClause = '';
+
+    if (typeof limit === 'number') {
+      values.push(limit);
+      limitOffsetClause += ` LIMIT $${values.length}`;
+    }
+
+    if (typeof offset === 'number') {
+      values.push(offset);
+      limitOffsetClause += ` OFFSET $${values.length}`;
+    }
+
     const result = await pool.query(
       `SELECT 
         id, user_id as "userId", conversation_id as "conversationId",
@@ -11,10 +37,30 @@ export class MessagesRepository {
         read, attachments, created_at as "createdAt"
       FROM messages 
       WHERE user_id = $1 AND conversation_id = $2
-      ORDER BY created_at ASC`,
-      [userId, conversationId]
+      ORDER BY created_at ${direction}${limitOffsetClause}`,
+      values
     );
     return result.rows;
+  }
+
+  static async countMessages(userId: number, conversationId: number): Promise<number> {
+    const pool = getPool();
+    const result = await pool.query(
+      'SELECT COUNT(*) as count FROM messages WHERE user_id = $1 AND conversation_id = $2',
+      [userId, conversationId]
+    );
+    return parseInt(result.rows[0]?.count || '0', 10);
+  }
+
+  static async markConversationRead(userId: number, conversationId: number): Promise<number> {
+    const pool = getPool();
+    const result = await pool.query(
+      `UPDATE messages
+       SET read = TRUE
+       WHERE user_id = $1 AND conversation_id = $2 AND direction = $3 AND read = FALSE`,
+      [userId, conversationId, 'in']
+    );
+    return result.rowCount || 0;
   }
 
   static async createMessage(

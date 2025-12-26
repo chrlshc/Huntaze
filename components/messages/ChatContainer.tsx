@@ -100,9 +100,10 @@ export function ChatContainer({
   useLayoutEffect(() => {
     preserveScrollRef.current = null;
     isLoadingOlderRef.current = false;
-    setIsLoadingOlder(false);
     isNearBottomRef.current = true;
     scrollToBottom('auto');
+    const resetId = requestAnimationFrame(() => setIsLoadingOlder(false));
+    return () => cancelAnimationFrame(resetId);
   }, [conversationId, scrollToBottom]);
 
   // Track whether user is near the bottom (so we only auto-scroll in that case)
@@ -162,7 +163,8 @@ export function ChatContainer({
 
     preserveScrollRef.current = null;
     isLoadingOlderRef.current = false;
-    setIsLoadingOlder(false);
+    const resetId = requestAnimationFrame(() => setIsLoadingOlder(false));
+    return () => cancelAnimationFrame(resetId);
   }, [normalizedMessages.length]);
 
   // Auto-scroll to bottom on new messages only if user is already near bottom

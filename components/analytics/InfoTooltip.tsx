@@ -31,11 +31,6 @@ export function InfoTooltip({ glossaryId, size = 14, showPopover = true }: InfoT
   const popoverRef = useRef<HTMLDivElement>(null);
   
   const entry = getGlossaryEntry(glossaryId);
-  
-  if (!entry) {
-    console.warn(`InfoTooltip: No glossary entry found for "${glossaryId}"`);
-    return null;
-  }
 
   // Listen for close-all event from other instances
   useEffect(() => {
@@ -75,6 +70,11 @@ export function InfoTooltip({ glossaryId, size = 14, showPopover = true }: InfoT
       };
     }
   }, [isPopoverOpen]);
+
+  if (!entry) {
+    console.warn(`InfoTooltip: No glossary entry found for "${glossaryId}"`);
+    return null;
+  }
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();

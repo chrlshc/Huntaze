@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useIsClient } from '@/hooks/useIsClient';
 
 /**
  * SafeBadge Component
@@ -24,13 +24,7 @@ export function SafeBadge({
   className = '',
   ariaLabel,
 }: SafeBadgeProps) {
-  const [isClient, setIsClient] = useState(false);
-  const [displayCount, setDisplayCount] = useState(0);
-
-  useEffect(() => {
-    setIsClient(true);
-    setDisplayCount(count);
-  }, [count]);
+  const isClient = useIsClient();
 
   // Don't render on server to avoid hydration mismatch
   if (!isClient) {
@@ -38,16 +32,16 @@ export function SafeBadge({
   }
 
   // Don't render if count is 0
-  if (displayCount === 0) {
+  if (count === 0) {
     return null;
   }
 
-  const formattedCount = displayCount > maxCount ? `${maxCount}+` : displayCount;
-  const label = ariaLabel || `${displayCount} ${type === 'unread' ? 'new messages' : 'alerts'}`;
+  const formattedCount = count > maxCount ? `${maxCount}+` : count;
+  const label = ariaLabel || `${count} ${type === 'unread' ? 'new messages' : 'alerts'}`;
 
   return (
     <span
-      className={`nav-badge ${displayCount > 0 ? 'nav-badge-pulse' : ''} ${className}`}
+      className={`nav-badge ${count > 0 ? 'nav-badge-pulse' : ''} ${className}`}
       role="status"
       aria-label={label}
     >

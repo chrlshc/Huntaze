@@ -1,6 +1,6 @@
-import { Card } from '@/components/ui/card';
 'use client';
 
+import { Card } from '@/components/ui/card';
 export function DashboardMockSection() {
   return (
     <section 

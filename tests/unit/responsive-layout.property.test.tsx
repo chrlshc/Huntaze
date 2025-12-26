@@ -8,11 +8,24 @@
  * single-column mode and hides the sidebar.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { AppShell } from '@/components/layout/AppShell';
 import { MobileSidebarProvider } from '@/components/layout/MobileSidebarContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+  usePathname: () => '/',
+  useSearchParams: () => new URLSearchParams(),
+}));
 
 // Property-based test helper: Generate random viewport widths
 function* generateViewportWidths(count: number = 100) {

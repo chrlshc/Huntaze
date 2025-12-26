@@ -7,25 +7,15 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 
 export function CookieConsent() {
-  const [consent, setConsent] = useState<boolean | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const storedConsent = typeof window === 'undefined' ? null : localStorage.getItem('analytics_consent');
+  const initialConsent = storedConsent === null ? null : storedConsent === 'true';
 
-  useEffect(() => {
-    // Check if user has already made a choice
-    const storedConsent = localStorage.getItem('analytics_consent');
-    
-    if (storedConsent !== null) {
-      setConsent(storedConsent === 'true');
-      setIsVisible(false);
-    } else {
-      // Show banner after a short delay
-      setTimeout(() => setIsVisible(true), 1000);
-    }
-  }, []);
+  const [consent, setConsent] = useState<boolean | null>(initialConsent);
+  const [isVisible, setIsVisible] = useState(initialConsent === null);
 
   const handleConsent = (accepted: boolean) => {
     // Store consent

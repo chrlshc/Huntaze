@@ -30,6 +30,11 @@ interface CelebrationModalProps {
   onInteraction: (type: string, data?: any) => void;
 }
 
+const pseudoRandom = (seed: number) => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+
 export const CelebrationModal: React.FC<CelebrationModalProps> = ({
   isVisible,
   achievement,
@@ -42,24 +47,31 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
 
   useEffect(() => {
     if (isVisible && achievement) {
-      setShowConfetti(true);
-      setAnimationPhase('enter');
-      
-      onInteraction('celebration_shown', {
-        achievementId: achievement.id,
-        type: achievement.type,
-        rarity: achievement.rarity
-      });
+      let timer1: number | undefined;
+      let timer2: number | undefined;
+      let timer3: number | undefined;
 
-      // Animation sequence
-      const timer1 = setTimeout(() => setAnimationPhase('celebrate'), 500);
-      const timer2 = setTimeout(() => setAnimationPhase('settle'), 2000);
-      const timer3 = setTimeout(() => setShowConfetti(false), 3000);
+      const kickoff = window.setTimeout(() => {
+        setShowConfetti(true);
+        setAnimationPhase('enter');
+        
+        onInteraction('celebration_shown', {
+          achievementId: achievement.id,
+          type: achievement.type,
+          rarity: achievement.rarity
+        });
+
+        // Animation sequence
+        timer1 = window.setTimeout(() => setAnimationPhase('celebrate'), 500);
+        timer2 = window.setTimeout(() => setAnimationPhase('settle'), 2000);
+        timer3 = window.setTimeout(() => setShowConfetti(false), 3000);
+      }, 0);
 
       return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-        clearTimeout(timer3);
+        clearTimeout(kickoff);
+        if (timer1) clearTimeout(timer1);
+        if (timer2) clearTimeout(timer2);
+        if (timer3) clearTimeout(timer3);
       };
     }
   }, [isVisible, achievement, onInteraction]);
@@ -199,14 +211,16 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
     const colors = ['var(--accent-info)', 'var(--accent-error)', 'var(--accent-success)', 'var(--accent-warning)', 'var(--accent-primary)', 'var(--accent-primary)'];
     
     for (let i = 0; i < 20; i++) {
+      const colorIndex = Math.floor(pseudoRandom(i + 1) * colors.length);
+      const left = pseudoRandom(i + 2) * 100;
       pieces.push(
         <motion.div
           key={i}
           variants={confettiPieceVariants}
           className="absolute w-2 h-2 rounded"
           style={{
-            backgroundColor: colors[Math.floor(Math.random() * colors.length)],
-            left: `${Math.random() * 100}%`,
+            backgroundColor: colors[colorIndex],
+            left: `${left}%`,
             top: '10%'
           }}
         />

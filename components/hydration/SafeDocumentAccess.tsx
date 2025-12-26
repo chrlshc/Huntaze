@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useMemo, useState, useEffect, ReactNode } from 'react';
 import { HydrationSafeWrapper } from './HydrationSafeWrapper';
+import { useIsClient } from '@/hooks/useIsClient';
 
 interface SafeDocumentAccessProps {
   children: (documentAPI: {
@@ -30,60 +31,51 @@ interface SafeDocumentAccessProps {
  * 4. Offrant une API cohérente serveur/client
  */
 export function SafeDocumentAccess({ children, fallback, className }: SafeDocumentAccessProps) {
-  const [documentState, setDocumentState] = useState({
-    title: '',
-    isAvailable: false
-  });
-
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      setDocumentState({
-        title: document.title,
-        isAvailable: true
-      });
-    }
-  }, []);
-
-  const documentAPI = {
-    title: documentState.title,
-    body: typeof document !== 'undefined' ? document.body : null,
-    head: typeof document !== 'undefined' ? document.head : null,
-    createElement: (tagName: string) => {
-      if (typeof document !== 'undefined') {
-        return document.createElement(tagName);
-      }
-      return null;
-    },
-    getElementById: (id: string) => {
-      if (typeof document !== 'undefined') {
-        return document.getElementById(id);
-      }
-      return null;
-    },
-    querySelector: (selector: string) => {
-      if (typeof document !== 'undefined') {
-        return document.querySelector(selector);
-      }
-      return null;
-    },
-    querySelectorAll: (selector: string) => {
-      if (typeof document !== 'undefined') {
-        return document.querySelectorAll(selector);
-      }
-      return null;
-    },
-    addEventListener: (event: string, handler: EventListener) => {
-      if (typeof document !== 'undefined') {
-        document.addEventListener(event, handler);
-      }
-    },
-    removeEventListener: (event: string, handler: EventListener) => {
-      if (typeof document !== 'undefined') {
-        document.removeEventListener(event, handler);
-      }
-    },
-    isAvailable: documentState.isAvailable
-  };
+  const isClient = useIsClient();
+  const documentAPI = useMemo(() => {
+    const isAvailable = isClient && typeof document !== 'undefined';
+    return {
+      title: isAvailable ? document.title : '',
+      body: isAvailable ? document.body : null,
+      head: isAvailable ? document.head : null,
+      createElement: (tagName: string) => {
+        if (typeof document !== 'undefined') {
+          return document.createElement(tagName);
+        }
+        return null;
+      },
+      getElementById: (id: string) => {
+        if (typeof document !== 'undefined') {
+          return document.getElementById(id);
+        }
+        return null;
+      },
+      querySelector: (selector: string) => {
+        if (typeof document !== 'undefined') {
+          return document.querySelector(selector);
+        }
+        return null;
+      },
+      querySelectorAll: (selector: string) => {
+        if (typeof document !== 'undefined') {
+          return document.querySelectorAll(selector);
+        }
+        return null;
+      },
+      addEventListener: (event: string, handler: EventListener) => {
+        if (typeof document !== 'undefined') {
+          document.addEventListener(event, handler);
+        }
+      },
+      removeEventListener: (event: string, handler: EventListener) => {
+        if (typeof document !== 'undefined') {
+          document.removeEventListener(event, handler);
+        }
+      },
+      isAvailable
+    };
+  }, [isClient]);
+  
 
   return (
     <HydrationSafeWrapper fallback={fallback} className={className}>
@@ -96,13 +88,12 @@ export function SafeDocumentAccess({ children, fallback, className }: SafeDocume
  * Hook pour l'accès sécurisé au titre du document
  */
 export function useDocumentTitle(initialTitle?: string) {
-  const [title, setTitle] = useState(initialTitle || '');
-
-  useEffect(() => {
+  const [title, setTitle] = useState(() => {
     if (typeof document !== 'undefined') {
-      setTitle(document.title);
+      return document.title;
     }
-  }, []);
+    return initialTitle || '';
+  });
 
   const updateTitle = (newTitle: string) => {
     setTitle(newTitle);
@@ -118,16 +109,12 @@ export function useDocumentTitle(initialTitle?: string) {
  * Hook pour l'accès sécurisé aux éléments DOM
  */
 export function useElement(selector: string) {
-  const [element, setElement] = useState<Element | null>(null);
-
-  useEffect(() => {
+  return useMemo(() => {
     if (typeof document !== 'undefined') {
-      const el = document.querySelector(selector);
-      setElement(el);
+      return document.querySelector(selector);
     }
+    return null;
   }, [selector]);
-
-  return element;
 }
 
 /**

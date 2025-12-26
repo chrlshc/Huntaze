@@ -13,7 +13,7 @@
  */
 
 import { useState } from 'react';
-import type { DateRange } from '@/lib/dashboard/types';
+import type { DateRange, DateRangePreset } from '@/lib/dashboard/types';
 
 type CompareMode = 'none' | 'previous-period' | 'previous-year' | 'custom';
 type Granularity = 'hourly' | 'daily' | 'weekly';
@@ -46,7 +46,7 @@ export function AnalyticsToolbar({
 }: AnalyticsToolbarProps) {
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
 
-  const handleDateRangeSelect = (preset: string) => {
+  const handleDateRangeSelect = (preset: DateRangePreset | 'custom') => {
     if (preset === 'custom') {
       setShowCustomDatePicker(true);
       return;
@@ -73,11 +73,11 @@ export function AnalyticsToolbar({
 
   const getDateRangeLabel = (): string => {
     if (dateRange.type === 'preset') {
-      const labels: Record<string, string> = {
-        'today': 'Today',
+      const labels: Record<DateRangePreset, string> = {
+        today: 'Today',
         '7d': 'Last 7 days',
         '30d': 'Last 30 days',
-        '90d': 'Last 90 days',
+        '12m': 'Last 12 months',
       };
       return labels[dateRange.preset] || dateRange.preset;
     }

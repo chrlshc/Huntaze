@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { format } from 'date-fns';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -129,9 +130,11 @@ export default function ContentList({ items, onItemClick, onSelectionChange }: C
               {/* Thumbnail */}
               <div className="w-16 h-16 flex-shrink-0">
                 {item.media.length > 0 ? (
-                  <img
+                  <Image
                     src={item.media[0].thumbnail_url}
                     alt="Content thumbnail"
+                    width={64}
+                    height={64}
                     className="w-full h-full object-cover rounded"
                   />
                 ) : (

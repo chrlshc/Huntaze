@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSmartOnboarding } from '@/hooks/useSmartOnboarding';
 import { AdaptiveContent } from './AdaptiveContent';
@@ -37,21 +37,7 @@ export const AdaptiveOnboardingStep: React.FC<AdaptiveOnboardingStepProps> = ({
     isLoading
   } = useSmartOnboarding(userId, stepId);
 
-  // Real-time content adaptation based on ML predictions
-  useEffect(() => {
-    if (predictions?.successProbability !== undefined && predictions.successProbability < 0.6) {
-      handleContentAdaptation('low_success_probability');
-    }
-  }, [predictions]);
-
-  // Behavioral adaptation
-  useEffect(() => {
-    if (behaviorData?.struggleIndicators && behaviorData.struggleIndicators.length > 0) {
-      handleContentAdaptation('struggle_detected');
-    }
-  }, [behaviorData]);
-
-  const handleContentAdaptation = async (reason: string) => {
+  const handleContentAdaptation = useCallback(async (reason: string) => {
     if (isAdapting) return;
 
     setIsAdapting(true);
@@ -77,7 +63,27 @@ export const AdaptiveOnboardingStep: React.FC<AdaptiveOnboardingStepProps> = ({
       setIsAdapting(false);
       setAdaptationReason(null);
     }
-  };
+  }, [adaptContent, behaviorData, content, isAdapting, predictions, stepId]);
+
+  // Real-time content adaptation based on ML predictions
+  useEffect(() => {
+    if (predictions?.successProbability !== undefined && predictions.successProbability < 0.6) {
+      const timeoutId = window.setTimeout(() => {
+        void handleContentAdaptation('low_success_probability');
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [handleContentAdaptation, predictions]);
+
+  // Behavioral adaptation
+  useEffect(() => {
+    if (behaviorData?.struggleIndicators && behaviorData.struggleIndicators.length > 0) {
+      const timeoutId = window.setTimeout(() => {
+        void handleContentAdaptation('struggle_detected');
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [behaviorData, handleContentAdaptation]);
 
   const handleInteraction = (interactionType: string, data?: any) => {
     trackInteraction(stepId, interactionType, data);

@@ -1,279 +1,347 @@
-# API Map (UI → Internal APIs)
+# API Map (UI -> Routes internes)
 
-Objectif: cartographier chaque écran/feature qui consommait des mocks vers les routes internes existantes (Next.js `app/api/**`) et clarifier les états `loading/error/empty`.
+Objectif: cartographier les ecrans/features vers les routes internes, les donnees attendues, et les etats UI.
+TODO = endpoint absent dans le repo (ne pas inventer).
 
-## Conventions & Auth (constaté)
+Conventions:
+- Entities: types/objets utilises par l'UI.
+- Endpoints: methodes + chemins.
+- Etats: loading / error / empty.
 
-### Base URL
-- Client: appels vers les routes internes via chemins `"/api/..."` (même origine).
-- Config: `NEXT_PUBLIC_INTERNAL_API_BASE_URL` (client) par défaut sur `/api` via `lib/api/client/internal-api-client.ts` (apiClient).
-- Config: `NEXT_PUBLIC_API_URL` est utilisé par certaines routes proxy et par des clients (ex: `app/api/schedule/*`).
+Statut endpoints:
+- ✅ real (connected to database)
+- 🔄 real (returns empty/defaults when no data)
+- ⏳ not implemented (NOT_IMPLEMENTED; UI should hide/flag)
 
-### Auth
-- Majorité des pages “app” sont protégées via NextAuth (`components/auth/ProtectedRoute.tsx`).
-- Côté API, plusieurs patterns coexistent:
-  - NextAuth session (`getServerSession()` / `auth()` / middleware `withAuth`)
-  - Cookie token (`access_token` / `auth_token`) utilisé pour les routes proxy (ex: `app/api/schedule/route.ts`)
-  - Header `x-user-id` pour certaines routes (ex: `app/api/content/templates/route.ts`) → à normaliser (TODO)
+---
+## RECABLAGE STATUS (2024-12-24)
 
-### Réponses
-Les formats ne sont pas uniformes selon les endpoints:
-- `successResponse(...)` → `{ success: true, data: ..., meta: ... }`
-- `NextResponse.json({ success: true, data: ... })`
-- Réponses “brutes” (ex: `/api/offers` → `{ offers, total }`)
+### Fichiers recâblés (mocks → DB):
+- `src/lib/of/analytics-manager.ts` - ✅ Utilise Prisma (subscriptions, transactions, user_stats)
+- `src/lib/of/session-manager.ts` - ✅ Utilise Prisma (users.of_cookies, of_linked_at)
+- `app/api/onboarding/mock-ingest/route.ts` - ✅ Utilise Prisma (transactions, subscriptions, oauth_accounts)
+- `src/lib/onboarding/autoCalibrate.ts` - ✅ Appelle la vraie API
+- `src/lib/of/shoutout-marketplace.ts` - ✅ Utilise Prisma (users, user_stats, AIInsight pour deals)
+- `src/lib/of/smart-relance.ts` - ✅ Utilise Prisma (subscriptions, transactions, AIInsight pour tracking)
 
-## Features / Écrans
+### Fichiers avec mocks restants (dev-only):
+- `src/services/content-moderation.ts` - mockMode flag (vision API integration TODO)
 
-### Overview Dashboard
-- UI: `app/(app)/overview/page.tsx`
-- Entities:
-  - `Campaign` (marketing)
-  - `ContentItem`
+---
+
+## Home / Dashboard
+### Home (/home)
+- Entities: DashboardData (summary, trends, recentActivity, quickActions, connectedIntegrations)
 - Endpoints:
-  - GET `app/api/marketing/campaigns/route.ts` → `/api/marketing/campaigns?status&channel&limit&offset`
-  - GET `app/api/content/route.ts` → `/api/content?status&platform&type&limit&offset`
-- États:
-  - loading: skeleton métriques
-  - empty: “No campaigns yet” / “No content yet”
-  - error: afficher un état non-bloquant (banner/empty) (TODO si absent)
+  - ✅ GET /api/dashboard?range=...&include=content,marketing
+  - ✅ GET /api/automations
+  - 🧪 GET /api/marketing-war-room/state (ENABLE_MOCK_DATA=1; real => empty)
+- Etats: loading / error / empty
 
-### Marketing Campaigns
-- UI: `app/(app)/marketing/campaigns/page.tsx`
-- Entities: `Campaign` + `CampaignStats`
+### Overview (/overview)
+- Entities: ContentItem, ContentResponse
 - Endpoints:
-  - GET `app/api/marketing/campaigns/route.ts` → liste + filtres
-  - POST `app/api/marketing/campaigns/route.ts` → créer
-  - PUT/DELETE `app/api/marketing/campaigns/[id]/route.ts`
-  - POST `app/api/marketing/campaigns/[id]/launch/route.ts` → “launch/schedule”
-- États:
-  - loading: “Loading...”
-  - empty: “No campaigns found”
-  - error: non-bloquant (TODO si absent)
+  - ✅ GET /api/content?status=...
+- Etats: loading / error / empty
 
-### Marketing – Overview (War Room)
-- UI: `app/(app)/marketing/page.tsx`
-- Entities: `QueueItem`, `Automation`, `HealthCheck`
+## OnlyFans
+### Dashboard (/onlyfans)
+- Entities: OnlyFansStatsResponse (messages, fans, ppv, connection)
 - Endpoints:
-  - GET `app/api/marketing-war-room/state/route.ts` → `/api/marketing-war-room/state`
-  - POST `app/api/warroom/schedule/route.ts` → `/api/warroom/schedule` (actions post/schedule/cancel)
-- États:
-  - loading: spinner/badge
-  - empty: `EmptyState` “No queue items” + “No health data”
-  - error: banner + retry
-- TODO:
-  - `marketing-war-room/state` retourne vide hors `API_MODE=mock` → brancher DB/monitoring
+  - ✅ GET /api/onlyfans/stats (stats null si non connecte)
+- Etats: loading / error / empty (stats null si non connecte)
 
-### Content Templates
-- UI: `app/(app)/content/templates/page.tsx`
-- Entities: `Template` (content template)
+### Messages (/onlyfans/messages)
+- Entities: UnifiedMessagesResponse, MessageThread, Message, Fan
 - Endpoints:
-  - GET `app/api/content/templates/route.ts` → `/api/content/templates?category&search&limit&offset`
-  - POST `app/api/content/templates/route.ts` → créer
-  - POST `app/api/content/templates/[id]/use/route.ts` → incrémenter `usageCount`
-- États:
-  - loading: grille skeleton
-  - empty: `EmptyState` (“No templates found”)
-  - error: non-bloquant (TODO si absent)
-- TODO:
-  - Auth: endpoint dépend de `x-user-id` header (à aligner sur NextAuth/session)
+  - ✅ GET /api/messages/unified?creatorId=...
+  - ✅ GET /api/messages/[threadId]
+  - ✅ PATCH /api/messages/[threadId]/read
+  - ✅ POST /api/messages/[threadId]/send
+  - ✅ GET /api/crm/fans
+- Etats: loading / error / empty
 
-### Automations
-- UI: `app/(app)/automations/page.tsx`
-- Entities:
-  - `AutomationFlow`
-  - Analytics: `ExecutionMetrics` / `AnalyticsSummary`
+### Mass Messages (/onlyfans/messages/mass)
+- Entities: Fan, BulkMessageResult
 - Endpoints:
-  - GET/POST `app/api/automations/route.ts` → `/api/automations`
-  - GET/PUT/DELETE `app/api/automations/[id]/route.ts`
-  - GET `app/api/automations/analytics/route.ts` → `/api/automations/analytics?type=summary|metrics|trends|compare|triggers`
-- États:
-  - loading: à ajouter (TODO si absent)
-  - empty: “No automations yet”
-  - error: non-bloquant (TODO si absent)
+  - ✅ GET /api/crm/fans
+  - ✅ POST /api/messages/bulk
+- Etats: loading / error / empty
 
-### Offers (List)
-- UI: `app/(app)/offers/page.tsx`
-- Entities: `Offer`
+### Fans (/onlyfans/fans, /onlyfans/fans/[id])
+- Entities: OnlyFansFan, pagination
 - Endpoints:
-  - GET/POST `app/api/offers/route.ts` → `/api/offers?status&limit&offset`
-  - GET/PUT/DELETE `app/api/offers/[id]/route.ts` → `/api/offers/:id`
-  - POST `app/api/offers/[id]/duplicate/route.ts` → `/api/offers/:id/duplicate`
-  - GET `app/api/offers/analytics/route.ts` (optionnel)
-- États:
-  - empty: écran “No offers yet”
-  - error: non-bloquant (TODO si absent)
+  - ✅ GET /api/onlyfans/fans?limit=...&offset=...
+- Etats: loading / error / empty
 
-### Offers (Edit)
-- UI: `app/(app)/offers/[id]/page.tsx`
-- Entities: `Offer`, `UpdateOfferInput`
+### PPV (/onlyfans/ppv, /onlyfans/ppv/create)
+- Entities: PPVTemplate, PPVCampaign
 - Endpoints:
-  - GET `app/api/offers/[id]/route.ts`
-  - PUT `app/api/offers/[id]/route.ts`
-- États:
-  - loading: spinner
-  - empty/not found: carte “Offer not found”
-  - error: non-bloquant (TODO si absent)
+  - ✅ GET /api/integrations/status
+  - ✅ GET /api/ppv/templates - List PPV templates
+  - ✅ POST /api/ppv/templates - Create PPV template
+  - ✅ GET /api/ppv/templates/[id] - Get single template
+  - ✅ PUT /api/ppv/templates/[id] - Update template
+  - ✅ DELETE /api/ppv/templates/[id] - Delete template
+  - ✅ GET /api/ppv/campaigns - List campaigns
+  - ✅ POST /api/ppv/campaigns - Create/send campaign
+- Etats: loading / error / empty
 
-### Marketing Calendar
-- UI: `app/(app)/marketing/calendar/page.tsx`
-- Entities: `ScheduleItem` (scheduled content)
-- Endpoints (proxy):
-  - GET/POST `app/api/schedule/route.ts` → `/api/schedule`
-  - PUT/DELETE `app/api/schedule/[id]/route.ts` → `/api/schedule/:id`
-- États:
-  - loading: skeleton
-  - empty: à définir (TODO)
-  - error: non-bloquant (TODO)
-- TODO:
-  - Clarifier le DTO réel renvoyé par l’upstream (mapping vers le modèle UI)
-
-### Content (Trends / Ideas / Recommendations)
-- UI: `app/(app)/content/page.tsx`
-- Entities:
-  - Trends: `TrendItem`
-  - Recommendations: `Recommendation`
-  - Content ideas: `Idea`
+### Settings (/onlyfans/settings, /onlyfans/settings/welcome, /onlyfans/smart-messages)
+- Entities: IntegrationStatus, AiQuota, UserProfile
 - Endpoints:
-  - GET `app/api/ai/content-trends/trends/route.ts` → `/api/ai/content-trends/trends?platform&timeframe&category`
-  - GET/POST `app/api/ai/content-trends/recommendations/route.ts` → `/api/ai/content-trends/recommendations`
-- États:
-  - refresh/loading: spinner bouton refresh
-  - empty: à définir (TODO)
-  - error: non-bloquant (TODO)
+  - ✅ GET /api/integrations/status
+  - 🧪 GET /api/ai/quota (ENABLE_MOCK_DATA=1; real => quota null)
+  - ✅ GET/PATCH /api/users/profile
+  - ⏳ TODO: welcome messages endpoints — missing in repo; UI should hide until ready
+  - ⏳ TODO: smart messages/automations endpoints — missing in repo; UI should hide until ready
+- Etats: loading / error / empty
 
-### Schedule (Smart Scheduler)
-- UI: `app/(app)/schedule/page.tsx`
-- Entities: `ScheduleItem`, `QueueItem`, `LibraryItem`
+### OnlyFans Analytics (/of-analytics)
+- Entities: FanAnalytics, segments
 - Endpoints:
-  - GET/POST `/api/schedule` (proxy) (voir `app/api/schedule/route.ts`)
-  - GET `/api/content` (library) (voir `app/api/content/route.ts`)
-  - GET `/api/schedule/recommendations` (voir `app/api/schedule/recommendations/route.ts`)
-- TODO:
-  - Définir le mapping DTO upstream → UI (schedule + queue)
+  - ✅ GET /api/integrations/onlyfans/analytics?period=... (placeholder zeros)
+- Etats: loading / error / empty
 
-### Home – Recent Activity
-- UI: `app/(app)/home/RecentActivity.tsx`
-- Entities: `ActivityItem`
+## Analytics
+### Overview (/analytics)
+- Entities: OverviewResponse, FinanceResponse, AcquisitionResponse
 - Endpoints:
-  - GET `app/api/dashboard/route.ts` → `/api/dashboard` (inclut `data.recentActivity`)
-- États:
-  - loading: skeleton
-  - empty: “No recent activity”
-  - error: `EmptyState` variant error
+  - ✅ GET /api/dashboard/overview (real; some fields empty when no data)
+  - ✅ GET /api/dashboard/finance (real; some fields empty when no data)
+  - ✅ GET /api/dashboard/acquisition (real; some fields empty when no data)
+- Etats: loading / error / empty
 
-### Home – Priority Actions & Integrations
-- UI: `app/(app)/home/page.tsx`
-- Entities: `DashboardSummary`, `AutomationFlow`, `QueueItem`
+### Finance (/analytics/finance, /analytics/revenue, /analytics/fans)
+- Entities: FinanceResponse (breakdown, whales, aiMetrics, messagingKpis)
 - Endpoints:
-  - GET `app/api/dashboard/route.ts` → `/api/dashboard` (summary + integrations)
-  - GET `app/api/automations/route.ts` → `/api/automations`
-  - GET `app/api/marketing-war-room/state/route.ts` → `/api/marketing-war-room/state` (queue)
-- États:
-  - loading: placeholder texte (no-data)
-  - empty: actions à 0 / listes vides
-  - error: silencieux (fallback à 0)
+  - ✅ GET /api/dashboard/finance (real; some fields empty when no data)
+- Etats: loading / error / empty
 
-### Analytics – Pricing
-- UI: `app/(app)/analytics/pricing/page.tsx`
-- Entities: `PricingRecommendation` (voir `app/api/revenue/pricing/route.ts`)
+### Acquisition (/analytics/acquisition, /analytics/platforms, /analytics/funnel, /analytics/content)
+- Entities: AcquisitionResponse (funnel, platformMetrics, topContent)
 - Endpoints:
-  - GET `app/api/revenue/pricing/route.ts` → `/api/revenue/pricing?creatorId=...`
-- TODO:
-  - Le endpoint renvoie vide hors `API_MODE=mock` (placeholder) → à remplacer par service réel
+  - ✅ GET /api/dashboard/acquisition (real; some fields empty when no data)
+- Etats: loading / error / empty
 
-### OnlyFans – Fans (List)
-- UI: `app/(app)/onlyfans/fans/page.tsx`
-- Entities: `OnlyFansFan` (mapped vers UI `Fan`)
+### Churn (/analytics/churn)
+- Entities: ChurnRiskResponse
 - Endpoints:
-  - GET `app/api/onlyfans/fans/route.ts` → `/api/onlyfans/fans?limit&offset`
-- États:
-  - loading: `EmptyState` “Loading fans…”
-  - empty: “Connect OnlyFans…”
-  - error: `EmptyState` variant error + retry
-- Mapping:
-  - `subscriptionAmount` → ARPU
-  - `totalSpent` → LTV
-  - `lastMessageAt` / `subscribedAt` → “Last Active”
+  - ✅ GET /api/revenue/churn?creatorId=...
+  - ✅ POST /api/revenue/churn/reengage
+- Etats: loading / error / empty
 
-### OnlyFans – Fan Profile
-- UI: `app/(app)/onlyfans/fans/[id]/page.tsx`
-- Entities: `OnlyFansFan` (détail partiel)
+### Pricing (/analytics/pricing)
+- Entities: PricingRecommendation
 - Endpoints:
-  - GET `app/api/onlyfans/fans/route.ts` → `/api/onlyfans/fans?limit&offset` (filtrage client)
-- États:
-  - loading: `EmptyState` “Loading fan profile…”
-  - empty: “No fan data yet”
-  - error: `EmptyState` variant error + retry
-- TODO:
-  - Endpoint dédié `/api/onlyfans/fans/:id` pour éviter le filtrage client + achats récents
+  - ✅ GET /api/revenue/pricing?creatorId=...
+  - ⏳ POST /api/revenue/pricing/apply (NOT_IMPLEMENTED; hook unused in UI)
+- Etats: loading / error / empty
 
-### OnlyFans – Analytics
-- UI: `app/(app)/of-analytics/page.tsx`
-- Entities: `FanAnalytics`, segments
-- Endpoints (partiels):
-  - GET `app/api/onlyfans/stats/route.ts` → `/api/onlyfans/stats` (retourne `stats: null` tant que non branché)
-  - GET `app/api/onlyfans/dashboard/route.ts` → `/api/onlyfans/dashboard?accountId=...` (summary cards, pas de métriques détaillées)
-- États:
-  - loading: “Loading analytics...”
-  - empty: stats null → empty state
-  - error: EmptyState variant error
-- TODO:
-  - Aucun endpoint `FanAnalytics` (period, segments, conversion rates) n’existe dans le code → à créer/brancher.
-
-### OnlyFans – Smart Messages
-- UI: `app/(app)/onlyfans/smart-messages/page.tsx`
-- Entities: message templates + automation rules + auto-reply config
-- Endpoints existants (à confirmer/mapper):
-  - GET/POST `app/api/ai/quick-replies/route.ts` → `/api/ai/quick-replies` (templates)
-  - GET `app/api/automations/route.ts` → `/api/automations` (rules, à mapper)
-- TODO:
-  - Endpoints dédiés “auto-reply config” / “rules” si besoin
-
-### OnlyFans – Mass Messaging
-- UI: `app/(app)/onlyfans/messages/mass/page.tsx`
-- Entities: audiences/segments + scheduled + sent + templates
-- Endpoints existants (partiels):
-  - POST `app/api/messages/bulk/route.ts` → `/api/messages/bulk` (bulk send via `recipientIds`)
-  - GET `app/api/crm/fans/route.ts` → `/api/crm/fans` (source possible pour segments)
-- TODO:
-  - Endpoints de lecture (segments, scheduled, sent, templates) non identifiés dans le code actuel
-
-### OnlyFans – Messages (Inbox)
-- UI: `app/(app)/onlyfans/messages/page.tsx` + `components/messages/MessagingInterface.tsx`
-- Entities: conversations + messages + fan context
-- Endpoints existants (partiels):
-  - GET `app/api/messages/unified/route.ts` → `/api/messages/unified?creatorId&platform&filter`
-  - GET `app/api/messages/[threadId]/route.ts`
-  - POST `app/api/messages/[threadId]/send/route.ts`
-- TODO:
-  - `messages/unified` renvoie actuellement des mocks → brancher service réel
-  - Adapter `MessagingInterface` aux DTO réels
-
-### OnlyFans – PPV Create
-- UI: `app/(app)/onlyfans/ppv/create/create-ppv-client.tsx`
-- Entities: campaign + audience segments
-- Endpoints existants (partiels):
-  - POST `app/api/of/campaigns/route.ts` → `/api/of/campaigns`
-- TODO:
-  - Endpoints segments + upload media + stats (non identifiés)
-
-### OnlyFans – Settings (Templates & Recommendations)
-- UI: `app/(app)/onlyfans/settings/page.tsx`
+### Forecast (/analytics/forecast)
+- Entities: RevenueForecastResponse
 - Endpoints:
-  - GET `app/api/onlyfans/connection/route.ts`
-  - GET `app/api/ai/quota/route.ts`
-  - GET/PUT `app/api/user/preferences/route.ts`
-- TODO:
-  - Templates & recommandations encore en mock UI
+  - ✅ GET /api/revenue/forecast?creatorId=...&months=...
+  - ⏳ POST /api/revenue/forecast/goal (NOT_IMPLEMENTED; hook unused in UI)
+  - ⏳ POST /api/revenue/forecast/scenario (NOT_IMPLEMENTED; hook unused in UI)
+- Etats: loading / error / empty
 
-### OnlyFans – Welcome Messages
-- UI: `app/(app)/onlyfans/settings/welcome/page.tsx`
-- Entities: welcome templates + automation state
-- TODO:
-  - Endpoints CRUD non identifiés (demo only)
+### Upsells (/analytics/upsells)
+- Entities: UpsellOpportunitiesResponse
+- UI: placeholder page only (no API calls yet)
+- Endpoints:
+  - ✅ GET /api/revenue/upsells (returns empty when no data)
+  - ⏳ POST /api/revenue/upsells/send (NOT_IMPLEMENTED; page placeholder only)
+  - ⏳ POST /api/revenue/upsells/dismiss (NOT_IMPLEMENTED; page placeholder only)
+  - ⏳ GET/POST /api/revenue/upsells/automation (NOT_IMPLEMENTED; page placeholder only)
+- Etats: loading / error / empty
 
-### Onboarding – Huntaze Demo
-- UI: `app/(app)/onboarding/huntaze/page.tsx`
-- Entities: setup guide + completion nudge
-- TODO:
-  - Démo uniquement (mocks locaux), endpoints non branchés
+### Payouts (/analytics/payouts)
+- Entities: PayoutScheduleResponse
+- UI: placeholder page only (no API calls yet)
+- Endpoints:
+  - ⏳ GET /api/revenue/payouts (NOT_IMPLEMENTED; page placeholder only)
+  - ⏳ GET /api/revenue/payouts/export (NOT_IMPLEMENTED; page placeholder only)
+  - ⏳ POST /api/revenue/payouts/sync (NOT_IMPLEMENTED; page placeholder only)
+  - ⏳ POST /api/revenue/payouts/tax-rate (NOT_IMPLEMENTED; page placeholder only)
+- Etats: loading / error / empty
+
+## Content
+### Overview (/content)
+- Entities: TrendItem, Recommendations
+- Endpoints:
+  - ✅ GET /api/ai/content-trends/trends
+  - ✅ GET /api/ai/content-trends/recommendations
+- Etats: loading / error / empty
+
+### Content Factory (/content/factory)
+- Entities: Idea, ScriptVariant, ProductionJob, PlannedDraft
+- Endpoints:
+  - ✅ POST /api/content-factory/ideas (real returns empty unless ENABLE_MOCK_DATA=1)
+  - ✅ POST /api/content-factory/script (real returns empty unless ENABLE_MOCK_DATA=1)
+  - ✅ POST /api/content-factory/produce
+  - ✅ POST /api/content-factory/planned-drafts (real returns empty unless ENABLE_MOCK_DATA=1)
+  - ✅ GET /api/content-factory/jobs/[jobId]
+  - 🧪/⏳ Legacy demo: /api/content/factory, /api/content/factory/[id] (ENABLE_MOCK_DATA=1; real => NOT_IMPLEMENTED)
+- Etats: loading / error / empty
+
+### Schedule (/content/schedule)
+- Entities: ContentItem
+- Endpoints:
+  - ✅ GET /api/content?status=scheduled
+- Etats: loading / error / empty
+
+### Templates (/content/templates)
+- Entities: ContentTemplate
+- Endpoints:
+  - ✅ GET /api/content/templates
+  - ✅ POST /api/content/templates/[id]/use
+- Etats: loading / error / empty
+
+### Editor (/content/editor), Generator (/content/generator)
+- Entities: ContentDraft, GeneratedContent
+- Endpoints:
+  - ✅ GET /api/content/editor - List drafts
+  - ✅ POST /api/content/editor - Create draft
+  - ✅ PUT /api/content/editor - Update draft
+  - ✅ GET /api/content/generator - Get generation types
+  - ✅ POST /api/content/generator - Generate content (placeholder AI)
+- Etats: loading / error / empty
+
+### Trends (/content-trends)
+- Entities: TrendItem, TrendAnalysis, TrendRecommendations
+- Endpoints:
+  - ✅ GET /api/ai/content-trends/trends
+  - ✅ POST /api/ai/content-trends/analyze
+  - ✅ POST /api/ai/content-trends/scrape
+  - ✅ GET /api/ai/content-trends/recommendations
+- Etats: loading / error / empty
+
+## Marketing
+### War Room (/marketing)
+- Entities: WarRoomState (queue, automations, health, trends)
+- Endpoints:
+  - 🧪 GET /api/marketing-war-room/state (ENABLE_MOCK_DATA=1; real => empty)
+  - ✅ GET /api/marketing-war-room/automations/[key]
+  - ✅ GET/POST /api/warroom/schedule
+- Etats: loading / error / empty
+
+### Campaigns (/marketing/campaigns, /marketing/campaigns/new, /marketing/campaigns/[id])
+- Entities: MarketingCampaign, CampaignStats
+- Endpoints:
+  - ✅ GET /api/marketing/campaigns
+  - ✅ POST /api/marketing/campaigns
+  - ✅ GET/PUT/DELETE /api/marketing/campaigns/[id]
+  - ✅ POST /api/marketing/campaigns/[id]/launch
+- Etats: loading / error / empty
+
+### Calendar (/marketing/calendar)
+- Entities: ContentItem
+- Endpoints:
+  - ✅ GET /api/content?status=...
+- Etats: loading / error / empty
+
+### Content Detail (/marketing/content/[id])
+- Entities: ContentItem
+- Endpoints:
+  - 🧪 GET /api/marketing-war-room/content/[id] (ENABLE_MOCK_DATA=1; real => MOCK_DISABLED)
+- Etats: loading / error / empty
+
+## Automations
+### Overview (/automations, /automations/flows)
+- Entities: AutomationFlow, AutomationStep, AutomationComparison
+- Endpoints:
+  - ✅ GET /api/automations
+  - ✅ GET /api/automations/analytics?type=compare
+- Etats: loading / error / empty
+
+### Automation Detail (/automations/[id])
+- Entities: AutomationFlow
+- Endpoints:
+  - ✅ GET /api/automations/[id]
+  - ✅ PUT /api/automations/[id]
+  - ✅ DELETE /api/automations/[id]
+- Etats: loading / error / empty
+
+### Automation Create (/automations/new)
+- Entities: AutomationFlow, AiAutomationDraft
+- Endpoints:
+  - ✅ POST /api/ai/automation-builder
+  - ✅ POST /api/automations
+- Etats: loading / error / empty
+
+### Automation Analytics (/automations/analytics)
+- Entities: AnalyticsSummary, ExecutionMetrics, trends, triggerBreakdown
+- Endpoints:
+  - ✅ GET /api/automations/analytics?type=summary&startDate=...&endDate=...
+  - ✅ GET /api/automations/analytics?type=compare
+- Etats: loading / error / empty
+
+### Templates (/automations/templates)
+- Entities: AutomationTemplate
+- Endpoints:
+  - ✅ GET /api/automations/templates - List pre-built templates
+  - ✅ POST /api/automations/templates - Use template to create automation
+- Etats: loading / error / empty
+
+## Offers
+### Overview (/offers)
+- Entities: Offer
+- Endpoints:
+  - ✅ GET /api/offers?limit=...&offset=...
+  - ✅ PUT /api/offers/[id]
+  - ✅ POST /api/offers/[id]/duplicate
+  - ✅ DELETE /api/offers/[id]
+- Etats: loading / error / empty
+
+### Create (/offers/new)
+- Entities: Offer
+- Endpoints:
+  - ✅ POST /api/offers
+- Etats: loading / error / empty
+
+### Edit (/offers/[id])
+- Entities: Offer
+- Endpoints:
+  - ✅ GET /api/offers/[id]
+  - ✅ PUT /api/offers/[id]
+- Etats: loading / error / empty
+
+### Analytics (/offers/analytics)
+- Entities: RedemptionMetrics, OfferComparison, trends
+- Endpoints:
+  - ✅ GET /api/offers/analytics?type=metrics|trends|compare
+  - ✅ POST /api/offers/analytics/export
+  - ✅ GET /api/offers (offer names)
+- Etats: loading / error / empty
+
+## Integrations
+### Overview (/integrations)
+- Entities: IntegrationStatus, ConnectedAccount
+- Endpoints:
+  - ✅ GET /api/integrations/status
+  - ✅ POST /api/integrations/connect/[provider]
+  - ✅ DELETE /api/integrations/disconnect/[provider]/[accountId]
+  - ✅ GET /api/csrf/token (CSRF)
+- Etats: loading / error / empty
+
+## Settings
+### Settings (/settings)
+- Entities: UserProfile, OFStatus
+- Endpoints:
+  - ✅ GET /api/users/profile
+  - ✅ POST/PUT /api/users/profile
+  - ✅ GET /api/of/status
+- Etats: loading / error / empty
+
+### Billing (/billing)
+- Entities: PricingPlan
+- Endpoints:
+  - ⏳ TODO: billing endpoints (static for now)
+- Etats: static
+
+### Profile (/profile)
+- Entities: UserProfile
+- Endpoints:
+  - ✅ GET /api/users/profile (if wired)
+- Etats: loading / error / empty

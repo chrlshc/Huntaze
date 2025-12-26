@@ -22,26 +22,15 @@ export const SmoothTransition: React.FC<SmoothTransitionProps> = ({
   minHeight,
   className = ''
 }) => {
-  const [showContent, setShowContent] = useState(!isLoading);
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number | undefined>();
 
-  useEffect(() => {
-    if (!isLoading) {
-      // Delay showing content slightly for smooth fade
-      const timer = setTimeout(() => setShowContent(true), 50);
-      return () => clearTimeout(timer);
-    } else {
-      setShowContent(false);
-    }
-  }, [isLoading]);
-
   // Measure content height to prevent layout shift
   useEffect(() => {
-    if (contentRef.current && showContent) {
+    if (contentRef.current && !isLoading) {
       setContentHeight(contentRef.current.offsetHeight);
     }
-  }, [showContent, children]);
+  }, [children, isLoading]);
 
   const style: React.CSSProperties = {
     minHeight: minHeight || (contentHeight ? `${contentHeight}px` : undefined),

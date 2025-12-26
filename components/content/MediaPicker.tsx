@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 
@@ -31,16 +31,12 @@ export default function MediaPicker({
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchMedia();
-  }, [filterType]);
-
-  const fetchMedia = async () => {
+  const runFetch = useCallback(async (query: string) => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
       if (filterType !== 'all') params.append('type', filterType);
-      if (searchTerm) params.append('search', searchTerm);
+      if (query) params.append('search', query);
 
       const response = await fetch(`/api/content/media?${params}`, {
         headers: {
@@ -57,7 +53,15 @@ export default function MediaPicker({
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterType]);
+
+  const fetchMedia = useCallback(() => {
+    runFetch(searchTerm);
+  }, [runFetch, searchTerm]);
+
+  useEffect(() => {
+    runFetch('');
+  }, [runFetch]);
 
   const toggleSelection = (mediaId: string) => {
     const newSelection = new Set(selectedMedia);

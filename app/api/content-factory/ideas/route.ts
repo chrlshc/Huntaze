@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 interface IdeasRequest {
   niche: string;
@@ -48,6 +49,16 @@ const IDEA_TEMPLATES: Record<string, Record<string, Idea[]>> = {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json({
+        ideas: [],
+        metadata: {
+          lastUpdated: new Date().toISOString(),
+          source: 'empty',
+        },
+      });
+    }
+
     const body: IdeasRequest = await request.json();
     const { niche, goal, count = 10 } = body;
 

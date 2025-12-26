@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   ChevronLeftIcon, 
@@ -30,18 +30,10 @@ export const SmartNavigation: React.FC<SmartNavigationProps> = ({
   canGoForward = true,
   isLoading = false
 }) => {
-  const [showWarning, setShowWarning] = useState(false);
-  const [warningMessage, setWarningMessage] = useState('');
-
-  useEffect(() => {
-    // Show warning if user might struggle with next step
-    if (predictions?.successProbability < 0.5 && canGoForward) {
-      setShowWarning(true);
-      setWarningMessage('You might want to review this step before continuing.');
-    } else {
-      setShowWarning(false);
-    }
-  }, [predictions, canGoForward]);
+  const showWarning = Boolean(predictions?.successProbability < 0.5 && canGoForward);
+  const warningMessage = showWarning
+    ? 'You might want to review this step before continuing.'
+    : '';
 
   const handleNavigation = (direction: 'next' | 'previous') => {
     onInteraction('navigation_clicked', { 

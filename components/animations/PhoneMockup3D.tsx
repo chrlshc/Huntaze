@@ -40,7 +40,7 @@ interface IPhoneModelProps {
 function IPhoneModel({ scrollProgress }: IPhoneModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const [currentApp, setCurrentApp] = useState(0);
+  const currentApp = Math.floor(scrollProgress * 3) % 3;
   
   // Load placeholder textures (we'll create actual mockup images later)
   const textures = [
@@ -63,12 +63,6 @@ function IPhoneModel({ scrollProgress }: IPhoneModelProps) {
       groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.05;
     }
   });
-
-  // Change app based on scroll position
-  useEffect(() => {
-    const appIndex = Math.floor(scrollProgress * 3) % 3;
-    setCurrentApp(appIndex);
-  }, [scrollProgress]);
 
   return (
     <Float

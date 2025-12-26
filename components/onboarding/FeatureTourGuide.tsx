@@ -75,13 +75,15 @@ export default function FeatureTourGuide({
   }, [currentStep]);
 
   useEffect(() => {
-    updateTooltipPosition();
-    window.addEventListener('resize', updateTooltipPosition);
-    window.addEventListener('scroll', updateTooltipPosition);
+    const handlePositionUpdate = () => updateTooltipPosition();
+    const rafId = requestAnimationFrame(handlePositionUpdate);
+    window.addEventListener('resize', handlePositionUpdate);
+    window.addEventListener('scroll', handlePositionUpdate);
 
     return () => {
-      window.removeEventListener('resize', updateTooltipPosition);
-      window.removeEventListener('scroll', updateTooltipPosition);
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', handlePositionUpdate);
+      window.removeEventListener('scroll', handlePositionUpdate);
       
       // Remove highlight from all elements
       document.querySelectorAll('.tour-highlight').forEach(el => {

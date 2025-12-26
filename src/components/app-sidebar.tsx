@@ -170,6 +170,7 @@ export default function AppSidebar() {
   useEffect(() => {
     if (!drawerOpen) return;
     const prevFocused = document.activeElement as HTMLElement | null;
+    const focusTarget = openBtnRef.current;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setDrawerOpen(false);
     };
@@ -180,7 +181,7 @@ export default function AppSidebar() {
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
-      (openBtnRef.current ?? prevFocused)?.focus();
+      (focusTarget ?? prevFocused)?.focus();
     };
   }, [drawerOpen]);
 

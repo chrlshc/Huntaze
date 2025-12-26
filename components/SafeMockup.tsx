@@ -1,7 +1,8 @@
 'use client';
 import dynamic from 'next/dynamic';
-import { useEffect, useState, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { DebugWrapper } from './DebugWrapper';
+import { useIsClient } from '@/hooks/useIsClient';
 
 // Dynamic imports for mockups to avoid SSR issues
 const DynamicIPhoneMockup = dynamic(
@@ -54,11 +55,7 @@ interface SafeMockupProps {
 }
 
 export function SafeMockup({ type, children, className = '', scale }: SafeMockupProps) {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsClient();
 
   if (!mounted) {
     return <MockupSkeleton type={type} />;
@@ -79,11 +76,7 @@ export function SafeMockup({ type, children, className = '', scale }: SafeMockup
 export const SafeDeviceShowcase = dynamic(
   () => import('./CSSMockups').then(mod => ({ 
     default: function Wrapper(props: any) {
-      const [mounted, setMounted] = useState(false);
-      
-      useEffect(() => {
-        setMounted(true);
-      }, []);
+      const mounted = useIsClient();
 
       if (!mounted) {
         return (

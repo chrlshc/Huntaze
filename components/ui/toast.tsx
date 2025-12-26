@@ -52,8 +52,9 @@ export function ToastProvider({ children }: PropsWithChildren) {
   );
 
   useEffect(() => {
+    const timeoutsMap = timeouts.current;
     return () => {
-      Object.values(timeouts.current).forEach(clearTimeout);
+      Object.values(timeoutsMap).forEach(clearTimeout);
     };
   }, []);
 

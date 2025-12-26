@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 
 interface ExecutionMetrics {
   totalExecutions: number;
@@ -45,6 +46,16 @@ interface AnalyticsSummary {
   topAutomations: AutomationComparison[];
 }
 
+interface AnalyticsSummaryApi extends Omit<AnalyticsSummary, 'topAutomations'> {
+  topAutomations?: AutomationComparison[];
+  topPerformers?: Array<{
+    automationId: string;
+    name: string;
+    metrics: ExecutionMetrics;
+    rank?: number;
+  }>;
+}
+
 type TimeRange = '7d' | '30d' | '90d';
 
 export function AutomationAnalytics() {
@@ -60,14 +71,59 @@ export function AutomationAnalytics() {
       setError(null);
 
       try {
-        const response = await fetch(`/api/automations/analytics?timeRange=${timeRange}`);
-        const data = await response.json();
+        const emptyMetrics: ExecutionMetrics = {
+          totalExecutions: 0,
+          successCount: 0,
+          failedCount: 0,
+          partialCount: 0,
+          successRate: 0,
+          averageStepsExecuted: 0,
+        };
 
-        if (data.success) {
-          setAnalytics(data.data);
-        } else {
-          setError(data.error || 'Failed to load analytics');
+        const endDate = new Date();
+        const startDate = new Date(endDate);
+        const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
+        startDate.setDate(endDate.getDate() - days);
+
+        const params = new URLSearchParams({
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+          type: 'summary',
+        });
+
+        const data = await internalApiFetch<
+          AnalyticsSummaryApi | { success: boolean; data?: AnalyticsSummaryApi; error?: string }
+        >(`/api/automations/analytics?${params.toString()}`);
+
+        const rawSummary =
+          typeof data === 'object' && data !== null && 'success' in data ? data.data : data;
+
+        if (!rawSummary) {
+          setAnalytics(null);
+          setError('Failed to load analytics');
+          return;
         }
+
+        if (typeof data === 'object' && data !== null && 'success' in data && !data.success) {
+          setError(data.error || 'Failed to load analytics');
+          return;
+        }
+
+        const topAutomations =
+          rawSummary.topAutomations ??
+          (rawSummary.topPerformers ?? []).map((automation) => ({
+            automationId: automation.automationId,
+            name: automation.name,
+            executions: automation.metrics?.totalExecutions ?? 0,
+            successRate: automation.metrics?.successRate ?? 0,
+          }));
+
+        setAnalytics({
+          metrics: rawSummary.metrics ?? emptyMetrics,
+          trends: rawSummary.trends ?? [],
+          triggerBreakdown: rawSummary.triggerBreakdown ?? [],
+          topAutomations,
+        });
       } catch (err) {
         console.error('Error fetching analytics:', err);
         setError('Failed to connect to analytics service');

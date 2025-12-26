@@ -6,9 +6,9 @@
  * Manages campaign data fetching and mutations
  */
 
-import useSWR from 'swr';
 import { useState } from 'react';
 import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { useInternalSWR } from '@/lib/swr';
 
 export type CampaignStatus = 'draft' | 'scheduled' | 'active' | 'paused' | 'completed';
 export type CampaignChannel = 'email' | 'dm' | 'sms' | 'push';
@@ -84,7 +84,7 @@ type CampaignListResponse = {
   };
 };
 
-const fetcher = <T,>(url: string) => internalApiFetch<T>(url);
+const fetchCampaigns = (url: string) => internalApiFetch<ApiEnvelope<CampaignListResponse>>(url);
 
 function normalizeRate(value: unknown): number {
   const n = typeof value === 'number' ? value : 0;
@@ -150,9 +150,9 @@ export function useMarketingCampaigns(options: UseMarketingCampaignsOptions) {
   params.set('limit', String(limit));
   params.set('offset', String(offset));
 
-  const { data, error, mutate } = useSWR<ApiEnvelope<CampaignListResponse>>(
+  const { data, error, mutate } = useInternalSWR<ApiEnvelope<CampaignListResponse>>(
     `/api/marketing/campaigns?${params.toString()}`,
-    fetcher<ApiEnvelope<CampaignListResponse>>,
+    fetchCampaigns,
     { refreshInterval: 30000, revalidateOnFocus: true }
   );
 

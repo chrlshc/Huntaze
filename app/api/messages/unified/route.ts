@@ -1,50 +1,36 @@
 import { NextRequest } from 'next/server';
-import { getServerSession } from '@/lib/auth';
-import type { MessageThread, UnifiedMessagesResponse } from '@/lib/types/messages';
+import { ConversationsRepository } from '@/lib/db/repositories';
+import { getPool } from '@/lib/db';
+import type { MessagePlatform, MessageThread, UnifiedMessagesResponse } from '@/lib/types/messages';
+import { resolveUserId } from '@/app/api/crm/_lib/auth';
 
-/**
- * GET /api/messages/unified
- * 
- * Aggregate messages from all platforms (OnlyFans, Instagram, TikTok, Reddit, Fansly)
- * 
- * Query Parameters:
- * - creatorId (required): string - Creator ID
- * - platform (optional): 'onlyfans' | 'instagram' | 'tiktok' | 'reddit' | 'fansly'
- * - filter (optional): 'unread' | 'starred' | 'all'
- * - limit (optional): number - Max threads to return (default: 50, max: 100)
- * - offset (optional): number - Pagination offset (default: 0)
- * 
- * Response: UnifiedMessagesResponse
- * {
- *   threads: MessageThread[],
- *   stats: {
- *     totalUnread: number,
- *     byPlatform: { [platform]: number }
- *   }
- * }
- * 
- * Errors:
- * - 400: Invalid parameters
- * - 401: Unauthorized (no session)
- * - 403: Forbidden (not your data)
- * - 429: Rate limit exceeded
- * - 500: Server error
- */
+const VALID_PLATFORMS: MessagePlatform[] = ['onlyfans', 'instagram', 'tiktok', 'reddit', 'fansly'];
+
+function normalizePlatform(value?: string | null): MessagePlatform {
+  const normalized = (value || '').toLowerCase();
+  if (normalized === 'instagram') return 'instagram';
+  if (normalized === 'tiktok') return 'tiktok';
+  if (normalized === 'reddit') return 'reddit';
+  if (normalized === 'fansly') return 'fansly';
+  return 'onlyfans';
+}
+
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
-  const correlationId = request.headers.get('X-Correlation-ID') || `msg-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+  const correlationId =
+    request.headers.get('X-Correlation-ID') ||
+    `msg-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 
   try {
-    // 1. Authentication check
-    const session = await getServerSession();
-    
-    if (!session?.user?.id) {
+    const { userId } = await resolveUserId(request);
+
+    if (!userId) {
       console.warn('[API] Unified messages - Unauthorized access attempt:', {
         correlationId,
         timestamp: new Date().toISOString(),
       });
       return Response.json(
-        { 
+        {
           error: 'Unauthorized',
           correlationId,
         },
@@ -52,22 +38,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 2. Parse and validate parameters
     const { searchParams } = new URL(request.url);
     const creatorId = searchParams.get('creatorId');
     const platform = searchParams.get('platform');
     const filter = searchParams.get('filter');
-    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100); // Max 100
-    const offset = Math.max(parseInt(searchParams.get('offset') || '0'), 0); // Min 0
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
+    const offset = Math.max(parseInt(searchParams.get('offset') || '0', 10), 0);
 
-    // Validation
     if (!creatorId) {
       console.warn('[API] Unified messages - Missing creatorId:', {
         correlationId,
         timestamp: new Date().toISOString(),
       });
       return Response.json(
-        { 
+        {
           error: 'creatorId is required',
           correlationId,
         },
@@ -75,9 +59,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (platform && !['onlyfans', 'instagram', 'tiktok', 'reddit', 'fansly'].includes(platform)) {
+    if (platform && !VALID_PLATFORMS.includes(platform as MessagePlatform)) {
       return Response.json(
-        { 
+        {
           error: 'Invalid platform. Must be: onlyfans, instagram, tiktok, reddit, or fansly',
           correlationId,
         },
@@ -87,7 +71,7 @@ export async function GET(request: NextRequest) {
 
     if (filter && !['unread', 'starred', 'all'].includes(filter)) {
       return Response.json(
-        { 
+        {
           error: 'Invalid filter. Must be: unread, starred, or all',
           correlationId,
         },
@@ -95,16 +79,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 3. Authorization check
-    if (session.user.id !== creatorId) {
+    if (String(userId) !== creatorId) {
       console.warn('[API] Unified messages - Forbidden access attempt:', {
-        userId: session.user.id,
+        userId,
         requestedCreatorId: creatorId,
         correlationId,
         timestamp: new Date().toISOString(),
       });
       return Response.json(
-        { 
+        {
           error: 'Forbidden',
           correlationId,
         },
@@ -112,7 +95,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 4. Log request
     console.log('[API] Unified messages request:', {
       creatorId,
       platform: platform || 'all',
@@ -123,203 +105,202 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
 
-    // TODO: Replace with actual backend service calls
-    // Fetch from OnlyFans, Instagram, TikTok, Reddit in parallel
-    // const [ofMessages, igMessages, ttMessages, rdMessages] = await Promise.all([
-    //   backendOnlyFansService.getMessages(creatorId),
-    //   backendInstagramService.getMessages(creatorId),
-    //   backendTikTokService.getMessages(creatorId),
-    //   backendRedditService.getMessages(creatorId),
-    // ]);
+    const rawConversations = await ConversationsRepository.listConversations(userId);
 
-    // Mock data
-    const mockThreads: MessageThread[] = [
-      {
-        id: 'thread_1',
-        platform: 'onlyfans',
-        sender: {
-          id: 'user_1',
-          name: 'Sarah M.',
-          username: '@sarah_m',
-          avatar: 'https://i.pravatar.cc/150?img=1',
-          platform: 'onlyfans',
-          tier: 'VIP',
-        },
-        lastMessage: {
-          id: 'msg_1',
-          threadId: 'thread_1',
-          platform: 'onlyfans',
-          sender: {
-            id: 'user_1',
-            name: 'Sarah M.',
-            username: '@sarah_m',
-            platform: 'onlyfans',
-            tier: 'VIP',
-          },
-          content: 'Hey! Love your latest content 😍',
-          status: 'unread',
-          priority: 'high',
-          timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-        },
-        unreadCount: 2,
-        messageCount: 15,
-        status: 'unread',
-        priority: 'high',
-        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
-        updatedAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-      },
-      {
-        id: 'thread_2',
-        platform: 'instagram',
-        sender: {
-          id: 'user_2',
-          name: 'Mike R.',
-          username: '@mike_r',
-          avatar: 'https://i.pravatar.cc/150?img=2',
-          platform: 'instagram',
-        },
-        lastMessage: {
-          id: 'msg_2',
-          threadId: 'thread_2',
-          platform: 'instagram',
-          sender: {
-            id: 'user_2',
-            name: 'Mike R.',
-            username: '@mike_r',
-            platform: 'instagram',
-          },
-          content: 'When is your next post?',
-          status: 'read',
-          priority: 'normal',
-          timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-        },
-        unreadCount: 0,
-        messageCount: 8,
-        status: 'read',
-        priority: 'normal',
-        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
-        updatedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-      },
-      {
-        id: 'thread_3',
-        platform: 'tiktok',
-        sender: {
-          id: 'user_3',
-          name: 'Emma L.',
-          username: '@emma_l',
-          avatar: 'https://i.pravatar.cc/150?img=3',
-          platform: 'tiktok',
-        },
-        lastMessage: {
-          id: 'msg_3',
-          threadId: 'thread_3',
-          platform: 'tiktok',
-          sender: {
-            id: 'user_3',
-            name: 'Emma L.',
-            username: '@emma_l',
-            platform: 'tiktok',
-          },
-          content: 'Your videos are amazing! 🔥',
-          status: 'starred',
-          priority: 'normal',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-        },
-        unreadCount: 1,
-        messageCount: 5,
-        status: 'starred',
-        priority: 'normal',
-        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
-        updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-      },
-    ];
-
-    // Filter by platform if specified
-    let filteredThreads = platform
-      ? mockThreads.filter(t => t.platform === platform)
-      : mockThreads;
-
-    // Filter by status if specified
-    if (filter === 'unread') {
-      filteredThreads = filteredThreads.filter(t => t.unreadCount > 0);
-    } else if (filter === 'starred') {
-      filteredThreads = filteredThreads.filter(t => t.status === 'starred');
+    let filtered = rawConversations;
+    if (platform) {
+      filtered = filtered.filter(
+        (conversation) => normalizePlatform(conversation.platform) === platform
+      );
     }
 
-    // Sort by most recent
-    filteredThreads.sort((a, b) => 
-      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    if (filter === 'unread') {
+      filtered = filtered.filter((conversation) => (conversation.unreadCount || 0) > 0);
+    } else if (filter === 'starred') {
+      filtered = [];
+    }
+
+    const total = filtered.length;
+    const page = filtered.slice(offset, offset + limit);
+
+    const conversationIds = Array.from(
+      new Set(
+        page
+          .map((conversation) => Number(conversation.id))
+          .filter((value) => Number.isFinite(value))
+      )
+    );
+    const fanIds = Array.from(
+      new Set(
+        page
+          .map((conversation) => Number(conversation.fanId))
+          .filter((value) => Number.isFinite(value))
+      )
     );
 
-    // Pagination
-    const paginatedThreads = filteredThreads.slice(offset, offset + limit);
+    const lastMessageMap = new Map<
+      number,
+      { id: string; text: string | null; createdAt: string; direction: string }
+    >();
+    const messageCountMap = new Map<number, number>();
+    const fanMap = new Map<
+      number,
+      { id: number; name: string; handle?: string; avatar?: string | null; tags?: string[] }
+    >();
 
-    // Calculate stats
+    if (conversationIds.length > 0) {
+      const pool = getPool();
+      const [lastResult, countResult, fanResult] = await Promise.all([
+        pool.query(
+          `SELECT DISTINCT ON (conversation_id)
+            id,
+            conversation_id,
+            text,
+            created_at,
+            direction
+          FROM messages
+          WHERE user_id = $1 AND conversation_id = ANY($2::int[])
+          ORDER BY conversation_id, created_at DESC`,
+          [userId, conversationIds]
+        ),
+        pool.query(
+          `SELECT conversation_id, COUNT(*) as count
+           FROM messages
+           WHERE user_id = $1 AND conversation_id = ANY($2::int[])
+           GROUP BY conversation_id`,
+          [userId, conversationIds]
+        ),
+        fanIds.length > 0
+          ? pool.query(
+              `SELECT id, name, handle, avatar, tags
+               FROM fans
+               WHERE user_id = $1 AND id = ANY($2::int[])`,
+              [userId, fanIds]
+            )
+          : Promise.resolve({ rows: [] }),
+      ]);
+
+      for (const row of lastResult.rows) {
+        lastMessageMap.set(row.conversation_id, {
+          id: row.id,
+          text: row.text ?? null,
+          createdAt: row.created_at?.toISOString?.() ?? row.created_at,
+          direction: row.direction,
+        });
+      }
+
+      for (const row of countResult.rows) {
+        messageCountMap.set(row.conversation_id, parseInt(row.count, 10));
+      }
+
+      for (const row of fanResult.rows) {
+        fanMap.set(row.id, {
+          id: row.id,
+          name: row.name,
+          handle: row.handle || undefined,
+          avatar: row.avatar || undefined,
+          tags: Array.isArray(row.tags) ? row.tags : [],
+        });
+      }
+    }
+
+    const threads: MessageThread[] = page.map((conversation) => {
+      const conversationId = Number(conversation.id);
+      const fanId = Number(conversation.fanId);
+      const fan = fanMap.get(fanId);
+      const lastMessage = lastMessageMap.get(conversationId);
+      const platformValue = normalizePlatform(conversation.platform);
+      const unreadCount = conversation.unreadCount || 0;
+      const senderName = fan?.name || `Fan ${conversation.fanId}`;
+      const senderUsername = fan?.handle || senderName;
+      const lastMessageTimestamp =
+        lastMessage?.createdAt || conversation.lastMessageAt || conversation.updatedAt;
+      const isUnread = unreadCount > 0;
+
+      return {
+        id: String(conversation.id),
+        platform: platformValue,
+        sender: {
+          id: fan ? String(fan.id) : String(conversation.fanId),
+          name: senderName,
+          username: senderUsername,
+          avatar: fan?.avatar,
+          platform: platformValue,
+          tier: fan?.tags?.includes('VIP') ? 'VIP' : undefined,
+        },
+        lastMessage: {
+          id: lastMessage?.id || `msg-${conversation.id}`,
+          threadId: String(conversation.id),
+          platform: platformValue,
+          sender: {
+            id: fan ? String(fan.id) : String(conversation.fanId),
+            name: senderName,
+            username: senderUsername,
+            avatar: fan?.avatar,
+            platform: platformValue,
+            tier: fan?.tags?.includes('VIP') ? 'VIP' : undefined,
+          },
+          content: lastMessage?.text || '',
+          status: isUnread ? 'unread' : 'read',
+          priority: isUnread ? 'high' : 'normal',
+          timestamp: lastMessageTimestamp || new Date().toISOString(),
+        },
+        unreadCount,
+        messageCount: messageCountMap.get(conversationId) || 0,
+        status: isUnread ? 'unread' : 'read',
+        priority: isUnread ? 'high' : 'normal',
+        createdAt: conversation.createdAt,
+        updatedAt: conversation.updatedAt,
+      };
+    });
+
     const stats = {
-      totalUnread: mockThreads.reduce((sum, t) => sum + t.unreadCount, 0),
+      totalUnread: threads.reduce((sum, thread) => sum + thread.unreadCount, 0),
       byPlatform: {
-        onlyfans: mockThreads.filter(t => t.platform === 'onlyfans').reduce((sum, t) => sum + t.unreadCount, 0),
-        instagram: mockThreads.filter(t => t.platform === 'instagram').reduce((sum, t) => sum + t.unreadCount, 0),
-        tiktok: mockThreads.filter(t => t.platform === 'tiktok').reduce((sum, t) => sum + t.unreadCount, 0),
-        reddit: mockThreads.filter(t => t.platform === 'reddit').reduce((sum, t) => sum + t.unreadCount, 0),
-        fansly: mockThreads.filter(t => t.platform === 'fansly').reduce((sum, t) => sum + t.unreadCount, 0),
-      },
+        onlyfans: 0,
+        instagram: 0,
+        tiktok: 0,
+        reddit: 0,
+        fansly: 0,
+      } as Record<MessagePlatform, number>,
     };
+
+    for (const thread of threads) {
+      stats.byPlatform[thread.platform] += thread.unreadCount;
+    }
 
     const response: UnifiedMessagesResponse = {
-      threads: paginatedThreads,
+      threads,
       stats,
       metadata: {
-        total: filteredThreads.length,
+        total,
         limit,
         offset,
-        hasMore: offset + limit < filteredThreads.length,
+        hasMore: offset + threads.length < total,
       },
     };
 
-    // 5. Log successful response
     const duration = Date.now() - startTime;
     console.log('[API] Unified messages response:', {
-      creatorId,
-      threadsReturned: paginatedThreads.length,
+      correlationId,
+      threadsCount: threads.length,
       totalUnread: stats.totalUnread,
-      duration: `${duration}ms`,
-      correlationId,
-      timestamp: new Date().toISOString(),
+      duration,
     });
 
-    return Response.json(response, {
-      headers: {
-        'X-Correlation-ID': correlationId,
-        'X-Response-Time': `${duration}ms`,
-      },
-    });
+    return Response.json(response);
   } catch (error) {
-    const duration = Date.now() - startTime;
-    
-    // 6. Enhanced error logging
     console.error('[API] Unified messages error:', {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error instanceof Error ? error.message : 'Unknown error',
       correlationId,
-      duration: `${duration}ms`,
-      timestamp: new Date().toISOString(),
     });
 
-    // 7. User-friendly error response
     return Response.json(
-      { 
-        error: 'Failed to fetch messages. Please try again.',
-        message: error instanceof Error ? error.message : 'Internal server error',
+      {
+        error: 'Internal server error',
         correlationId,
       },
-      { 
-        status: 500,
-        headers: {
-          'X-Correlation-ID': correlationId,
-          'X-Response-Time': `${duration}ms`,
-        },
-      }
+      { status: 500 }
     );
   }
 }

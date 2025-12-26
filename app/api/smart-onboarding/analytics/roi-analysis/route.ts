@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { assertMockEnabled } from '@/lib/config/mock-data';
 // Facade-free minimal implementation (no heavy imports)
 
 export async function GET(request: NextRequest) {
+  const mockDisabled = assertMockEnabled('/api/smart-onboarding/analytics/roi-analysis');
+  if (mockDisabled) return mockDisabled;
+
   try {
     const { searchParams } = new URL(request.url);
     const timeRange = searchParams.get('timeRange') || '30d';

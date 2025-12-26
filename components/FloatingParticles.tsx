@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface Particle {
@@ -14,9 +14,7 @@ interface Particle {
 }
 
 export default function FloatingParticles() {
-  const [particles, setParticles] = useState<Particle[]>([]);
-
-  useEffect(() => {
+  const [particles] = useState<Particle[]>(() => {
     const colors = ['#8b5cf6', 'var(--accent-primary)', 'var(--accent-primary)', '#d946ef', '#c084fc'];
     const newParticles: Particle[] = [];
 
@@ -32,8 +30,8 @@ export default function FloatingParticles() {
       });
     }
 
-    setParticles(newParticles);
-  }, []);
+    return newParticles;
+  });
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">

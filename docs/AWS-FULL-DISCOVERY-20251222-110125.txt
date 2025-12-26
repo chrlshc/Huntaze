@@ -282,3 +282,30 @@
 → Secrets Manager...
   ○ Aucun
 → VPCs...
+  📦        1 VPCs
+    • vpc-0336c485872cc1277	True	None
+
+  📊 Total région ap-northeast-1: 1 ressources
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RESSOURCES GLOBALES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+→ IAM Users...
+  📦        1 users
+    • huntaze
+→ IAM Roles (huntaze/kiro)...
+  📦        3 roles
+    • AmplifyServiceRole-Huntaze	AmplifySSRComputeRole-Huntaze-Prod	HuntazeEventBridgeInvokeApiDestination
+→ S3 Buckets...
+  ○ Aucun
+→ CloudFront Distributions...
+  📦        1 distributions
+    • None
+→ Amplify Apps (us-east-1)...
+  ○ Aucune
+
+═══════════════════════════════════════════════════════════
+  📊 TOTAL GLOBAL: 24 ressources
+═══════════════════════════════════════════════════════════
+
+✅ Découverte terminée

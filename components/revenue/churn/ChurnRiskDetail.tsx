@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { ChurnRiskFan, EngagementDataPoint } from '@/lib/services/revenue/types';
 import { Button } from "@/components/ui/button";
 
@@ -19,6 +20,7 @@ export function ChurnRiskDetail({
   recommendedActions,
   onClose
 }: ChurnRiskDetailProps) {
+  const [now] = useState(() => Date.now());
   // Handle ESC key to close modal
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -52,9 +54,9 @@ export function ChurnRiskDetail({
     });
   };
 
-  const daysUntilChurn = Math.ceil(
-    (new Date(predictedChurnDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
+  const daysUntilChurn = now === null
+    ? null
+    : Math.ceil((predictedChurnDate.getTime() - now) / (1000 * 60 * 60 * 24));
 
   return (
     <div
@@ -72,9 +74,11 @@ export function ChurnRiskDetail({
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-4">
             {fan.avatar ? (
-              <img
+              <Image
                 src={fan.avatar}
                 alt={fan.name}
+                width={48}
+                height={48}
                 className="w-12 h-12 rounded-full object-cover"
               />
             ) : (
@@ -117,7 +121,7 @@ export function ChurnRiskDetail({
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">Predicted Churn</div>
               <div className="text-2xl font-bold text-gray-900">
-                {daysUntilChurn > 0 ? `${daysUntilChurn}d` : 'Overdue'}
+                {daysUntilChurn === null ? '—' : daysUntilChurn > 0 ? `${daysUntilChurn}d` : 'Overdue'}
               </div>
               <div className="text-xs text-gray-500 mt-1">
                 {formatDate(predictedChurnDate)}

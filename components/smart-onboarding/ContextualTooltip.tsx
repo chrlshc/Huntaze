@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Button } from "@/components/ui/button";
@@ -36,28 +36,16 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
   const [actualPosition, setActualPosition] = useState<'top' | 'bottom' | 'left' | 'right'>('top');
   const tooltipRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (isVisible && targetElement) {
-      calculatePosition();
-      onInteraction('contextual_tooltip_shown', { 
-        content: content.message.substring(0, 50),
-        type: content.type,
-        position: actualPosition
-      });
-    }
-  }, [isVisible, targetElement, content, actualPosition, onInteraction]);
+  const handleDismiss = useCallback(() => {
+    onInteraction('contextual_tooltip_dismissed', { 
+      content: content.message.substring(0, 50),
+      type: content.type,
+      position: actualPosition
+    });
+    if (onDismiss) onDismiss();
+  }, [actualPosition, content, onDismiss, onInteraction]);
 
-  useEffect(() => {
-    if (isVisible && autoHide) {
-      const timer = setTimeout(() => {
-        handleDismiss();
-      }, autoHideDelay);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isVisible, autoHide, autoHideDelay]);
-
-  const calculatePosition = () => {
+  const calculatePosition = useCallback(() => {
     if (!targetElement || !tooltipRef.current) return;
 
     const targetRect = targetElement.getBoundingClientRect();
@@ -120,16 +108,30 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
 
     setTooltipPosition({ x, y });
     setActualPosition(finalPosition);
-  };
+  }, [position, targetElement]);
 
-  const handleDismiss = () => {
-    onInteraction('contextual_tooltip_dismissed', { 
-      content: content.message.substring(0, 50),
-      type: content.type,
-      position: actualPosition
+  useEffect(() => {
+    if (!isVisible || !targetElement) return;
+    const rafId = requestAnimationFrame(() => {
+      calculatePosition();
+      onInteraction('contextual_tooltip_shown', { 
+        content: content.message.substring(0, 50),
+        type: content.type,
+        position: actualPosition
+      });
     });
-    if (onDismiss) onDismiss();
-  };
+    return () => cancelAnimationFrame(rafId);
+  }, [actualPosition, calculatePosition, content, isVisible, onInteraction, targetElement]);
+
+  useEffect(() => {
+    if (isVisible && autoHide) {
+      const timer = setTimeout(() => {
+        handleDismiss();
+      }, autoHideDelay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [autoHide, autoHideDelay, handleDismiss, isVisible]);
 
   const getColorClasses = () => {
     switch (content.type) {

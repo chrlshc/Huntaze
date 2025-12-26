@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,20 +17,20 @@ export async function POST(request: NextRequest) {
       redirect_uri: process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI!,
     });
 
-    console.log('Testing token exchange with:', {
-      url: tokenUrl,
-      params: Object.fromEntries(params)
-    });
-
-    const response = await fetch(tokenUrl, {
+    const response = await externalFetch(tokenUrl, {
+      service: 'tiktok',
+      operation: 'oauth.sandbox.exchange',
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: params,
+      body: params.toString(),
+      timeoutMs: 10_000,
+      retry: { maxRetries: 0, retryMethods: [] },
+      cache: 'no-store',
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
     
     return NextResponse.json({
       status: response.status,
@@ -36,6 +38,10 @@ export async function POST(request: NextRequest) {
       headers: Object.fromEntries(response.headers.entries())
     });
   } catch (error) {
+    if (isExternalServiceError(error)) {
+      const status = error.code === 'TIMEOUT' ? 504 : 502;
+      return NextResponse.json({ error: 'TikTok sandbox request failed', code: error.code }, { status });
+    }
     return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }

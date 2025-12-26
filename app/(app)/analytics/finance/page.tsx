@@ -13,6 +13,7 @@ import { useState } from 'react';
 import useSWR from 'swr';
 import { PageLayout } from '@/components/ui/PageLayout';
 import { ShopifyCard } from '@/components/ui/shopify/ShopifyCard';
+import { ShopifyEmptyState } from '@/components/ui/shopify/ShopifyEmptyState';
 import { DateRangeSelector } from '../components/DateRangeSelector';
 import { RevenueBreakdown } from '../components/RevenueBreakdown';
 import { AIMetricsCard } from '../components/AIMetricsCard';
@@ -21,7 +22,7 @@ import { fetchFinanceData, getErrorMessage } from '@/lib/dashboard/api';
 import { formatCurrency } from '@/lib/dashboard/formatters';
 import { IndexTable, Column } from '@/components/ui/IndexTable';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Users } from 'lucide-react';
+import { AlertTriangle, Users, Wallet } from 'lucide-react';
 import type { DateRange } from '@/lib/dashboard/types';
 
 interface Whale {
@@ -45,8 +46,8 @@ export default function FinancePage() {
 
   // Export period formatting
   const exportPeriod = useExportPeriod(
-    dateRange.type === 'custom' ? dateRange.from : undefined,
-    dateRange.type === 'custom' ? dateRange.to : undefined
+    dateRange.type === 'custom' ? new Date(dateRange.from) : undefined,
+    dateRange.type === 'custom' ? new Date(dateRange.to) : undefined
   );
 
   // Fetch data with SWR (Requirement 2.2)
@@ -118,22 +119,14 @@ export default function FinancePage() {
         actions={<DateRangeSelector value={dateRange} onChange={setDateRange} />}
       >
         <div className="flex items-center justify-center h-[400px]">
-          <div className="text-center">
-            <div className="text-4xl mb-4">⚠️</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Data temporarily unavailable
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              {getErrorMessage(error)}
-            </p>
-            <button
-              type="button"
-              onClick={() => void mutate()}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
+          <ShopifyCard className="w-full max-w-2xl">
+            <ShopifyEmptyState
+              icon={AlertTriangle}
+              title="Data temporarily unavailable"
+              description={getErrorMessage(error)}
+              action={{ label: 'Retry', onClick: () => void mutate() }}
+            />
+          </ShopifyCard>
         </div>
       </PageLayout>
     );
@@ -154,22 +147,14 @@ export default function FinancePage() {
         actions={<DateRangeSelector value={dateRange} onChange={setDateRange} />}
       >
         <div className="flex items-center justify-center h-[400px]">
-          <div className="text-center">
-            <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No data for selected period
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Try selecting a different date range
-            </p>
-            <button
-              type="button"
-              onClick={() => void mutate()}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
+          <ShopifyCard className="w-full max-w-2xl">
+            <ShopifyEmptyState
+              icon={Wallet}
+              title="No data for selected period"
+              description="Try selecting a different date range"
+              action={{ label: 'Retry', onClick: () => void mutate() }}
+            />
+          </ShopifyCard>
         </div>
       </PageLayout>
     );

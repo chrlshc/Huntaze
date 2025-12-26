@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
+import { auth } from '@/lib/auth/config';
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -14,6 +15,11 @@ export async function GET(
   { params }: { params: Promise<{ jobId: string }> }
 ) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { jobId } = await params;
 
     if (!jobId) {
@@ -28,8 +34,8 @@ export async function GET(
       const result = await pool.query(
         `SELECT id, status, progress, created_content_ids, error, created_at, updated_at
          FROM production_jobs 
-         WHERE id = $1`,
-        [jobId]
+         WHERE id = $1 AND user_id = $2`,
+        [jobId, session.user.id]
       );
 
       if (result.rows.length > 0) {

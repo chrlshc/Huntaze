@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { auth } from '@/lib/auth/config';
 
 const REGION = process.env.AWS_REGION || 'us-east-1';
 const BUCKET = process.env.S3_BUCKET || 'huntaze-videos-production';
@@ -15,6 +16,11 @@ interface PresignedUrlRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body: PresignedUrlRequest = await request.json();
     const { fileName, contentType, fileSize } = body;
 

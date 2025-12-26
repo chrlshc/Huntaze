@@ -144,25 +144,16 @@ async function fetchDashboardData(
   correlationId: string
 ): Promise<any> {
   try {
-    const response = await fetchWithRetry(url, {
+    const data = await fetchWithRetry(url, {
       method: 'GET',
       headers,
     });
-
-    if (!response.ok) {
-      logger.warn('Dashboard data fetch failed', {
-        url,
-        status: response.status,
-        correlationId,
-      });
-      return null;
-    }
-
-    return await response.json();
+    return data;
   } catch (error) {
-    logger.error('Dashboard data fetch error', error as Error, {
+    logger.warn('Dashboard data fetch failed', {
       url,
       correlationId,
+      error: error instanceof Error ? error.message : String(error),
     });
     return null;
   }

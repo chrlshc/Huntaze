@@ -10,7 +10,7 @@ import Link from 'next/link';
 import useSWR from 'swr';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { DashboardErrorState, DashboardLoadingState } from '@/components/ui/DashboardLoadingState';
-import { 
+import {
   Plus, 
   Tag, 
   Percent, 
@@ -29,7 +29,8 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import type { Offer, OfferStatus, DiscountType } from '@/lib/offers/types';
-import { standardFetcher } from '@/lib/swr';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { offersListResponseSchema } from '@/lib/schemas/api-responses';
 
 type FilterStatus = 'all' | OfferStatus;
 
@@ -382,7 +383,10 @@ export default function OffersPage() {
 
   const { data, error, isLoading, mutate } = useSWR<OffersListResponse>(
     '/api/offers?limit=100&offset=0',
-    standardFetcher,
+    (url: string) =>
+      internalApiFetch<OffersListResponse>(url, {
+        schema: offersListResponseSchema,
+      }),
   );
 
   const offers = (data?.offers ?? []).map(normalizeOffer);
@@ -392,14 +396,6 @@ export default function OffersPage() {
     total: offers.length,
     active: offers.filter(o => o.status === 'active').length,
     totalRedemptions: offers.reduce((sum, o) => sum + o.redemptionCount, 0),
-  };
-
-  const getResponseErrorMessage = async (response: Response) => {
-    const payload = await response.json().catch(() => null);
-    if (payload && typeof payload === 'object' && 'error' in payload) {
-      return String((payload as any).error);
-    }
-    return `Request failed (${response.status})`;
   };
 
   const runAction = async (action: () => Promise<void>) => {
@@ -425,35 +421,25 @@ export default function OffersPage() {
   const handleToggleStatus = (offer: Offer) => {
     void runAction(async () => {
       const newStatus: OfferStatus = offer.status === 'active' ? 'draft' : 'active';
-      const response = await fetch(`/api/offers/${offer.id}`, {
+      await internalApiFetch(`/api/offers/${offer.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
+        body: { status: newStatus },
       });
-      if (!response.ok) {
-        throw new Error(await getResponseErrorMessage(response));
-      }
     });
   };
 
   const handleDuplicate = (offer: Offer) => {
     void runAction(async () => {
-      const response = await fetch(`/api/offers/${offer.id}/duplicate`, {
+      await internalApiFetch(`/api/offers/${offer.id}/duplicate`, {
         method: 'POST',
       });
-      if (!response.ok) {
-        throw new Error(await getResponseErrorMessage(response));
-      }
     });
   };
 
   const handleDelete = (offerId: string) => {
     if (!confirm('Are you sure you want to delete this offer?')) return;
     void runAction(async () => {
-      const response = await fetch(`/api/offers/${offerId}`, { method: 'DELETE' });
-      if (!response.ok) {
-        throw new Error(await getResponseErrorMessage(response));
-      }
+      await internalApiFetch(`/api/offers/${offerId}`, { method: 'DELETE' });
     });
   };
 

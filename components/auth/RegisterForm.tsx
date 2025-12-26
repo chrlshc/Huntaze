@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
+import { startOnboarding } from '@/lib/services/onboarding';
 
 export function RegisterForm() {
   const router = useRouter();
@@ -35,10 +36,7 @@ export function RegisterForm() {
 
       // Initialize onboarding for new user
       try {
-        await fetch('/api/onboarding/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        });
+        await startOnboarding();
       } catch (onboardingError) {
         console.error('Failed to initialize onboarding:', onboardingError);
         // Continue anyway - user can start onboarding later

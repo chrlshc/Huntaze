@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { X, ExternalLink, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Button } from "@/components/ui/button";
+import { useIsClient } from '@/hooks/useIsClient';
 
 interface Feature {
   id: string;
@@ -24,12 +25,10 @@ export default function FeatureUnlockModal({
   isOpen, 
   onClose 
 }: FeatureUnlockModalProps) {
-  const [isAnimating, setIsAnimating] = useState(false);
+  const isAnimating = useIsClient() && isOpen;
 
   useEffect(() => {
     if (isOpen) {
-      setIsAnimating(true);
-      
       // Trigger confetti animation
       const duration = 3000;
       const animationEnd = Date.now() + duration;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, Send, Paperclip, DollarSign, MoreVertical } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import type { OfMessage } from '@/lib/types/onlyfans';
@@ -22,7 +22,7 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
   
   // Fetch messages
   const { data, loading, error, refresh } = useCachedFetch(`/api/of/threads/${conversationId}`);
-  const messages = data?.messages || [];
+  const messages = useMemo(() => data?.messages ?? [], [data]);
 
   // Quick replies
   const quickReplies = [

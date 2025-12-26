@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 export type JobStatus = 'queued' | 'processing' | 'needs_review' | 'ready' | 'failed';
 
@@ -78,6 +79,13 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Content factory demo is only available in dev mode' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
     const { id } = await params;
     const job = getJobById(id);
 
@@ -107,6 +115,13 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Content factory demo is only available in dev mode' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
     const { id } = await params;
     const body = await request.json();
     const { action } = body;

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { sendAIChat } from '@/lib/services/ai-chat';
 
 type AIChatAssistantProps = {
   fanId: string;
@@ -29,27 +30,14 @@ export function AIChatAssistant({ fanId, fanName, onSendMessage }: AIChatAssista
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const data = await sendAIChat({
+        fanId,
+        message: message.trim(),
+        context: {
+          fanName,
         },
-        body: JSON.stringify({
-          fanId,
-          message: message.trim(),
-          context: {
-            fanName,
-          },
-        }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate response');
-      }
-
-      const data = await response.json();
-      setAiResponse(data.data);
+      setAiResponse(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate response');
     } finally {

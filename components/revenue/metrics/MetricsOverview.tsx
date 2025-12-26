@@ -11,6 +11,15 @@ interface MetricsOverviewProps {
   loading?: boolean;
 }
 
+const seededRandom = (seed: string) => {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) / 2147483647;
+};
+
 export function MetricsOverview({
   metrics,
   trends,
@@ -26,26 +35,27 @@ export function MetricsOverview({
   }
 
   // Calculate change percentages (mock data - in production would come from API)
-  const calculateChange = (current: number, trend: string) => {
+  const calculateChange = (current: number, trend: string, key: string) => {
     // Mock calculation - in production this would be actual historical data
-    const baseChange = Math.random() * 20 - 5; // -5% to +15%
+    const baseChange = seededRandom(`${key}-${trend}-${current}`) * 20 - 5; // -5% to +15%
     if (trend === 'up') return Math.abs(baseChange);
     if (trend === 'down') return -Math.abs(baseChange);
     return baseChange * 0.2; // Small change for stable
   };
 
   // Generate mock sparkline data
-  const generateSparkline = (trend: string, points = 12) => {
+  const generateSparkline = (trend: string, key: string, points = 12) => {
     const data: number[] = [];
     let value = 100;
     
     for (let i = 0; i < points; i++) {
+      const stepSeed = seededRandom(`${key}-${trend}-${i}`);
       if (trend === 'up') {
-        value += Math.random() * 5 + 2;
+        value += stepSeed * 5 + 2;
       } else if (trend === 'down') {
-        value -= Math.random() * 5 + 2;
+        value -= stepSeed * 5 + 2;
       } else {
-        value += (Math.random() - 0.5) * 3;
+        value += (stepSeed - 0.5) * 3;
       }
       data.push(Math.max(0, value));
     }
@@ -56,12 +66,12 @@ export function MetricsOverview({
   // Check if metric has significant change (>10%)
   const isSignificantChange = (change: number) => Math.abs(change) > 10;
 
-  const arpuChange = calculateChange(metrics.arpu, trends.arpu);
-  const ltvChange = calculateChange(metrics.ltv, trends.ltv);
-  const churnChange = calculateChange(metrics.churnRate, trends.churnRate);
-  const subscribersChange = calculateChange(metrics.activeSubscribers, trends.activeSubscribers);
-  const revenueChange = calculateChange(metrics.totalRevenue, trends.totalRevenue);
-  const growthChange = calculateChange(metrics.momGrowth, trends.totalRevenue);
+  const arpuChange = calculateChange(metrics.arpu, trends.arpu, 'arpu');
+  const ltvChange = calculateChange(metrics.ltv, trends.ltv, 'ltv');
+  const churnChange = calculateChange(metrics.churnRate, trends.churnRate, 'churn');
+  const subscribersChange = calculateChange(metrics.activeSubscribers, trends.activeSubscribers, 'subscribers');
+  const revenueChange = calculateChange(metrics.totalRevenue, trends.totalRevenue, 'revenue');
+  const growthChange = calculateChange(metrics.momGrowth, trends.totalRevenue, 'growth');
 
   return (
     <div>
@@ -82,7 +92,7 @@ export function MetricsOverview({
           trend={trends.arpu}
           changePercent={arpuChange}
           format="currency"
-          sparklineData={generateSparkline(trends.arpu)}
+          sparklineData={generateSparkline(trends.arpu, 'arpu')}
           onClick={() => onMetricClick('arpu')}
           isHighlighted={isSignificantChange(arpuChange)}
         />
@@ -94,7 +104,7 @@ export function MetricsOverview({
           trend={trends.ltv}
           changePercent={ltvChange}
           format="currency"
-          sparklineData={generateSparkline(trends.ltv)}
+          sparklineData={generateSparkline(trends.ltv, 'ltv')}
           onClick={() => onMetricClick('ltv')}
           isHighlighted={isSignificantChange(ltvChange)}
         />
@@ -106,7 +116,7 @@ export function MetricsOverview({
           trend={trends.churnRate}
           changePercent={churnChange}
           format="percentage"
-          sparklineData={generateSparkline(trends.churnRate)}
+          sparklineData={generateSparkline(trends.churnRate, 'churn')}
           onClick={() => onMetricClick('churnRate')}
           isHighlighted={isSignificantChange(churnChange)}
         />
@@ -118,7 +128,7 @@ export function MetricsOverview({
           trend={trends.activeSubscribers}
           changePercent={subscribersChange}
           format="number"
-          sparklineData={generateSparkline(trends.activeSubscribers)}
+          sparklineData={generateSparkline(trends.activeSubscribers, 'subscribers')}
           onClick={() => onMetricClick('activeSubscribers')}
           isHighlighted={isSignificantChange(subscribersChange)}
         />
@@ -130,7 +140,7 @@ export function MetricsOverview({
           trend={trends.totalRevenue}
           changePercent={revenueChange}
           format="currency"
-          sparklineData={generateSparkline(trends.totalRevenue)}
+          sparklineData={generateSparkline(trends.totalRevenue, 'revenue')}
           onClick={() => onMetricClick('totalRevenue')}
           isHighlighted={isSignificantChange(revenueChange)}
         />
@@ -142,7 +152,7 @@ export function MetricsOverview({
           trend={trends.totalRevenue}
           changePercent={growthChange}
           format="percentage"
-          sparklineData={generateSparkline(trends.totalRevenue)}
+          sparklineData={generateSparkline(trends.totalRevenue, 'growth')}
           onClick={() => onMetricClick('momGrowth')}
           isHighlighted={isSignificantChange(growthChange)}
         />

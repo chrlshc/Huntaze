@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
@@ -10,39 +10,23 @@ export default function RedditConnectPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [username, setUsername] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!searchParams) return;
-    
-    // Check for OAuth callback parameters
-    const errorParam = searchParams.get('error');
-    const successParam = searchParams.get('success');
-    const usernameParam = searchParams.get('username');
+  const errorParam = searchParams?.get('error');
+  const success = searchParams?.get('success') === 'true';
+  const username = searchParams?.get('username') ?? null;
 
-    if (errorParam) {
-      setError(decodeURIComponent(errorParam));
-      setLoading(false);
-    }
-
-    if (successParam === 'true') {
-      setSuccess(true);
-      setUsername(usernameParam);
-      setLoading(false);
-    }
-  }, [searchParams]);
+  const error = errorParam ? decodeURIComponent(errorParam) : localError;
 
   const handleConnect = async () => {
     setLoading(true);
-    setError(null);
+    setLocalError(null);
 
     try {
       // Redirect to OAuth init endpoint
       window.location.href = '/api/auth/reddit';
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to connect');
+      setLocalError(err instanceof Error ? err.message : 'Failed to connect');
       setLoading(false);
     }
   };

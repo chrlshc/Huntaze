@@ -14,6 +14,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
+import { completeOnboarding } from '@/lib/services/onboarding';
 
 interface OnboardingData {
   contentTypes: string[];
@@ -94,20 +95,12 @@ export default function BetaOnboardingClient() {
 
     try {
       // Requirement 5.9: Save all onboarding data
-      const response = await fetch('/api/onboarding/complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contentTypes: data.contentTypes,
-          platform: data.platform,
-          goal,
-          revenueGoal
-        })
+      await completeOnboarding({
+        contentTypes: data.contentTypes,
+        platform: data.platform,
+        goal,
+        revenueGoal,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to complete onboarding');
-      }
 
       // Redirect to home page
       router.push('/home');

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
@@ -31,7 +32,7 @@ export function LandingHeader({ logoSrc, showAuthButtons = true }: LandingHeader
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             {logoSrc ? (
-              <img src={logoSrc} alt="Huntaze" className="h-8" />
+              <Image src={logoSrc} alt="Huntaze" width={32} height={32} className="h-8 w-8" />
             ) : (
               <>
                 <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">

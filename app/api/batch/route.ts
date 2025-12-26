@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { assertMockEnabled } from '@/lib/config/mock-data';
 
 interface BatchRequest {
   id: string;
@@ -18,6 +19,9 @@ interface BatchResponse {
 }
 
 export async function POST(request: NextRequest) {
+  const mockDisabled = assertMockEnabled('/api/batch');
+  if (mockDisabled) return mockDisabled;
+
   try {
     const { requests } = await request.json();
 

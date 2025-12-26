@@ -18,6 +18,29 @@ export type LoginJob = {
   otp?: string;
 };
 
+// NEW: Scraper job types
+export type ScrapeFinancialsJob = {
+  type: 'scrape_financials';
+  userId: string;
+  timestamp: string;
+};
+
+export type ScrapeFansJob = {
+  type: 'scrape_fans';
+  userId: string;
+  options?: { maxCount?: number; type?: 'active' | 'expired' | 'all' };
+  timestamp: string;
+};
+
+export type ScrapeContentJob = {
+  type: 'scrape_content';
+  userId: string;
+  options?: { maxCount?: number };
+  timestamp: string;
+};
+
+export type Job = SendJob | LoginJob | ScrapeFinancialsJob | ScrapeFansJob | ScrapeContentJob;
+
 export async function enqueueSend(job: SendJob) {
   if (!QUEUE_URL) throw new Error('OF_SQS_SEND_QUEUE_URL not configured');
   await sqs.send(new SendMessageCommand({
@@ -32,5 +55,14 @@ export async function enqueueLogin(job: { userId: string; otp?: string }) {
   await sqs.send(new SendMessageCommand({
     QueueUrl: QUEUE_URL,
     MessageBody: JSON.stringify(payload),
+  }));
+}
+
+// NEW: Generic job enqueue function for scrapers
+export async function enqueueJob(job: Job) {
+  if (!QUEUE_URL) throw new Error('OF_SQS_SEND_QUEUE_URL not configured');
+  await sqs.send(new SendMessageCommand({
+    QueueUrl: QUEUE_URL,
+    MessageBody: JSON.stringify(job),
   }));
 }

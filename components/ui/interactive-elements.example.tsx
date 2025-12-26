@@ -103,7 +103,7 @@ export function InteractiveElementsExample() {
               Dense Variant
             </label>
             <Input 
-              variant="dense"
+              size="sm"
               placeholder="Compact input for tight layouts" 
             />
           </div>

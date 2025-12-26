@@ -13,35 +13,13 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import useSWR from 'swr';
-
-interface OnboardingStatusResponse {
-  onboarding_completed: boolean;
-  correlationId: string;
-}
-
-interface OnboardingError {
-  error: string;
-  type?: string;
-  correlationId?: string;
-}
-
-/**
- * Fetcher function for SWR
- */
-const fetcher = async (url: string): Promise<OnboardingStatusResponse> => {
-  const response = await fetch(url, {
-    credentials: 'include',
-    cache: 'no-store',
-  });
-  
-  if (!response.ok) {
-    const error: OnboardingError = await response.json();
-    throw new Error(error.error || 'Failed to fetch onboarding status');
-  }
-  
-  return response.json();
-};
+import { InternalApiError } from '@/lib/api/client/internal-api-client';
+import { useInternalSWR } from '@/lib/swr';
+import {
+  completeAuthOnboarding,
+  fetchAuthOnboardingStatus,
+  type AuthOnboardingStatusResponse,
+} from '@/lib/services/onboarding';
 
 /**
  * Hook to manage user onboarding status
@@ -82,9 +60,9 @@ export function useOnboardingStatus() {
     error,
     isLoading,
     mutate,
-  } = useSWR<OnboardingStatusResponse>(
+  } = useInternalSWR<AuthOnboardingStatusResponse>(
     '/api/auth/onboarding-status',
-    fetcher,
+    fetchAuthOnboardingStatus,
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
@@ -94,7 +72,7 @@ export function useOnboardingStatus() {
       errorRetryInterval: 5000,
       shouldRetryOnError: (error) => {
         // Don't retry on auth errors
-        return !error.message.includes('Unauthorized');
+        return !(error instanceof InternalApiError && error.kind === 'Auth');
       },
     }
   );
@@ -116,18 +94,7 @@ export function useOnboardingStatus() {
         false
       );
       
-      const response = await fetch('/api/auth/complete-onboarding', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!response.ok) {
-        const error: OnboardingError = await response.json();
-        throw new Error(error.error || 'Failed to complete onboarding');
-      }
+      await completeAuthOnboarding();
       
       // Revalidate to get fresh data
       await mutate();

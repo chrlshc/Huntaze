@@ -300,7 +300,7 @@ export function getCacheHitRate(): number {
 /**
  * Generate cache key from handler
  */
-function generateKey(handler: Function): string {
+function generateKey(handler: (...args: unknown[]) => unknown): string {
   return `cache_${handler.toString().slice(0, 50)}`;
 }
 

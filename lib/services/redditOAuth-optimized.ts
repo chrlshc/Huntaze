@@ -12,6 +12,8 @@
 import * as crypto from 'crypto';
 import { redditLogger } from './reddit/logger';
 import { CircuitBreaker } from './reddit/circuit-breaker';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 import {
   RedditError,
   RedditErrorType,
@@ -194,24 +196,53 @@ export class RedditOAuthServiceOptimized {
     });
   }
 
+  private mapExternalErrorType(code: string): RedditErrorType {
+    switch (code) {
+      case 'TIMEOUT':
+      case 'NETWORK_ERROR':
+        return RedditErrorType.NETWORK_ERROR;
+      case 'RATE_LIMIT':
+        return RedditErrorType.RATE_LIMIT_ERROR;
+      case 'UNAUTHORIZED':
+        return RedditErrorType.AUTH_ERROR;
+      case 'FORBIDDEN':
+        return RedditErrorType.PERMISSION_ERROR;
+      case 'BAD_REQUEST':
+        return RedditErrorType.VALIDATION_ERROR;
+      case 'UPSTREAM_5XX':
+        return RedditErrorType.API_ERROR;
+      default:
+        return RedditErrorType.API_ERROR;
+    }
+  }
+
   private async fetchWithTimeout(
     url: string,
     options: RequestInit,
-    correlationId: string
+    correlationId: string,
+    operation: string
   ): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.REQUEST_TIMEOUT_MS);
-
     try {
-      return await fetch(url, { ...options, signal: controller.signal });
+      return await externalFetch(url, {
+        ...options,
+        service: 'reddit',
+        operation,
+        correlationId,
+        timeoutMs: this.REQUEST_TIMEOUT_MS,
+        retry: { maxRetries: 0, retryMethods: [] },
+      });
     } catch (error) {
-      const message =
-        error instanceof Error && error.name === 'AbortError'
-          ? 'Request timed out'
-          : error instanceof Error
-            ? error.message
-            : 'Network error';
+      if (isExternalServiceError(error)) {
+        throw this.createError(
+          this.mapExternalErrorType(error.code),
+          error.message,
+          correlationId,
+          error.status,
+          error
+        );
+      }
 
+      const message = error instanceof Error ? error.message : 'Network error';
       throw this.createError(
         RedditErrorType.NETWORK_ERROR,
         message,
@@ -219,8 +250,6 @@ export class RedditOAuthServiceOptimized {
         undefined,
         error instanceof Error ? error : undefined
       );
-    } finally {
-      clearTimeout(timeoutId);
     }
   }
 
@@ -315,20 +344,25 @@ export class RedditOAuthServiceOptimized {
     return this.retryApiCall(async () => {
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
-      const response = await this.fetchWithTimeout(REDDIT_TOKEN_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': this.userAgent,
+      const response = await this.fetchWithTimeout(
+        REDDIT_TOKEN_URL,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': this.userAgent,
+          },
+          body: new URLSearchParams({
+            grant_type: 'authorization_code',
+            code,
+            redirect_uri: this.redirectUri,
+          }),
+          cache: 'no-store',
         },
-        body: new URLSearchParams({
-          grant_type: 'authorization_code',
-          code,
-          redirect_uri: this.redirectUri,
-        }),
-        cache: 'no-store',
-      }, correlationId);
+        correlationId,
+        'oauth.exchange'
+      );
 
       let data: any;
       try {
@@ -365,19 +399,24 @@ export class RedditOAuthServiceOptimized {
     return this.retryApiCall(async () => {
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
-      const response = await this.fetchWithTimeout(REDDIT_TOKEN_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': this.userAgent,
+      const response = await this.fetchWithTimeout(
+        REDDIT_TOKEN_URL,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': this.userAgent,
+          },
+          body: new URLSearchParams({
+            grant_type: 'refresh_token',
+            refresh_token: refreshToken,
+          }),
+          cache: 'no-store',
         },
-        body: new URLSearchParams({
-          grant_type: 'refresh_token',
-          refresh_token: refreshToken,
-        }),
-        cache: 'no-store',
-      }, correlationId);
+        correlationId,
+        'oauth.refresh'
+      );
 
       let data: any;
       try {
@@ -412,13 +451,18 @@ export class RedditOAuthServiceOptimized {
     redditLogger.info('Getting user info', { correlationId });
 
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/api/v1/me`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'User-Agent': this.userAgent,
+      const response = await this.fetchWithTimeout(
+        `${REDDIT_API_URL}/api/v1/me`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'User-Agent': this.userAgent,
+          },
+          cache: 'no-store',
         },
-        cache: 'no-store',
-      }, correlationId);
+        correlationId,
+        'user.me'
+      );
 
       let data: any;
       try {
@@ -454,13 +498,18 @@ export class RedditOAuthServiceOptimized {
     redditLogger.info('Getting subscribed subreddits', { correlationId });
 
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/subreddits/mine/subscriber?limit=100`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'User-Agent': this.userAgent,
+      const response = await this.fetchWithTimeout(
+        `${REDDIT_API_URL}/subreddits/mine/subscriber?limit=100`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'User-Agent': this.userAgent,
+          },
+          cache: 'no-store',
         },
-        cache: 'no-store',
-      }, correlationId);
+        correlationId,
+        'subreddits.list'
+      );
 
       let data: any;
       try {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Sparkles, X } from 'lucide-react';
 import { featureTourService, FeatureTour } from '@/lib/services/featureTourService';
 import FeatureTourGuide from './FeatureTourGuide';
@@ -21,18 +21,21 @@ export default function TourNotificationBadge({
   const [activeTour, setActiveTour] = useState<FeatureTour | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
-  useEffect(() => {
-    loadPendingTours();
-  }, [userId]);
-
-  const loadPendingTours = async () => {
+  const loadPendingTours = useCallback(async () => {
     try {
       const tours = await featureTourService.getPendingTours(userId);
       setPendingTours(tours);
     } catch (error) {
       console.error('Error loading pending tours:', error);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void loadPendingTours();
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  }, [loadPendingTours]);
 
   const handleStartTour = (tour: FeatureTour) => {
     setActiveTour(tour);

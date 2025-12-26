@@ -188,9 +188,11 @@ export function FilterPillStatesExample() {
   );
 }
 
-export default {
+const filterPillExamples = {
   BasicFilterPillExample,
   FilterPillWithSegmentCardsExample,
   MultipleFilterPillsExample,
   FilterPillStatesExample,
 };
+
+export default filterPillExamples;

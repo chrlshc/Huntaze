@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { isMockApiMode } from '@/config/api-mode';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 /**
  * AI Quota API Route
@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    if (!isMockApiMode()) {
+    if (!ENABLE_MOCK_DATA) {
       return NextResponse.json({
         success: true,
         quota: null,

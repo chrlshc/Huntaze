@@ -11,6 +11,7 @@
 
 import { useEffect, useRef, ComponentType } from 'react';
 import { mutate } from 'swr';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 
 /**
  * Higher-Order Component that adds request cancellation on unmount
@@ -30,6 +31,7 @@ export function withRequestCancellation<P extends object>(
 
     useEffect(() => {
       mountedRef.current = true;
+      const keys = keysRef.current;
 
       return () => {
         mountedRef.current = false;
@@ -41,12 +43,12 @@ export function withRequestCancellation<P extends object>(
           });
         } else {
           // Cancel all keys that were tracked
-          keysRef.current.forEach(key => {
+          keys.forEach(key => {
             mutate(key, undefined, { revalidate: false });
           });
         }
 
-        keysRef.current.clear();
+        keys.clear();
       };
     }, []);
 
@@ -74,19 +76,21 @@ export function useRequestCancellation() {
   const abortControllersRef = useRef<Map<string, AbortController>>(new Map());
 
   useEffect(() => {
+    const keys = keysRef.current;
+    const controllers = abortControllersRef.current;
     return () => {
       // Cancel all tracked requests on unmount
-      keysRef.current.forEach(key => {
+      keys.forEach(key => {
         mutate(key, undefined, { revalidate: false });
       });
 
       // Abort all fetch requests
-      abortControllersRef.current.forEach(controller => {
+      controllers.forEach(controller => {
         controller.abort();
       });
 
-      keysRef.current.clear();
-      abortControllersRef.current.clear();
+      keys.clear();
+      controllers.clear();
     };
   }, []);
 
@@ -127,23 +131,7 @@ export function createCancellableFetcherHOC() {
   const abortController = new AbortController();
 
   const fetcher = async (url: string) => {
-    try {
-      const response = await fetch(url, {
-        signal: abortController.signal,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return response.json();
-    } catch (error: any) {
-      // Don't throw on abort - this is expected
-      if (error.name === 'AbortError') {
-        return null;
-      }
-      throw error;
-    }
+    return internalApiFetch(url, { signal: abortController.signal });
   };
 
   return {

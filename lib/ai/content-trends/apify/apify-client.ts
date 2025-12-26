@@ -19,6 +19,8 @@ import {
   IApifyActorManager,
 } from './types';
 import { getPrimaryActor } from './actor-configs';
+import { externalFetch } from '@/lib/services/external/http';
+import { ExternalServiceError, mapHttpStatusToExternalCode } from '@/lib/services/external/errors';
 
 // ============================================================================
 // Configuration
@@ -39,15 +41,30 @@ const DEFAULT_CONFIG: Partial<ApifyClientConfig> = {
   retryDelay: 1000,
 };
 
-export class ApifyClientError extends Error {
-  name = 'ApifyClientError';
-
+export class ApifyClientError extends ExternalServiceError {
   constructor(
     message: string,
-    public status?: number,
-    public responseBody?: string
+    options?: {
+      status?: number;
+      responseBody?: string;
+      code?: ExternalServiceError['code'];
+      retryable?: boolean;
+      correlationId?: string;
+      cause?: unknown;
+    }
   ) {
-    super(message);
+    const code = options?.code ?? 'UNKNOWN';
+    const retryable = options?.retryable ?? false;
+    super({
+      service: 'apify',
+      code,
+      retryable,
+      status: options?.status,
+      correlationId: options?.correlationId,
+      message,
+      details: options?.responseBody ? { body: options.responseBody } : undefined,
+      cause: options?.cause,
+    });
   }
 }
 
@@ -403,46 +420,78 @@ export class ApifyClient implements IApifyActorManager {
     
     for (let attempt = 0; attempt < this.config.maxRetries; attempt++) {
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
-        let response: Response;
-        try {
-          response = await fetch(url, {
-            ...options,
-            signal: controller.signal,
-            headers: {
-              ...headers,
-              ...(options?.headers as Record<string, string>),
-            },
-          });
-        } finally {
-          clearTimeout(timeoutId);
-        }
+        const response = await externalFetch(url, {
+          ...options,
+          service: 'apify',
+          operation: `${(options?.method || 'GET').toUpperCase()} ${new URL(url).pathname}`,
+          headers: {
+            ...headers,
+            ...(options?.headers as Record<string, string>),
+          },
+          cache: 'no-store',
+          timeoutMs: this.config.timeout,
+          retry: { maxRetries: 0, retryMethods: [] },
+          throwOnHttpError: false,
+        });
 
         if (!response.ok) {
           const errorBody = await response.text();
-          throw new ApifyClientError(
-            `Apify API error: ${response.status} - ${errorBody}`,
-            response.status,
-            errorBody
-          );
+          const mapped = mapHttpStatusToExternalCode(response.status);
+          throw new ApifyClientError(`Apify API error: ${response.status} - ${errorBody}`, {
+            status: response.status,
+            responseBody: errorBody,
+            code: mapped.code,
+            retryable: mapped.retryable,
+          });
         }
 
         // Handle empty responses
         const text = await response.text();
         if (!text) return {} as T;
         
-        return JSON.parse(text) as T;
+        try {
+          return JSON.parse(text) as T;
+        } catch (error) {
+          throw new ApifyClientError('Apify API returned invalid JSON', {
+            code: 'INVALID_RESPONSE',
+            retryable: false,
+            responseBody: text.slice(0, 2000),
+            cause: error,
+          });
+        }
       } catch (error) {
-        lastError = error as Error;
+        if (error instanceof ApifyClientError) {
+          lastError = error;
+        } else if (error instanceof ExternalServiceError) {
+          lastError = new ApifyClientError(error.message, {
+            code: error.code,
+            retryable: error.retryable,
+            status: error.status,
+            cause: error,
+          });
+        } else {
+          lastError = error as Error;
+        }
 
         // Don't retry on timeouts if we're on last attempt
-        if (lastError.name === 'AbortError' && attempt >= this.config.maxRetries - 1) {
-          throw new ApifyClientError(`Apify API timeout after ${this.config.timeout}ms`);
+        if (
+          lastError instanceof ExternalServiceError &&
+          lastError.code === 'TIMEOUT' &&
+          attempt >= this.config.maxRetries - 1
+        ) {
+          throw new ApifyClientError(`Apify API timeout after ${this.config.timeout}ms`, {
+            code: 'TIMEOUT',
+            retryable: true,
+          });
         }
         
         // Don't retry on 4xx errors
-        if (lastError instanceof ApifyClientError && lastError.status && lastError.status >= 400 && lastError.status < 500) {
+        if (
+          lastError instanceof ExternalServiceError &&
+          lastError.status &&
+          lastError.status >= 400 &&
+          lastError.status < 500
+        ) {
           throw lastError;
         }
         

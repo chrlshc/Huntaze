@@ -70,8 +70,9 @@ function platformToLibraryChannel(platform: ContentItem['platform']): LibraryIte
   }
 }
 
-function formatEtaLabel(date: Date): string {
-  const diffMs = date.getTime() - Date.now();
+function formatEtaLabel(date: Date, now: number | null): string {
+  if (now === null) return '—';
+  const diffMs = date.getTime() - now;
   if (diffMs <= 0) return 'Now';
 
   const diffMins = Math.round(diffMs / 60_000);
@@ -86,17 +87,21 @@ function formatEtaLabel(date: Date): string {
 export default function ContentSchedulerPage() {
   const [channel, setChannel] = useState<Channel>('all');
   const [status, setStatus] = useState<StatusFilter>('all');
+  const [now] = useState(() => Date.now());
 
-  const { data: contentResponse } = useContent({ status: 'all', limit: 200 });
+  const { data: contentResponse } = useContent({ status: 'all', limit: 100 });
   const contentItems = contentResponse?.data?.items ?? [];
 
-  const maxScheduled = new Date(Date.now() + 7 * 24 * 60 * 60_000);
+  const maxScheduledDate = useMemo(
+    () => new Date(now + 7 * 24 * 60 * 60_000),
+    [now],
+  );
 
   const scheduleData: ScheduleItem[] = contentItems
     .filter((item) => item.status === 'scheduled' || item.status === 'draft')
     .flatMap((item) => {
       const when = new Date(item.scheduledAt || item.createdAt);
-      if (item.status === 'scheduled' && item.scheduledAt && when > maxScheduled) return [];
+      if (item.status === 'scheduled' && item.scheduledAt && when > maxScheduledDate) return [];
 
       return [
         {
@@ -113,12 +118,12 @@ export default function ContentSchedulerPage() {
   const queueData: QueueItem[] = contentItems
     .filter((item) => item.status === 'scheduled' && item.scheduledAt)
     .map((item) => ({ item, when: new Date(item.scheduledAt as string) }))
-    .filter(({ when }) => !Number.isNaN(when.getTime()) && when <= maxScheduled)
+    .filter(({ when }) => !Number.isNaN(when.getTime()) && when <= maxScheduledDate)
     .sort((a, b) => a.when.getTime() - b.when.getTime())
     .slice(0, 5)
     .map(({ item, when }) => ({
       id: item.id,
-      etaLabel: formatEtaLabel(when),
+      etaLabel: formatEtaLabel(when, now),
       channel: platformToScheduleChannel(item.platform),
       title: item.title,
     }));

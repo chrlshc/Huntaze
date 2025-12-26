@@ -21,7 +21,7 @@ export default class SafeBoundary extends React.Component<Props, State> {
 
   componentDidCatch(error: any, info: any) {
     if (typeof window !== 'undefined') {
-      // eslint-disable-next-line no-console
+       
       console.error('Home page crashed:', error, info);
     }
   }

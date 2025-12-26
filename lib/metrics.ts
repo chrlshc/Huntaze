@@ -16,7 +16,7 @@ export function emitMetric(namespace: string, metrics: Metric[], dimensions: Rec
       ...baseDims,
     }
     for (const m of metrics) emf[m.name] = m.value
-    // eslint-disable-next-line no-console
+     
     console.log(JSON.stringify(emf))
 
     // Mirror to Prometheus where applicable (lazy, non-blocking)

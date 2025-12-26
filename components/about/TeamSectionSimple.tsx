@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export function TeamSectionSimple() {
   const team = [
     {
@@ -59,9 +61,11 @@ export function TeamSectionSimple() {
               className={`text-center hover-scale animate-slideUp delay-${(index + 1) * 100}`}
             >
               <div className="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                <img 
+                <Image 
                   src={member.image} 
                   alt={member.name}
+                  width={128}
+                  height={128}
                   className="w-full h-full object-cover"
                 />
               </div>

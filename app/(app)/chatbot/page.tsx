@@ -1,16 +1,21 @@
 'use client';
 /**
- * Fetches real-time data from API or database
- * Requires dynamic rendering
- * Requirements: 2.1, 2.2
+ * Majordome Chatbot
+ * Uses assistant conversation APIs.
  */
 export const dynamic = 'force-dynamic';
 
-
-import { useState, useRef, useEffect } from 'react';
-import { Send, Plus, Trash2, MessageCircle } from 'lucide-react';
-import { Button } from "@/components/ui/button";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import useSWR from 'swr';
+import { MessageCircle, Plus, Send } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import {
+  createAssistantConversation,
+  getAssistantConversation,
+  listAssistantConversations,
+  sendAssistantMessage,
+} from '@/lib/services/assistant';
 
 interface Message {
   id: string;
@@ -25,98 +30,158 @@ interface Conversation {
   lastMessage: Date;
 }
 
+interface ApiConversationSummary {
+  id: string;
+  title?: string;
+  updatedAt?: string;
+}
+
+interface ConversationsResponse {
+  conversations: ApiConversationSummary[];
+}
+
+interface ApiMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt: string;
+}
+
+interface ConversationResponse {
+  conversation: {
+    id: string;
+    title?: string;
+    updatedAt?: string;
+    messages?: ApiMessage[];
+  };
+}
+
 export default function ChatbotPage() {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversation, setCurrentConversation] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
-  const [pendingRequest, setPendingRequest] = useState<{ message: string; history: Message[] } | null>(null);
+  const [pendingRequest, setPendingRequest] = useState<{ message: string; conversationId?: string | null } | null>(null);
+  const [creatingConversation, setCreatingConversation] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const {
+    data: conversationsData,
+    error: conversationsError,
+    isLoading: conversationsLoading,
+    mutate: mutateConversations,
+  } = useSWR<ConversationsResponse>('/api/assistant/conversations', () => listAssistantConversations());
+
+  const conversations: Conversation[] = useMemo(() => {
+    const list = conversationsData?.conversations ?? [];
+    return list.map((conv) => ({
+      id: conv.id,
+      title: conv.title || 'New Conversation',
+      lastMessage: conv.updatedAt ? new Date(conv.updatedAt) : new Date(),
+    }));
+  }, [conversationsData]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (!currentConversation && conversations.length > 0) {
+      setCurrentConversation(conversations[0].id);
+    }
+  }, [conversations, currentConversation]);
 
-  const startNewConversation = () => {
-    const newConv: Conversation = {
-      id: Date.now().toString(),
-      title: 'New Conversation',
-      lastMessage: new Date(),
-    };
-    setConversations([newConv, ...conversations]);
-    setCurrentConversation(newConv.id);
-    setMessages([
-      {
-        id: '1',
-        role: 'assistant',
-        content: 'Hi! I\'m your Huntaze AI assistant. How can I help you today?',
-        timestamp: new Date(),
-      },
-    ]);
+  const {
+    data: conversationData,
+    error: conversationError,
+    isLoading: conversationLoading,
+  } = useSWR<ConversationResponse>(
+    currentConversation ? `/api/assistant/conversations/${currentConversation}` : null,
+    () => getAssistantConversation(currentConversation as string),
+  );
+
+  useEffect(() => {
+    if (!conversationData?.conversation?.messages) {
+      setMessages([]);
+      return;
+    }
+
+    const apiMessages = conversationData.conversation.messages;
+    setMessages(
+      apiMessages.map((msg) => ({
+        id: msg.id,
+        role: msg.role,
+        content: msg.content,
+        timestamp: new Date(msg.createdAt),
+      }))
+    );
+  }, [conversationData]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isSending, sendError]);
+
+  const startNewConversation = async () => {
+    if (creatingConversation) return;
+    setCreatingConversation(true);
+    setSendError(null);
+
+    try {
+      const data = await createAssistantConversation();
+      const conversationId = data?.conversation?.id;
+      if (conversationId) {
+        setCurrentConversation(conversationId);
+        setMessages([]);
+        await mutateConversations();
+      }
+    } catch (error) {
+      setSendError(error instanceof Error ? error.message : 'Failed to start conversation');
+    } finally {
+      setCreatingConversation(false);
+    }
   };
 
-  const sendToApi = async (request: { message: string; history: Message[] }) => {
-    setIsLoading(true);
+  const sendToApi = async (request: { message: string; conversationId?: string | null }) => {
+    setIsSending(true);
     setSendError(null);
     setPendingRequest(request);
 
     try {
-      const response = await fetch('/api/chatbot/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: request.message,
-          history: request.history,
-        }),
+      const data = await sendAssistantMessage({
+        message: request.message,
+        conversationId: request.conversationId || undefined,
       });
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        const errorMessage =
-          data && typeof data === 'object' && 'error' in data
-            ? String((data as any).error)
-            : 'Failed to send message';
-        throw new Error(errorMessage);
-      }
-
-      if (!data || typeof data !== 'object' || !('message' in data) || typeof (data as any).message !== 'string') {
-        throw new Error('Unexpected response from assistant');
-      }
-
       const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `${Date.now()}-assistant`,
         role: 'assistant',
-        content: (data as any).message,
+        content: data.reply,
         timestamp: new Date(),
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
       setPendingRequest(null);
+
+      if (data.conversationId && data.conversationId !== currentConversation) {
+        setCurrentConversation(data.conversationId);
+      }
+
+      void mutateConversations();
     } catch (error) {
       setSendError(error instanceof Error ? error.message : 'Failed to send message');
     } finally {
-      setIsLoading(false);
+      setIsSending(false);
     }
   };
 
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isSending) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-user`,
       role: 'user',
       content: input,
       timestamp: new Date(),
     };
 
-    const request = { message: input, history: messages.slice(-5) };
+    const request = { message: input, conversationId: currentConversation };
 
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
@@ -125,30 +190,48 @@ export default function ChatbotPage() {
   };
 
   const retrySend = async () => {
-    if (!pendingRequest || isLoading) return;
+    if (!pendingRequest || isSending) return;
     await sendToApi(pendingRequest);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      void handleSend();
     }
   };
+
+  const showWelcome = !currentConversation || messages.length === 0;
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">
-          <Button variant="primary" onClick={startNewConversation}>
+          <Button variant="primary" onClick={startNewConversation} disabled={creatingConversation}>
             <Plus className="w-4 h-4" />
             New Chat
           </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-2">
-          {conversations.length === 0 ? (
+          {conversationsLoading ? (
+            <div className="text-center text-gray-500 mt-8 px-4">
+              <MessageCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Loading conversations...</p>
+            </div>
+          ) : conversationsError ? (
+            <div className="text-center text-red-500 mt-8 px-4">
+              <p className="text-sm">Failed to load conversations.</p>
+              <button
+                type="button"
+                className="text-xs underline mt-2"
+                onClick={() => void mutateConversations()}
+              >
+                Retry
+              </button>
+            </div>
+          ) : conversations.length === 0 ? (
             <div className="text-center text-gray-500 mt-8 px-4">
               <MessageCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p className="text-sm">No conversations yet</p>
@@ -156,9 +239,9 @@ export default function ChatbotPage() {
             </div>
           ) : (
             conversations.map((conv) => (
-              <Button 
+              <Button
                 key={conv.id}
-                variant="ghost" 
+                variant="ghost"
                 onClick={() => setCurrentConversation(conv.id)}
                 className={`w-full text-left p-3 rounded-lg mb-2 transition-colors ${
                   currentConversation === conv.id
@@ -190,7 +273,11 @@ export default function ChatbotPage() {
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6">
-          {!currentConversation ? (
+          {conversationError ? (
+            <div className="max-w-2xl mx-auto text-center text-red-500">
+              <p className="text-sm">Failed to load conversation.</p>
+            </div>
+          ) : showWelcome ? (
             <div className="h-full flex items-center justify-center">
               <div className="text-center">
                 <MessageCircle className="w-16 h-16 mx-auto mb-4 text-gray-300" />
@@ -252,7 +339,10 @@ export default function ChatbotPage() {
                   </div>
                 </div>
               ))}
-              {isLoading && (
+              {conversationLoading && (
+                <div className="flex justify-center text-sm text-gray-500">Loading conversation...</div>
+              )}
+              {isSending && (
                 <div className="flex justify-start">
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
                     <div className="flex gap-2">
@@ -271,7 +361,7 @@ export default function ChatbotPage() {
                       type="button"
                       onClick={retrySend}
                       className="underline font-medium"
-                      disabled={isLoading}
+                      disabled={isSending}
                     >
                       Retry
                     </button>
@@ -295,12 +385,12 @@ export default function ChatbotPage() {
                   placeholder="Type your message..."
                   className="flex-1 resize-none border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows={3}
-                  disabled={isLoading}
+                  disabled={isSending}
                 />
-                <Button 
-                  variant="primary" 
-                  onClick={handleSend} 
-                  disabled={!input.trim() || isLoading} 
+                <Button
+                  variant="primary"
+                  onClick={handleSend}
+                  disabled={!input.trim() || isSending}
                   aria-label="Send message"
                 >
                   <Send className="w-5 h-5" />

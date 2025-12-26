@@ -2,58 +2,53 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { signIn } from 'next-auth/react';
 import { fetchWithCsrf } from '@/lib/utils/csrf-client';
 import { useCsrfToken } from '@/hooks/useCsrfToken';
-import { Button } from "@/components/ui/button";
-import { Card } from '@/components/ui/card';
+import { ShopifyCard } from '@/components/ui/shopify/ShopifyCard';
+import { ShopifyButton } from '@/components/ui/shopify/ShopifyButton';
+import { isMockApiMode } from '@/config/api-mode';
+import '@/styles/shopify-tokens.css';
 
-/**
- * User Registration Page
- * 
- * Implements the Beta Launch UI System registration flow with:
- * - Email and password validation (client-side)
- * - Professional black theme with rainbow accents
- * - Accessible form with proper labels and ARIA attributes
- * - Password strength indicator
- * - Error handling with user-friendly messages
- * 
- * Requirements: 3.1, 3.2, 3.6, 3.7, 3.8, 16.1, 16.3
- */
+type PasswordLevel = {
+  strength: number;
+  label: string;
+  color: string;
+};
+
+const PASSWORD_LEVELS: PasswordLevel[] = [
+  { strength: 0, label: '', color: 'transparent' },
+  { strength: 1, label: 'Weak', color: '#c4320a' },
+  { strength: 2, label: 'Fair', color: '#b98900' },
+  { strength: 3, label: 'Good', color: '#2c6ecb' },
+  { strength: 4, label: 'Strong', color: '#1a5c1a' },
+  { strength: 5, label: 'Very Strong', color: '#0d7544' },
+];
+
 export default function RegisterPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { token: csrfToken, loading: csrfLoading, error: csrfError, refresh: refreshCsrf } = useCsrfToken();
+  const callbackUrl = searchParams.get('callbackUrl') || '/home';
 
-  // Calculate password strength
-  const getPasswordStrength = () => {
-    const { password } = formData;
-    if (!password) return { strength: 0, label: '', color: '' };
+  const getPasswordStrength = (): PasswordLevel => {
+    const pwd = formData.password;
+    if (!pwd) return PASSWORD_LEVELS[0];
     
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (password.length >= 12) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    let s = 0;
+    if (pwd.length >= 8) s++;
+    if (pwd.length >= 12) s++;
+    if (/[A-Z]/.test(pwd)) s++;
+    if (/[0-9]/.test(pwd)) s++;
+    if (/[^A-Za-z0-9]/.test(pwd)) s++;
 
-    const levels = [
-      { strength: 0, label: '', color: '' },
-      { strength: 1, label: 'Weak', color: 'text-red-500' },
-      { strength: 2, label: 'Fair', color: 'text-yellow-500' },
-      { strength: 3, label: 'Good', color: 'text-blue-500' },
-      { strength: 4, label: 'Strong', color: 'text-green-500' },
-      { strength: 5, label: 'Very Strong', color: 'text-green-600' },
-    ];
-
-    return levels[Math.min(strength, 5)];
+    return PASSWORD_LEVELS[Math.min(s, 5)];
   };
 
   const passwordStrength = getPasswordStrength();
@@ -64,7 +59,6 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // Ensure we have a CSRF token before sending the request
       if (!csrfToken && !csrfLoading) {
         await refreshCsrf();
       }
@@ -77,10 +71,8 @@ export default function RegisterPage() {
         });
       };
 
-      // Create user account
       let response = await executeRequest();
 
-      // Retry once if token was stale/expired
       if (response.status === 403) {
         await refreshCsrf();
         response = await executeRequest();
@@ -93,8 +85,33 @@ export default function RegisterPage() {
 
       await response.json();
 
-      // Redirect to auth page with pending verification message
-      router.push(`/auth/register?pending=1&email=${encodeURIComponent(formData.email)}`);
+      if (isMockApiMode()) {
+        router.push('/home');
+        router.refresh();
+        return;
+      }
+
+      const signInResult = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+        callbackUrl,
+      });
+
+      if (!signInResult || signInResult.error || signInResult.ok === false) {
+        setError('Account created, but automatic sign-in failed. Please log in.');
+        return;
+      }
+
+      const nextUrl =
+        signInResult.url &&
+        !signInResult.url.includes('/auth/login') &&
+        !signInResult.url.includes('/auth/register')
+          ? signInResult.url
+          : callbackUrl;
+
+      router.push(nextUrl);
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
@@ -102,340 +119,235 @@ export default function RegisterPage() {
     }
   };
 
-  const displayError =
-    error ||
-    (csrfError ? 'Security token could not be loaded. Please refresh and try again.' : null);
+  const displayError = error || (csrfError ? 'Security token could not be loaded. Please refresh.' : null);
   const submitting = isLoading || csrfLoading;
-  const buttonLabel = isLoading
-    ? 'Creating Account...'
-    : csrfLoading
-    ? 'Preparing Security...'
-    : 'Create Account';
+  const buttonLabel = isLoading ? 'Creating Account...' : csrfLoading ? 'Preparing...' : 'Create Account';
 
   return (
-    <div className="auth-container">
-      <Card>
-        <div className="auth-header">
-          <img src="/logo.svg" alt="Huntaze" className="logo" />
+    <div className="register-page">
+      <div className="register-container">
+        <div className="register-header">
+          <Image src="/logo.svg" alt="Huntaze" width={56} height={56} />
           <h1>Join Huntaze Beta</h1>
           <p>Start automating your creator business</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          {searchParams.get('pending') && (
-            <div className="success-message" role="status">
-              Check your email{searchParams.get('email') ? ` at ${searchParams.get('email')}` : ''} to verify your account, then sign in.
-            </div>
-          )}
-          {displayError && (
-            <div className="error-message" role="alert">
-              {displayError}
-            </div>
-          )}
-
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="creator@example.com"
-              required
-              className="input"
-              aria-required="true"
-              aria-describedby="email-hint"
-            />
-            <span id="email-hint" className="sr-only">
-              Enter a valid email address
-            </span>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <div className="password-input-wrapper">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="Min. 8 characters"
-                required
-                minLength={8}
-                className="input"
-                aria-required="true"
-                aria-describedby="password-hint"
-              />
-              <Button 
-                variant="primary" 
-                onClick={() => setShowPassword(!showPassword)} 
-                type="button"
-                className="password-toggle"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </Button>
-            </div>
-            <span id="password-hint" className="sr-only">
-              Password must be at least 8 characters long
-            </span>
-
-            {/* Password Strength Indicator */}
-            {formData.password && (
-              <div className="password-strength">
-                <div className="strength-bar">
-                  <div
-                    className="strength-fill"
-                    style={{
-                      width: `${(passwordStrength.strength / 5) * 100}%`,
-                      backgroundColor: passwordStrength.color.includes('red') ? 'var(--accent-error)' :
-                                      passwordStrength.color.includes('yellow') ? 'var(--accent-warning)' :
-                                      passwordStrength.color.includes('blue') ? 'var(--accent-info)' :
-                                      passwordStrength.color.includes('green') ? 'var(--accent-success)' : 'var(--text-tertiary)'
-                    }}
-                  />
-                </div>
-                {passwordStrength.label && (
-                  <span className={`strength-label ${passwordStrength.color}`}>
-                    {passwordStrength.label}
-                  </span>
-                )}
+        <ShopifyCard>
+          <form onSubmit={handleSubmit} className="register-form">
+            {displayError && (
+              <div className="alert alert-error">
+                <AlertCircle size={16} />
+                <span>{displayError}</span>
               </div>
             )}
-          </div>
 
-          <Button variant="primary" disabled={submitting} type="submit" aria-busy={submitting}>
-            {buttonLabel}
-          </Button>
+            <div className="form-field">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="creator@example.com"
+                required
+                autoComplete="email"
+              />
+            </div>
 
-          <p className="form-footer">
-            Already have an account?{' '}
-            <a href="/auth/login" className="link">Sign in</a>
-          </p>
-        </form>
-      </Card>
+            <div className="form-field">
+              <label htmlFor="password">Password</label>
+              <div className="password-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder="Min. 8 characters"
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              {formData.password && (
+                <div className="password-strength">
+                  <div className="strength-bar">
+                    <div
+                      className="strength-fill"
+                      style={{
+                        width: `${(passwordStrength.strength / 5) * 100}%`,
+                        backgroundColor: passwordStrength.color
+                      }}
+                    />
+                  </div>
+                  {passwordStrength.label && (
+                    <span className="strength-label" style={{ color: passwordStrength.color }}>
+                      {passwordStrength.label}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <ShopifyButton type="submit" variant="primary" fullWidth loading={submitting}>
+              {buttonLabel}
+            </ShopifyButton>
+          </form>
+        </ShopifyCard>
+
+        <p className="login-link">
+          Already have an account? <a href="/auth/login">Sign in</a>
+        </p>
+      </div>
 
       <style jsx>{`
-        .auth-container {
+        .register-page {
           min-height: 100vh;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: var(--bg-app);
-          padding: var(--space-4);
+          background: #f6f6f7;
+          padding: 24px;
         }
-
-        .auth-card {
+        .register-container {
           width: 100%;
-          max-width: 400px;
-          background: var(--bg-card);
-          border: 1px solid var(--border-default);
-          border-radius: var(--radius-lg);
-          padding: var(--space-8);
+          max-width: 420px;
         }
-
-        .auth-header {
+        .register-header {
           text-align: center;
-          margin-bottom: var(--space-6);
+          margin-bottom: 24px;
         }
-
-        .logo {
-          width: 48px;
-          height: 48px;
-          margin: 0 auto var(--space-4);
-        }
-
-        .auth-header h1 {
-          font-size: var(--text-2xl);
-          font-weight: 700;
-          color: var(--text-primary);
-          margin-bottom: var(--space-2);
-        }
-
-        .auth-header p {
-          font-size: var(--text-sm);
-          color: var(--text-secondary);
-        }
-
-        .auth-form {
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-4);
-        }
-
-        .error-message {
-          padding: var(--space-3);
-          background: rgba(239, 68, 68, 0.1);
-          border: 1px solid rgba(239, 68, 68, 0.3);
-          border-radius: var(--radius-md);
-          color: var(--accent-error);
-          font-size: var(--text-sm);
-        }
-
-        .success-message {
-          padding: var(--space-3);
-          background: rgba(34, 197, 94, 0.1);
-          border: 1px solid rgba(34, 197, 94, 0.3);
-          border-radius: var(--radius-md);
-          color: var(--accent-success);
-          font-size: var(--text-sm);
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-2);
-        }
-
-        .form-group label {
-          font-size: var(--text-sm);
+        .register-header h1 {
+          font-size: 24px;
           font-weight: 600;
-          color: var(--text-primary);
+          color: #202223;
+          margin: 16px 0 8px;
         }
-
-        .input {
+        .register-header p {
+          font-size: 14px;
+          color: #6d7175;
+          margin: 0;
+        }
+        .register-form {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .alert {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 12px 14px;
+          border-radius: 8px;
+          font-size: 13px;
+          line-height: 1.4;
+        }
+        .alert-error {
+          background: #fbeae5;
+          color: #c4320a;
+          border: 1px solid #f5c4b8;
+        }
+        .form-field {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .form-field label {
+          font-size: 13px;
+          font-weight: 500;
+          color: #202223;
+        }
+        .form-field input {
           width: 100%;
-          padding: var(--space-3);
-          background: var(--bg-input);
-          border: 1px solid var(--border-default);
-          border-radius: var(--radius-md);
-          color: var(--text-primary);
-          font-size: var(--text-base);
-          transition: all 0.2s;
+          padding: 10px 12px;
+          font-size: 14px;
+          border: 1px solid #c9cccf;
+          border-radius: 8px;
+          background: #fff;
+          color: #202223;
+          transition: border-color 0.15s, box-shadow 0.15s;
         }
-
-        .input:focus {
+        .form-field input:focus {
           outline: none;
-          border-color: var(--brand-primary);
-          box-shadow: var(--brand-glow);
+          border-color: #2c6ecb;
+          box-shadow: 0 0 0 2px rgba(44, 110, 203, 0.2);
         }
-
-        .input::placeholder {
-          color: var(--text-muted);
+        .form-field input::placeholder {
+          color: #6d7175;
         }
-
-        .password-input-wrapper {
+        .password-wrapper {
           position: relative;
         }
-
-        .password-input-wrapper .input {
-          padding-right: var(--space-10);
+        .password-wrapper input {
+          padding-right: 44px;
         }
-
         .password-toggle {
           position: absolute;
-          right: var(--space-3);
+          right: 10px;
           top: 50%;
           transform: translateY(-50%);
           background: none;
           border: none;
-          color: var(--text-secondary);
+          padding: 4px;
           cursor: pointer;
-          padding: var(--space-1);
+          color: #6d7175;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: color 0.2s;
+          border-radius: 4px;
+          transition: color 0.15s;
         }
-
         .password-toggle:hover {
-          color: var(--text-primary);
+          color: #202223;
         }
-
-        .password-toggle:focus {
-          outline: none;
-          box-shadow: var(--brand-glow);
-          border-radius: var(--radius-sm);
-        }
-
         .password-strength {
           display: flex;
           align-items: center;
-          gap: var(--space-2);
-          margin-top: var(--space-1);
+          gap: 10px;
+          margin-top: 6px;
         }
-
         .strength-bar {
           flex: 1;
           height: 4px;
-          background: var(--bg-hover);
-          border-radius: var(--radius-full);
+          background: #c9cccf;
+          border-radius: 2px;
           overflow: hidden;
         }
-
         .strength-fill {
           height: 100%;
-          transition: width 0.3s, background-color 0.3s;
+          transition: width 0.2s, background-color 0.2s;
         }
-
         .strength-label {
-          font-size: var(--text-xs);
-          font-weight: 600;
-        }
-
-        .btn-primary {
-          width: 100%;
-          padding: var(--space-3) var(--space-4);
-          background: var(--brand-gradient);
-          background-size: 200% 200%;
-          border: none;
-          border-radius: var(--radius-md);
-          color: white;
-          font-size: var(--text-base);
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-          background-position: right center;
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-lg);
-        }
-
-        .btn-primary:focus {
-          outline: none;
-          box-shadow: var(--brand-glow-strong);
-        }
-
-        .btn-primary:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .form-footer {
-          text-align: center;
-          font-size: var(--text-sm);
-          color: var(--text-secondary);
-        }
-
-        .link {
-          color: var(--brand-primary);
-          text-decoration: none;
-          font-weight: 600;
-          transition: color 0.2s;
-        }
-
-        .link:hover {
-          color: var(--brand-secondary);
-        }
-
-        .link:focus {
-          outline: none;
-          box-shadow: var(--brand-glow);
-          border-radius: var(--radius-sm);
-        }
-
-        .sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
+          font-size: 12px;
+          font-weight: 500;
           white-space: nowrap;
-          border-width: 0;
+        }
+        .login-link {
+          text-align: center;
+          margin-top: 20px;
+          font-size: 14px;
+          color: #6d7175;
+        }
+        .login-link a {
+          color: #2c6ecb;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        .login-link a:hover {
+          text-decoration: underline;
+        }
+        @media (max-width: 480px) {
+          .register-page {
+            padding: 16px;
+          }
         }
       `}</style>
     </div>

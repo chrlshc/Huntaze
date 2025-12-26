@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import useSWR from 'swr';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -17,20 +18,17 @@ import {
   Crown,
   DollarSign
 } from 'lucide-react';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 import type { DiscountRecommendation, FanSegment } from '@/lib/offers/types';
+import type { Fan } from '@/lib/services/crmData';
 
 interface AIDiscountStrategyProps {
   onApplyDiscount: (discount: DiscountRecommendation) => void;
 }
 
-// Mock fan segments
-const mockSegments: FanSegment[] = [
-  { id: 's1', name: 'New Subscribers', size: 245, averageSpend: 15, engagementScore: 0.65 },
-  { id: 's2', name: 'VIP Fans', size: 89, averageSpend: 120, engagementScore: 0.92 },
-  { id: 's3', name: 'Inactive Fans', size: 156, averageSpend: 8, engagementScore: 0.15 },
-  { id: 's4', name: 'High Spenders', size: 67, averageSpend: 200, engagementScore: 0.85 },
-  { id: 's5', name: 'Regular Fans', size: 412, averageSpend: 45, engagementScore: 0.55 },
-];
+type FansResponse = {
+  fans: Fan[];
+};
 
 const segmentIcons: Record<string, typeof Users> = {
   'New Subscribers': UserPlus,
@@ -40,78 +38,128 @@ const segmentIcons: Record<string, typeof Users> = {
   'Regular Fans': Users,
 };
 
+function parseDate(value?: string | null): Date | null {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function daysSince(date: Date | null): number {
+  if (!date) return Number.POSITIVE_INFINITY;
+  return (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
+}
+
+function averageSpend(fans: Fan[]): number {
+  if (fans.length === 0) return 0;
+  const totalCents = fans.reduce((sum, fan) => sum + (fan.valueCents ?? 0), 0);
+  return totalCents / 100 / fans.length;
+}
+
+function engagementScore(fans: Fan[]): number {
+  if (fans.length === 0) return 0;
+  const scores = fans.map((fan) => {
+    const lastSeen = parseDate(fan.lastSeenAt) ?? parseDate(fan.updatedAt) ?? parseDate(fan.createdAt);
+    const ageDays = Math.min(daysSince(lastSeen), 30);
+    return Math.max(0, 1 - ageDays / 30);
+  });
+  const avg = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+  return Math.round(avg * 10 * 10) / 10;
+}
+
 export function AIDiscountStrategy({ onApplyDiscount }: AIDiscountStrategyProps) {
   const [selectedSegments, setSelectedSegments] = useState<string[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [recommendations, setRecommendations] = useState<DiscountRecommendation[]>([]);
   const [goal, setGoal] = useState<'revenue' | 'engagement' | 'retention'>('revenue');
+  const [error, setError] = useState<string | null>(null);
+
+  const { data: fansData, error: fansError, isLoading: fansLoading } = useSWR<FansResponse>(
+    '/api/crm/fans',
+    (url) => internalApiFetch<FansResponse>(url),
+  );
+
+  const segments = useMemo<FanSegment[]>(() => {
+    const fans = fansData?.fans ?? [];
+    if (fans.length === 0) return [];
+
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const newSubscribers = fans.filter((fan) => {
+      const createdAt = parseDate(fan.createdAt);
+      return createdAt && createdAt >= sevenDaysAgo;
+    });
+
+    const vipFans = fans.filter((fan) => {
+      const tags = Array.isArray(fan.tags) ? fan.tags.join(' ').toLowerCase() : '';
+      return tags.includes('vip') || (fan.valueCents ?? 0) >= 50_000;
+    });
+
+    const inactiveFans = fans.filter((fan) => {
+      const lastSeen = parseDate(fan.lastSeenAt) ?? parseDate(fan.updatedAt) ?? parseDate(fan.createdAt);
+      return lastSeen !== null && lastSeen <= thirtyDaysAgo;
+    });
+
+    const highSpenders = fans.filter((fan) => (fan.valueCents ?? 0) >= 20_000);
+    const regularFans = fans.filter((fan) => {
+      const value = fan.valueCents ?? 0;
+      return value > 0 && value < 20_000;
+    });
+
+    const rawSegments: Array<{ id: string; name: string; fans: Fan[] }> = [
+      { id: 'new_subscribers', name: 'New Subscribers', fans: newSubscribers },
+      { id: 'vip_fans', name: 'VIP Fans', fans: vipFans },
+      { id: 'inactive_fans', name: 'Inactive Fans', fans: inactiveFans },
+      { id: 'high_spenders', name: 'High Spenders', fans: highSpenders },
+      { id: 'regular_fans', name: 'Regular Fans', fans: regularFans },
+    ];
+
+    return rawSegments
+      .filter((segment) => segment.fans.length > 0)
+      .map((segment) => ({
+        id: segment.id,
+        name: segment.name,
+        size: segment.fans.length,
+        averageSpend: Math.round(averageSpend(segment.fans)),
+        engagementScore: engagementScore(segment.fans),
+      }));
+  }, [fansData]);
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
+    setError(null);
 
     try {
-      const response = await fetch('/api/ai/offers/discounts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          segments: mockSegments.filter(s => selectedSegments.includes(s.id)),
-          goal,
-        }),
-      });
+      const selected = selectedSegments.length
+        ? segments.filter((segment) => selectedSegments.includes(segment.id))
+        : segments;
 
-      if (!response.ok) throw new Error('Failed to get recommendations');
+      if (selected.length === 0) {
+        setError('No fan segments available for analysis');
+        return;
+      }
 
-      const data = await response.json();
-      setRecommendations(data.recommendations || getMockRecommendations());
+      const data = await internalApiFetch<{ recommendations?: DiscountRecommendation[] }>(
+        '/api/ai/offers/discounts',
+        {
+          method: 'POST',
+          body: {
+            fanSegments: selected,
+          },
+        },
+      );
+
+      setRecommendations(Array.isArray(data?.recommendations) ? data.recommendations : []);
+      if (!data?.recommendations?.length) {
+        setError('No discount recommendations returned');
+      }
     } catch (err) {
-      setRecommendations(getMockRecommendations());
+      setRecommendations([]);
+      setError(err instanceof Error ? err.message : 'Failed to get recommendations');
     } finally {
       setIsAnalyzing(false);
     }
-  };
-
-  const getMockRecommendations = (): DiscountRecommendation[] => {
-    const baseRecs: DiscountRecommendation[] = [];
-    
-    if (selectedSegments.includes('s1') || selectedSegments.length === 0) {
-      baseRecs.push({
-        discountType: 'percentage',
-        discountValue: 25,
-        targetAudience: 'New Subscribers',
-        timing: 'First 48 hours after signup',
-        reasoning: 'New subscribers have high intent but need a push. A 25% welcome discount converts 40% more first-time buyers.',
-      });
-    }
-    
-    if (selectedSegments.includes('s3') || selectedSegments.length === 0) {
-      baseRecs.push({
-        discountType: 'fixed',
-        discountValue: 10,
-        targetAudience: 'Inactive Fans',
-        timing: 'After 30 days of inactivity',
-        reasoning: 'Win-back campaigns with fixed discounts perform 2x better than percentage discounts for re-engagement.',
-      });
-    }
-    
-    if (selectedSegments.includes('s2') || selectedSegments.length === 0) {
-      baseRecs.push({
-        discountType: 'bogo',
-        discountValue: 50,
-        targetAudience: 'VIP Fans',
-        timing: 'Exclusive early access',
-        reasoning: 'VIP fans respond better to exclusive offers than discounts. BOGO deals increase average order value by 35%.',
-      });
-    }
-
-    return baseRecs.length > 0 ? baseRecs : [
-      {
-        discountType: 'percentage',
-        discountValue: 15,
-        targetAudience: 'All Fans',
-        timing: 'Weekend flash sale',
-        reasoning: 'A moderate discount during peak engagement times maximizes both volume and revenue.',
-      },
-    ];
   };
 
   const toggleSegment = (segmentId: string) => {
@@ -120,6 +168,7 @@ export function AIDiscountStrategy({ onApplyDiscount }: AIDiscountStrategyProps)
         ? prev.filter(id => id !== segmentId)
         : [...prev, segmentId]
     );
+    setError(null);
   };
 
   const getDiscountDisplay = (rec: DiscountRecommendation) => {
@@ -195,7 +244,16 @@ export function AIDiscountStrategy({ onApplyDiscount }: AIDiscountStrategyProps)
         </p>
         
         <div className="space-y-3">
-          {mockSegments.map((segment) => {
+          {fansLoading && (
+            <div className="text-sm text-muted-foreground">Loading fan segments...</div>
+          )}
+          {!fansLoading && fansError && (
+            <div className="text-sm text-red-500">Failed to load fan segments</div>
+          )}
+          {!fansLoading && !fansError && segments.length === 0 && (
+            <div className="text-sm text-muted-foreground">No fan segments available yet.</div>
+          )}
+          {segments.map((segment) => {
             const Icon = segmentIcons[segment.name] || Users;
             return (
               <div
@@ -221,17 +279,11 @@ export function AIDiscountStrategy({ onApplyDiscount }: AIDiscountStrategyProps)
                     <div>
                       <p className="font-medium">{segment.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {segment.size} fans • Avg spend: ${segment.averageSpend}
+                        {segment.size} fans • ${segment.averageSpend} avg spend
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="text-sm font-medium">
-                        {Math.round(segment.engagementScore * 100)}%
-                      </p>
-                      <p className="text-xs text-muted-foreground">Engagement</p>
-                    </div>
+                  <div className="flex items-center gap-2">
                     {selectedSegments.includes(segment.id) && (
                       <Check className="w-5 h-5 text-primary" />
                     )}
@@ -241,21 +293,40 @@ export function AIDiscountStrategy({ onApplyDiscount }: AIDiscountStrategyProps)
             );
           })}
         </div>
+      </Card>
+
+      {/* CTA */}
+      <Card className="p-6">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+            <Percent className="w-5 h-5 text-muted-foreground" />
+          </div>
+          <div>
+            <h3 className="font-semibold">Generate Recommendations</h3>
+            <p className="text-sm text-muted-foreground">
+              AI will analyze your segments and suggest the best discount strategies
+            </p>
+          </div>
+        </div>
+
+        {error && (
+          <div className="mt-4 text-sm text-red-500">{error}</div>
+        )}
 
         <Button 
-          onClick={handleAnalyze} 
-          disabled={isAnalyzing}
+          onClick={handleAnalyze}
+          disabled={isAnalyzing || fansLoading || segments.length === 0}
           className="w-full mt-4"
         >
           {isAnalyzing ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Analyzing...
+              Analyzing Segments...
             </>
           ) : (
             <>
               <Sparkles className="w-4 h-4 mr-2" />
-              Get Discount Recommendations
+              Generate Recommendations
             </>
           )}
         </Button>
@@ -265,45 +336,33 @@ export function AIDiscountStrategy({ onApplyDiscount }: AIDiscountStrategyProps)
       {recommendations.length > 0 && (
         <Card className="p-6">
           <h3 className="font-semibold mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5" />
-            AI Recommendations
+            <Clock className="w-5 h-5" />
+            Recommended Strategies
           </h3>
           
           <div className="space-y-4">
             {recommendations.map((rec, index) => (
-              <div
+              <div 
                 key={index}
                 className="p-4 rounded-lg border border-border bg-card"
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-                      <Percent className="w-6 h-6 text-green-500" />
-                    </div>
-                    <div>
-                      <p className="text-xl font-bold">{getDiscountDisplay(rec)}</p>
-                      <p className="text-sm text-muted-foreground">
-                        for {rec.targetAudience}
-                      </p>
-                    </div>
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <h4 className="font-semibold">{rec.targetAudience}</h4>
+                    <p className="text-sm text-muted-foreground">{rec.timing}</p>
                   </div>
+                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                    {getDiscountDisplay(rec)}
+                  </span>
                 </div>
-
-                <div className="flex items-center gap-2 mb-3 text-sm">
-                  <Clock className="w-4 h-4 text-blue-500" />
-                  <span className="text-blue-500 font-medium">{rec.timing}</span>
-                </div>
-
                 <p className="text-sm text-muted-foreground mb-4">
                   {rec.reasoning}
                 </p>
-
                 <Button 
                   onClick={() => onApplyDiscount(rec)}
                   variant="outline"
                   className="w-full"
                 >
-                  <Check className="w-4 h-4 mr-2" />
                   Apply This Strategy
                 </Button>
               </div>

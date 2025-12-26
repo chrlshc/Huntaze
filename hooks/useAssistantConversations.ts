@@ -1,9 +1,15 @@
 import { useState, useCallback, useEffect } from "react";
+import {
+  deleteAssistantConversation,
+  getAssistantConversation,
+  listAssistantConversations,
+  sendAssistantMessage,
+} from "@/lib/services/assistant";
 
 export type Conversation = {
   id: string;
-  title: string;
-  updatedAt: string;
+  title?: string;
+  updatedAt?: string;
   messages?: { content: string }[];
 };
 
@@ -23,11 +29,8 @@ export function useAssistantConversations() {
   // Fetch all conversations
   const fetchConversations = useCallback(async () => {
     try {
-      const res = await fetch("/api/assistant/conversations");
-      if (res.ok) {
-        const data = await res.json();
-        setConversations(data.conversations || []);
-      }
+      const data = await listAssistantConversations();
+      setConversations(data.conversations || []);
     } catch {}
   }, []);
 
@@ -35,19 +38,16 @@ export function useAssistantConversations() {
   const loadConversation = useCallback(async (id: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/assistant/conversations/${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setCurrentConversationId(id);
-        setMessages(
-          data.conversation.messages.map((m: any) => ({
-            id: m.id,
-            role: m.role,
-            content: m.content,
-            createdAt: m.createdAt,
-          }))
-        );
-      }
+      const data = await getAssistantConversation(id);
+      setCurrentConversationId(id);
+      setMessages(
+        (data.conversation.messages || []).map((m) => ({
+          id: m.id,
+          role: m.role,
+          content: m.content,
+          createdAt: m.createdAt,
+        }))
+      );
     } catch {} finally {
       setLoading(false);
     }
@@ -58,18 +58,15 @@ export function useAssistantConversations() {
     if (!currentConversationId) return;
     
     try {
-      const res = await fetch(`/api/assistant/conversations/${currentConversationId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setMessages(
-          data.conversation.messages.map((m: any) => ({
-            id: m.id,
-            role: m.role,
-            content: m.content,
-            createdAt: m.createdAt,
-          }))
-        );
-      }
+      const data = await getAssistantConversation(currentConversationId);
+      setMessages(
+        (data.conversation.messages || []).map((m) => ({
+          id: m.id,
+          role: m.role,
+          content: m.content,
+          createdAt: m.createdAt,
+        }))
+      );
     } catch {}
   }, [currentConversationId]);
 
@@ -84,53 +81,31 @@ export function useAssistantConversations() {
   const sendMessage = useCallback(
     async (content: string) => {
       try {
-        const res = await fetch("/api/assistant", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            conversationId: currentConversationId,
-            message: content,
-          }),
+        const data = await sendAssistantMessage({
+          conversationId: currentConversationId,
+          message: content,
         });
 
-        if (res.ok) {
-          const data = await res.json();
-          // Update conversation ID if new
-          if (!currentConversationId && data.conversationId) {
-            setCurrentConversationId(data.conversationId);
-          }
-
-          // Reload messages from server to get the actual saved messages
-          if (data.conversationId) {
-            const convRes = await fetch(`/api/assistant/conversations/${data.conversationId}`);
-            if (convRes.ok) {
-              const convData = await convRes.json();
-              setMessages(
-                convData.conversation.messages.map((m: any) => ({
-                  id: m.id,
-                  role: m.role,
-                  content: m.content,
-                  createdAt: m.createdAt,
-                  }))
-              );
-            }
-          }
-
-          await fetchConversations();
-          return data.reply;
-        } else {
-          // Parse error response
-          let errorData;
-          try {
-            errorData = await res.json();
-          } catch {
-            errorData = { error: "Failed to send message" };
-          }
-          
-          const errorMessage = errorData.error || "Failed to send message";
-          
-          throw new Error(errorMessage);
+        // Update conversation ID if new
+        if (!currentConversationId && data.conversationId) {
+          setCurrentConversationId(data.conversationId);
         }
+
+        // Reload messages from server to get the actual saved messages
+        if (data.conversationId) {
+          const convData = await getAssistantConversation(data.conversationId);
+          setMessages(
+            (convData.conversation.messages || []).map((m) => ({
+              id: m.id,
+              role: m.role,
+              content: m.content,
+              createdAt: m.createdAt,
+            }))
+          );
+        }
+
+        await fetchConversations();
+        return data.reply;
       } catch (e) {
         throw e;
       }
@@ -142,7 +117,7 @@ export function useAssistantConversations() {
   const deleteConversation = useCallback(
     async (id: string) => {
       try {
-        await fetch(`/api/assistant/conversations/${id}`, { method: "DELETE" });
+        await deleteAssistantConversation(id);
         if (currentConversationId === id) {
           setCurrentConversationId(null);
           setMessages([]);

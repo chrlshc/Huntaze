@@ -1,27 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { crmData } from '@/lib/services/crmData';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { MessagesRepository } from '@/lib/db/repositories';
+import { resolveUserId } from '@/app/api/crm/_lib/auth';
 import { createSuccessResponse } from '@/lib/api/utils/response';
 
 export const runtime = 'nodejs';
 
-async function getUserId(request: NextRequest): Promise<string | null> {
-  const user = await getUserFromRequest(request);
-  return user?.userId || null;
+async function getUserId(request: NextRequest): Promise<number | null> {
+  const { userId } = await resolveUserId(request);
+  return userId ?? null;
 }
 
 const noStore = {
   'Cache-Control': 'no-store, no-transform',
 };
 
-async function computeUnread(userId: string): Promise<number> {
-  const convs = crmData.listConversations(userId);
-  let count = 0;
-  for (const c of convs) {
-    const msgs = crmData.listMessages(userId, c.id);
-    count += msgs.filter((m) => m.direction === 'in' && !m.read).length;
-  }
-  return count;
+async function computeUnread(userId: number): Promise<number> {
+  return MessagesRepository.getUnreadCount(userId);
 }
 
 export async function GET(request: NextRequest) {

@@ -9,4 +9,5 @@
 
 export * from './config';
 export * from './optimized-fetcher';
+export * from './use-internal-swr';
 export * from './use-optimized-swr';

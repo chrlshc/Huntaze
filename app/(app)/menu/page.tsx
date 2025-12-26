@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import NotificationSettings from '@/components/NotificationSettings';
 import { useRouter } from 'next/navigation';
@@ -89,9 +90,11 @@ export default function MenuPage() {
       <div className="bg-white border-b border-gray-100">
         <div className="px-4 py-4">
           <div className="flex items-center gap-3">
-            <img
+            <Image
               src="https://ui-avatars.com/api/?name=User&background=gradient"
               alt="User"
+              width={64}
+              height={64}
               className="w-16 h-16 rounded-full"
             />
             <div className="flex-1">

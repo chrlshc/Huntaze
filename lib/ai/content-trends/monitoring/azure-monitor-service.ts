@@ -13,6 +13,7 @@ import {
   Trace,
   TraceSeverity,
 } from './types';
+import { externalFetch } from '@/lib/services/external/http';
 
 // ============================================================================
 // Azure Monitor Service Implementation
@@ -232,7 +233,9 @@ export class AzureMonitorService {
     const stringToSign = `POST\n${contentLength}\napplication/json\nx-ms-date:${date}\n/api/logs`;
     const signature = await this.computeSignature(stringToSign);
 
-    const response = await fetch(url, {
+    await externalFetch(url, {
+      service: 'azure-monitor',
+      operation: `log.${type}`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -241,11 +244,11 @@ export class AzureMonitorService {
         Authorization: `SharedKey ${this.config.workspaceId}:${signature}`,
       },
       body,
+      cache: 'no-store',
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, retryMethods: ['POST'] },
+      throwOnHttpError: true,
     });
-
-    if (!response.ok) {
-      throw new Error(`Azure Monitor API error: ${response.statusText}`);
-    }
   }
 
   private async computeSignature(stringToSign: string): Promise<string> {

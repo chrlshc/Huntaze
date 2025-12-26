@@ -121,9 +121,9 @@ export default function BlogPage() {
         <div className="container-width">
           <div className="flex gap-4 overflow-x-auto no-scrollbar">
             {categories.map((category, index) => (
-              <Button variant="primary">
-  {category}
-</Button>
+              <Button key={category} variant="primary">
+                {category}
+              </Button>
             ))}
           </div>
         </div>

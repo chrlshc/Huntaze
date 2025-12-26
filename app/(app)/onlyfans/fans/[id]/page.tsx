@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MessageSquare, DollarSign, Calendar, TrendingUp, RefreshCw } from 'lucide-react';
@@ -156,7 +157,7 @@ export default function FanProfilePage() {
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <img src={fan.avatar} alt={fan.name} className="w-20 h-20 rounded-full" />
+            <Image src={fan.avatar} alt={fan.name} width={80} height={80} className="w-20 h-20 rounded-full" />
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{fan.name}</h1>
               <p className="text-gray-600 dark:text-gray-400 mb-2">{fan.username}</p>

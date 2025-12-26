@@ -82,15 +82,16 @@ class InMemoryRateLimitStore implements RateLimitRedisInterface {
 
   multi(): RateLimitRedisMulti {
     const operations: Array<() => Promise<unknown>> = [];
-    const self = this;
+    const incr = this.incr.bind(this);
+    const expire = this.expire.bind(this);
 
     return {
       incr(key: string) {
-        operations.push(() => self.incr(key));
+        operations.push(() => incr(key));
         return this;
       },
       expire(key: string, seconds: number) {
-        operations.push(() => self.expire(key, seconds));
+        operations.push(() => expire(key, seconds));
         return this;
       },
       async exec() {

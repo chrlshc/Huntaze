@@ -2,6 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/export-all";
 import { Card } from '@/components/ui/card';
@@ -121,7 +122,13 @@ export default function RepostPage() {
                   <div className="flex gap-3 items-start">
                     <div className="w-20 h-20 rounded overflow-hidden flex items-center justify-center bg-[var(--bg-app)]">
                       {s.asset.thumbUrl ? (
-                        <img src={s.asset.thumbUrl} alt={`${s.asset.type} thumbnail`} className="object-cover w-full h-full" />
+                        <Image
+                          src={s.asset.thumbUrl}
+                          alt={`${s.asset.type} thumbnail`}
+                          width={80}
+                          height={80}
+                          className="object-cover w-full h-full"
+                        />
                       ) : (
                         <span className="text-xs text-[var(--color-text-sub)]">{s.asset.type}</span>
                       )}

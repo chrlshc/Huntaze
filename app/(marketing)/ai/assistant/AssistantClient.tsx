@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { Send, Bot, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { listAIAgents, sendAIAgentMessage } from '@/lib/services/ai-agents';
 
 interface Message {
   id: string;
@@ -53,9 +54,8 @@ export default function AssistantClient() {
 
   const loadAgents = async () => {
     try {
-      const response = await fetch('/api/ai/agents');
-      const data = await response.json();
-      setAgents(data.agents || []);
+      const data = await listAIAgents();
+      setAgents((data.agents || []).map((agent) => ({ ...agent, actions: agent.actions ?? [] })));
     } catch (error) {
       console.error('Failed to load agents:', error);
     }
@@ -76,22 +76,15 @@ export default function AssistantClient() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/ai/agents', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: input,
-          context: {
-            currentPage: typeof window !== 'undefined' ? window.location.pathname : '/ai/assistant',
-            userRole: (session?.user as any)?.role || 'user'
-          }
-        }),
+      const data = await sendAIAgentMessage({
+        message: input,
+        context: {
+          currentPage: typeof window !== 'undefined' ? window.location.pathname : '/ai/assistant',
+          userRole: (session?.user as any)?.role || 'user',
+        },
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to process request');
+      if (data.error) {
+        throw new Error(data.error);
       }
 
       const assistantMessage: Message = {
@@ -100,7 +93,7 @@ export default function AssistantClient() {
         content: data.message || 'Task completed successfully!',
         timestamp: new Date(),
         type: data.type,
-        actionResult: data.result
+        actionResult: data.result,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -138,22 +131,15 @@ export default function AssistantClient() {
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      const response = await fetch('/api/ai/agents', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          directAction: {
-            agentKey,
-            action,
-            params
-          }
-        }),
+      const data = await sendAIAgentMessage({
+        directAction: {
+          agentKey,
+          action,
+          params,
+        },
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to execute action');
+      if (data.error) {
+        throw new Error(data.error);
       }
 
       const assistantMessage: Message = {

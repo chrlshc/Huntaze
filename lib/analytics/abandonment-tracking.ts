@@ -288,7 +288,16 @@ export function clearAbandonmentTracking(): void {
  * React hook for abandonment tracking
  */
 export function useAbandonmentTracking() {
-  if (typeof window === 'undefined') {
+  const isClient = typeof window !== 'undefined';
+  
+  // Setup tracking on mount
+  React.useEffect(() => {
+    if (!isClient) return;
+    const cleanup = setupAbandonmentTracking();
+    return cleanup;
+  }, [isClient]);
+
+  if (!isClient) {
     return {
       trackFieldFocus: () => {},
       trackFieldBlur: () => {},
@@ -296,12 +305,6 @@ export function useAbandonmentTracking() {
       clearTracking: () => {},
     };
   }
-  
-  // Setup tracking on mount
-  React.useEffect(() => {
-    const cleanup = setupAbandonmentTracking();
-    return cleanup;
-  }, []);
   
   return {
     trackFieldFocus,

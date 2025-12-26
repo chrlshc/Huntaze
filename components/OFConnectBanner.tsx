@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { usePWAInstall } from '@/components/usePWAInstall';
 import { IOSA2HSOverlay } from '@/components/IOSA2HSOverlay';
 import Link from 'next/link';
@@ -7,14 +7,9 @@ import { Button } from "@/components/ui/button";
 
 export default function OFConnectBanner() {
   const { isIOS, isStandalone, canInstall, promptInstall } = usePWAInstall();
-  const [showIOS, setShowIOS] = useState(false);
-
-  useEffect(() => {
-    if (isIOS && !isStandalone) {
-      const dismissed = typeof window !== 'undefined' ? localStorage.getItem('iosA2HS.dismissed') : '1';
-      if (!dismissed) setShowIOS(true);
-    }
-  }, [isIOS, isStandalone]);
+  const [manualShowIOS, setManualShowIOS] = useState(false);
+  const dismissed = typeof window !== 'undefined' ? localStorage.getItem('iosA2HS.dismissed') : '1';
+  const showIOS = manualShowIOS || (isIOS && !isStandalone && !dismissed);
 
   return (
     <>
@@ -35,7 +30,7 @@ export default function OFConnectBanner() {
             )}
             {/* iOS : affiche un guide A2HS */}
             {isIOS && !isStandalone && (
-              <Button variant="secondary" onClick={() => setShowIOS(true)}>
+              <Button variant="secondary" onClick={() => setManualShowIOS(true)}>
                 How to install on iPhone
               </Button>
             )}
@@ -59,7 +54,7 @@ export default function OFConnectBanner() {
         open={showIOS}
         onClose={() => {
           try { localStorage.setItem('iosA2HS.dismissed', '1'); } catch {}
-          setShowIOS(false);
+          setManualShowIOS(false);
         }}
       />
     </>

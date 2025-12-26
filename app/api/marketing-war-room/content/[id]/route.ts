@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { assertMockEnabled } from '@/lib/config/mock-data';
 
 interface ContentItem {
   id: string;
@@ -40,6 +41,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const mockDisabled = assertMockEnabled('/api/marketing-war-room/content/[id]');
+  if (mockDisabled) return mockDisabled;
+
   const { id } = await params;
 
   // Check mock data first
@@ -66,6 +70,9 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const mockDisabled = assertMockEnabled('/api/marketing-war-room/content/[id]');
+  if (mockDisabled) return mockDisabled;
+
   try {
     const { id } = await params;
     const body = await request.json();

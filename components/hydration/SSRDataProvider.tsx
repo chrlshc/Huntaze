@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { createContext, useContext, ReactNode, useState } from 'react';
+import { useIsClient } from '@/hooks/useIsClient';
 
 /**
  * SSRDataProvider Component
@@ -31,11 +32,7 @@ interface SSRDataProviderProps {
 
 export function SSRDataProvider({ children, initialData = {}, hydrationId, className }: SSRDataProviderProps) {
   const [data, setDataState] = useState<SSRData>(initialData);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const isHydrated = useIsClient();
 
   const setData = (key: string, value: any) => {
     setDataState(prev => ({ ...prev, [key]: value }));

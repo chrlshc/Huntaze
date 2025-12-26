@@ -10,6 +10,7 @@ const JWT_SECRET = new TextEncoder().encode(
 export async function GET() {
   try {
     const startTime = Date.now();
+    const isDev = process.env.NODE_ENV !== 'production';
     const checks = {
       database: false,
       jwtSecret: false,
@@ -17,7 +18,7 @@ export async function GET() {
       tokenVerification: false,
       passwordHashing: false,
       userTableAccess: false,
-      sessionTableAccess: false
+      sessionTableAccess: isDev
     };
 
     // Check JWT_SECRET configuration
@@ -39,12 +40,14 @@ export async function GET() {
       console.error('Auth health check - users table access failed:', error);
     }
 
-    // Test sessions table access
-    try {
-      await query('SELECT COUNT(*) FROM sessions LIMIT 1');
-      checks.sessionTableAccess = true;
-    } catch (error) {
-      console.error('Auth health check - sessions table access failed:', error);
+    // Test sessions table access (skip in dev since JWT-only auth doesn't use it)
+    if (!isDev) {
+      try {
+        await query('SELECT COUNT(*) FROM sessions LIMIT 1');
+        checks.sessionTableAccess = true;
+      } catch (error) {
+        console.error('Auth health check - sessions table access failed:', error);
+      }
     }
 
     // Test JWT token generation

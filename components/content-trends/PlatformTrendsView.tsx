@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -35,11 +35,7 @@ export function PlatformTrendsView() {
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState('24h');
 
-  useEffect(() => {
-    fetchTrends();
-  }, [activePlatform, timeframe]);
-
-  const fetchTrends = async () => {
+  const fetchTrends = useCallback(async () => {
     setLoading(true);
     try {
       const platformParam = activePlatform === 'all' ? '' : `&platform=${activePlatform}`;
@@ -54,7 +50,11 @@ export function PlatformTrendsView() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activePlatform, timeframe]);
+
+  useEffect(() => {
+    fetchTrends();
+  }, [fetchTrends]);
 
   const getViralBadge = (score: number) => {
     if (score >= 90) return { text: '🔥 Viral', class: 'bg-red-100 text-red-800' };

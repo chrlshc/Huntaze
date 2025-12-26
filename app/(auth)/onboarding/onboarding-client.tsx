@@ -8,6 +8,7 @@
 import { useRouter } from 'next/navigation';
 import { SimplifiedOnboardingWizard } from '@/components/onboarding/SimplifiedOnboardingWizard';
 import { useState } from 'react';
+import { completeOnboarding, trackOnboardingSkip } from '@/lib/services/onboarding';
 
 export function SimplifiedOnboardingClient() {
   const router = useRouter();
@@ -18,16 +19,7 @@ export function SimplifiedOnboardingClient() {
     
     try {
       // Mark onboarding as completed
-      const response = await fetch('/api/onboarding/complete', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to complete onboarding');
-      }
+      await completeOnboarding();
 
       // Redirect to dashboard
       router.push('/dashboard');
@@ -42,13 +34,7 @@ export function SimplifiedOnboardingClient() {
   const handleSkip = async (stepId: number) => {
     // Track skipped step for later completion
     try {
-      await fetch('/api/onboarding/skip', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ stepId }),
-      });
+      await trackOnboardingSkip(stepId);
     } catch (error) {
       console.error('Error tracking skipped step:', error);
     }

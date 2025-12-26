@@ -7,7 +7,7 @@
  * Follows the same patterns as Instagram and Reddit connect pages
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
@@ -18,32 +18,32 @@ export default function TikTokConnectPage() {
   const router = useRouter();
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [username, setUsername] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Check for OAuth callback results
-    if (!searchParams) return;
-    
-    const errorParam = searchParams.get('error');
-    const messageParam = searchParams.get('message');
-    const successParam = searchParams.get('success');
-    const usernameParam = searchParams.get('username');
+  const getErrorMessage = (errorCode: string, message: string | null): string => {
+    const errorMessages: Record<string, string> = {
+      access_denied: 'You denied access to your TikTok account. Please try again and grant the required permissions.',
+      invalid_state: 'Security validation failed. Please try connecting again.',
+      missing_code: 'Authorization failed. Please try connecting again.',
+      callback_failed: message || 'Failed to complete TikTok connection. Please try again.',
+      oauth_init_failed: message || 'Failed to start TikTok connection. Please check your configuration.',
+    };
 
-    if (errorParam) {
-      setError(getErrorMessage(errorParam, messageParam));
-      setIsConnecting(false);
-    } else if (successParam === 'true') {
-      setSuccess(true);
-      setUsername(usernameParam);
-      setIsConnecting(false);
-    }
-  }, [searchParams]);
+    return errorMessages[errorCode] || message || 'An unknown error occurred. Please try again.';
+  };
+
+  const errorParam = searchParams?.get('error');
+  const messageParam = searchParams?.get('message');
+  const successParam = searchParams?.get('success');
+  const usernameParam = searchParams?.get('username');
+
+  const callbackError = errorParam ? getErrorMessage(errorParam, messageParam) : null;
+  const isSuccess = !errorParam && successParam === 'true';
+  const displayError = error ?? callbackError;
+  const displayUsername = isSuccess ? usernameParam : null;
 
   const handleConnect = async () => {
     setIsConnecting(true);
     setError(null);
-    setSuccess(false);
 
     try {
       // Redirect to OAuth init endpoint
@@ -57,18 +57,6 @@ export default function TikTokConnectPage() {
   const handleDisconnect = async () => {
     // TODO: Implement disconnect functionality
     console.log('Disconnect TikTok account');
-  };
-
-  const getErrorMessage = (errorCode: string, message: string | null): string => {
-    const errorMessages: Record<string, string> = {
-      access_denied: 'You denied access to your TikTok account. Please try again and grant the required permissions.',
-      invalid_state: 'Security validation failed. Please try connecting again.',
-      missing_code: 'Authorization failed. Please try connecting again.',
-      callback_failed: message || 'Failed to complete TikTok connection. Please try again.',
-      oauth_init_failed: message || 'Failed to start TikTok connection. Please check your configuration.',
-    };
-
-    return errorMessages[errorCode] || message || 'An unknown error occurred. Please try again.';
   };
 
   return (
@@ -92,7 +80,7 @@ export default function TikTokConnectPage() {
         {/* Main Card */}
         <Card className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           {/* Success State */}
-          {success && username && (
+          {isSuccess && displayUsername && (
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +91,7 @@ export default function TikTokConnectPage() {
                 Successfully Connected!
               </h2>
               <p className="text-gray-600 mb-6">
-                Your TikTok account <span className="font-semibold text-black">@{username}</span> is now connected.
+                Your TikTok account <span className="font-semibold text-black">@{displayUsername}</span> is now connected.
               </p>
               <div className="flex gap-4 justify-center">
                 <Button variant="secondary" onClick={() => router.push('/dashboard')}>
@@ -117,7 +105,7 @@ export default function TikTokConnectPage() {
           )}
 
           {/* Error State */}
-          {error && !success && (
+          {displayError && !isSuccess && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-start">
                 <svg className="w-5 h-5 text-red-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
@@ -125,14 +113,14 @@ export default function TikTokConnectPage() {
                 </svg>
                 <div>
                   <h3 className="text-sm font-semibold text-red-800 mb-1">Connection Failed</h3>
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-red-700">{displayError}</p>
                 </div>
               </div>
             </div>
           )}
 
           {/* Connect State */}
-          {!success && (
+          {!isSuccess && (
             <>
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">What you'll be able to do:</h3>

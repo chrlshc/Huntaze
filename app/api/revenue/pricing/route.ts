@@ -1,7 +1,8 @@
-import { NextRequest } from 'next/server';
-import { auth } from '@/lib/auth/config';;
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth/config';
+import { prisma } from '@/lib/prisma';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 import type { PricingRecommendation } from '@/lib/services/revenue/types';
-import { isMockApiMode } from '@/config/api-mode';
 
 /**
  * GET /api/revenue/pricing
@@ -13,14 +14,14 @@ export async function GET(request: NextRequest) {
     const session = await auth();
     
     if (!session?.user?.id) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const creatorId = searchParams.get('creatorId');
 
     if (!creatorId) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'creatorId is required' },
         { status: 400 }
       );
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     // Verify creator owns this data
     if (session.user.id !== creatorId) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const correlationId = request.headers.get('X-Correlation-ID');
@@ -38,29 +39,43 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
 
-    if (!isMockApiMode()) {
+    if (!ENABLE_MOCK_DATA) {
+      const userId = Number.parseInt(creatorId, 10);
+      if (!Number.isFinite(userId)) {
+        return NextResponse.json({ error: 'Invalid creatorId' }, { status: 400 });
+      }
+
+      const aggregate = await prisma.subscriptions.aggregate({
+        where: {
+          user_id: userId,
+          status: 'active',
+        },
+        _avg: { amount: true },
+        _count: { _all: true },
+      });
+
+      const current = Math.round((aggregate._avg.amount ?? 0) * 100) / 100;
+      const dataPoints = aggregate._count._all ?? 0;
+
       const recommendations: PricingRecommendation = {
         subscription: {
-          current: 0,
-          recommended: 0,
+          current,
+          recommended: current,
           revenueImpact: 0,
-          reasoning: '',
+          reasoning: dataPoints > 0 ? 'Based on active subscription pricing.' : '',
           confidence: 0,
         },
         ppv: [],
         metadata: {
           lastUpdated: new Date().toISOString(),
-          dataPoints: 0,
+          dataPoints,
         },
       };
 
-      return Response.json(recommendations);
+      return NextResponse.json(recommendations);
     }
 
-    // TODO: Replace with actual backend service call
-    // const recommendations = await backendPricingService.getRecommendations(creatorId);
-
-    // Mock data for demo mode only
+    // Mock data for dev mode only
     const recommendations: PricingRecommendation = {
       subscription: {
         current: 9.99,
@@ -89,10 +104,10 @@ export async function GET(request: NextRequest) {
       ppvCount: recommendations.ppv.length,
     });
 
-    return Response.json(recommendations);
+    return NextResponse.json(recommendations);
   } catch (error) {
     console.error('[API] Pricing error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Search, Filter, Circle, DollarSign, Star } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import type { OfConversation } from '@/lib/types/onlyfans';
@@ -82,9 +83,11 @@ export default function OfInbox() {
             >
               {/* Avatar */}
               <div className="relative">
-                <img
+                <Image
                   src={conversation.avatarUrl || `https://ui-avatars.com/api/?name=${conversation.username}`}
                   alt={conversation.username}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-full"
                 />
                 {conversation.isSubscribed && (

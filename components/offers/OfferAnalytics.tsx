@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import useSWR from 'swr';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -16,84 +17,125 @@ import {
   ArrowDownRight,
   Percent
 } from 'lucide-react';
-import type { OfferAnalytics as OfferAnalyticsType, OfferComparison } from '@/lib/offers/types';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import type {
+  Offer,
+  OfferAnalytics as OfferAnalyticsType,
+  OfferComparison,
+  RedemptionMetrics,
+} from '@/lib/offers/types';
 
 interface OfferAnalyticsProps {
   offerId?: string;
 }
 
-// Mock analytics data
-const mockAnalytics: OfferAnalyticsType[] = [
-  { offerId: '1', redemptionCount: 145, totalRevenue: 2900, conversionRate: 0.32, averageOrderValue: 20 },
-  { offerId: '2', redemptionCount: 89, totalRevenue: 1780, conversionRate: 0.28, averageOrderValue: 20 },
-  { offerId: '3', redemptionCount: 234, totalRevenue: 5850, conversionRate: 0.45, averageOrderValue: 25 },
-  { offerId: '4', redemptionCount: 67, totalRevenue: 1340, conversionRate: 0.22, averageOrderValue: 20 },
-  { offerId: '5', redemptionCount: 312, totalRevenue: 7800, conversionRate: 0.52, averageOrderValue: 25 },
-];
+interface MetricsResponse {
+  metrics: RedemptionMetrics;
+}
 
-const mockOfferNames: Record<string, string> = {
-  '1': 'Summer Sale 20% Off',
-  '2': 'New Subscriber Welcome',
-  '3': 'Black Friday Bundle',
-  '4': 'Flash Sale Draft',
-  '5': 'Spring Promo',
-};
+interface TrendsResponse {
+  trends: Array<{ date: string; redemptions: number; revenue: number }>;
+}
 
-const mockTrends = [
-  { date: 'Mon', redemptions: 45, revenue: 900 },
-  { date: 'Tue', redemptions: 52, revenue: 1040 },
-  { date: 'Wed', redemptions: 38, revenue: 760 },
-  { date: 'Thu', redemptions: 65, revenue: 1300 },
-  { date: 'Fri', redemptions: 78, revenue: 1560 },
-  { date: 'Sat', redemptions: 92, revenue: 1840 },
-  { date: 'Sun', redemptions: 71, revenue: 1420 },
-];
+interface OffersResponse {
+  offers: Offer[];
+  total: number;
+}
 
 export function OfferAnalytics({ offerId }: OfferAnalyticsProps) {
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d'>('7d');
   const [isExporting, setIsExporting] = useState(false);
 
-  // Calculate totals
-  const totals = mockAnalytics.reduce((acc, a) => ({
-    redemptions: acc.redemptions + a.redemptionCount,
-    revenue: acc.revenue + a.totalRevenue,
-    avgConversion: acc.avgConversion + a.conversionRate,
-    avgOrderValue: acc.avgOrderValue + a.averageOrderValue,
-  }), { redemptions: 0, revenue: 0, avgConversion: 0, avgOrderValue: 0 });
+  const { startDate, endDate } = useMemo(() => {
+    const end = new Date();
+    const start = new Date(end);
+    const days = dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : 90;
+    start.setDate(end.getDate() - days);
+    return {
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+    };
+  }, [dateRange]);
 
-  totals.avgConversion = totals.avgConversion / mockAnalytics.length;
-  totals.avgOrderValue = totals.avgOrderValue / mockAnalytics.length;
+  const baseParams = useMemo(() => {
+    const params = new URLSearchParams();
+    if (offerId) params.set('offerId', offerId);
+    params.set('startDate', startDate);
+    params.set('endDate', endDate);
+    return params;
+  }, [offerId, startDate, endDate]);
 
-  // Mock comparison data
-  const previousPeriod = {
-    redemptions: totals.redemptions * 0.85,
-    revenue: totals.revenue * 0.82,
-    avgConversion: totals.avgConversion * 0.9,
+  const metricsKey = useMemo(() => {
+    const params = new URLSearchParams(baseParams);
+    params.set('type', 'metrics');
+    return `/api/offers/analytics?${params.toString()}`;
+  }, [baseParams]);
+
+  const trendsKey = useMemo(() => {
+    const params = new URLSearchParams(baseParams);
+    params.set('type', 'trends');
+    return `/api/offers/analytics?${params.toString()}`;
+  }, [baseParams]);
+
+  const comparisonKey = '/api/offers/analytics?type=compare';
+  const offersKey = '/api/offers?limit=100&offset=0';
+
+  const { data: metricsData } = useSWR<MetricsResponse>(metricsKey, (url) =>
+    internalApiFetch<MetricsResponse>(url)
+  );
+  const { data: trendsData } = useSWR<TrendsResponse>(trendsKey, (url) =>
+    internalApiFetch<TrendsResponse>(url)
+  );
+  const { data: comparisonData } = useSWR<OfferComparison>(comparisonKey, (url) =>
+    internalApiFetch<OfferComparison>(url)
+  );
+  const { data: offersData } = useSWR<OffersResponse>(offersKey, (url) =>
+    internalApiFetch<OffersResponse>(url)
+  );
+
+  const offerNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const offer of offersData?.offers ?? []) {
+      map.set(offer.id, offer.name);
+    }
+    return map;
+  }, [offersData]);
+
+  const comparisonOffers = useMemo<OfferAnalyticsType[]>(() => {
+    return (comparisonData?.offers ?? []).map((offer) => ({
+      ...offer,
+      conversionRate: (offer.conversionRate ?? 0) / 100,
+    }));
+  }, [comparisonData]);
+
+  const metrics = metricsData?.metrics;
+  const totals = {
+    redemptions: metrics?.totalRedemptions ?? 0,
+    revenue: metrics?.totalRevenue ?? 0,
+    avgConversion: (metrics?.conversionRate ?? 0) / 100,
+    avgOrderValue: metrics?.averageAmount ?? 0,
   };
 
   const changes = {
-    redemptions: ((totals.redemptions - previousPeriod.redemptions) / previousPeriod.redemptions) * 100,
-    revenue: ((totals.revenue - previousPeriod.revenue) / previousPeriod.revenue) * 100,
-    avgConversion: ((totals.avgConversion - previousPeriod.avgConversion) / previousPeriod.avgConversion) * 100,
+    redemptions: 0,
+    revenue: 0,
+    avgConversion: 0,
   };
 
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      const response = await fetch('/api/offers/analytics/export', {
+      const blob = await internalApiFetch<Blob>('/api/offers/analytics/export', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ format: 'csv', dateRange }),
+        body: { format: 'csv', dateRange },
+        responseType: 'blob',
       });
-      
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `offer-analytics-${dateRange}.csv`;
-        a.click();
-      }
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `offer-analytics-${dateRange}.csv`;
+      a.click();
     } catch (error) {
       console.error('Export failed:', error);
     } finally {
@@ -101,7 +143,15 @@ export function OfferAnalytics({ offerId }: OfferAnalyticsProps) {
     }
   };
 
-  const maxRedemptions = Math.max(...mockTrends.map(t => t.redemptions));
+  const trends = trendsData?.trends ?? [];
+  const maxRedemptions = Math.max(1, ...trends.map(t => t.redemptions));
+  const insights = comparisonData?.insights ?? [];
+
+  const formatTrendLabel = (date: string) => {
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.getTime())) return date;
+    return parsed.toLocaleDateString('en-US', { weekday: 'short' });
+  };
 
   return (
     <div className="space-y-6">
@@ -217,7 +267,7 @@ export function OfferAnalytics({ offerId }: OfferAnalyticsProps) {
         </h3>
         
         <div className="h-48 flex items-end gap-2">
-          {mockTrends.map((day, index) => (
+          {trends.map((day, index) => (
             <div key={index} className="flex-1 flex flex-col items-center gap-2">
               <div 
                 className="w-full bg-primary/80 rounded-t transition-all hover:bg-primary"
@@ -227,7 +277,7 @@ export function OfferAnalytics({ offerId }: OfferAnalyticsProps) {
                 }}
                 title={`${day.redemptions} redemptions`}
               />
-              <span className="text-xs text-muted-foreground">{day.date}</span>
+              <span className="text-xs text-muted-foreground">{formatTrendLabel(day.date)}</span>
             </div>
           ))}
         </div>
@@ -259,7 +309,7 @@ export function OfferAnalytics({ offerId }: OfferAnalyticsProps) {
               </tr>
             </thead>
             <tbody>
-              {mockAnalytics
+              {[...comparisonOffers]
                 .sort((a, b) => b.totalRevenue - a.totalRevenue)
                 .slice(0, 5)
                 .map((analytics, index) => (
@@ -269,7 +319,9 @@ export function OfferAnalytics({ offerId }: OfferAnalyticsProps) {
                         <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium">
                           {index + 1}
                         </span>
-                        <span className="font-medium">{mockOfferNames[analytics.offerId]}</span>
+                        <span className="font-medium">
+                          {offerNameById.get(analytics.offerId) || `Offer ${analytics.offerId}`}
+                        </span>
                       </div>
                     </td>
                     <td className="text-right py-3 px-2">{analytics.redemptionCount}</td>
@@ -297,18 +349,12 @@ export function OfferAnalytics({ offerId }: OfferAnalyticsProps) {
           AI Insights
         </h3>
         <ul className="space-y-2 text-sm">
-          <li className="flex items-start gap-2">
-            <span className="text-green-500">•</span>
-            <span>Your "Spring Promo" has the highest conversion rate at 52%. Consider extending similar offers.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-yellow-500">•</span>
-            <span>Weekend redemptions are 30% higher than weekdays. Schedule flash sales for Saturdays.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-blue-500">•</span>
-            <span>Bundle offers generate 25% more revenue per redemption than single-item discounts.</span>
-          </li>
+          {(insights.length ? insights : ['No AI insights available yet.']).map((insight, index) => (
+            <li key={`${index}-${insight}`} className="flex items-start gap-2">
+              <span className={index === 0 ? 'text-green-500' : index === 1 ? 'text-yellow-500' : 'text-blue-500'}>•</span>
+              <span>{insight}</span>
+            </li>
+          ))}
         </ul>
       </Card>
     </div>

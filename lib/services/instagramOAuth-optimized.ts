@@ -15,6 +15,8 @@
 import * as crypto from 'crypto';
 import { instagramLogger } from './instagram/logger';
 import { CircuitBreaker } from './instagram/circuit-breaker';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 import {
   InstagramError,
   InstagramErrorType,
@@ -305,24 +307,53 @@ export class InstagramOAuthServiceOptimized {
     });
   }
 
+  private mapExternalErrorType(code: string): InstagramErrorType {
+    switch (code) {
+      case 'TIMEOUT':
+      case 'NETWORK_ERROR':
+        return InstagramErrorType.NETWORK_ERROR;
+      case 'RATE_LIMIT':
+        return InstagramErrorType.RATE_LIMIT_ERROR;
+      case 'UNAUTHORIZED':
+        return InstagramErrorType.AUTH_ERROR;
+      case 'FORBIDDEN':
+        return InstagramErrorType.PERMISSION_ERROR;
+      case 'BAD_REQUEST':
+        return InstagramErrorType.VALIDATION_ERROR;
+      case 'UPSTREAM_5XX':
+        return InstagramErrorType.API_ERROR;
+      default:
+        return InstagramErrorType.API_ERROR;
+    }
+  }
+
   private async fetchWithTimeout(
     url: string,
     options: RequestInit,
-    correlationId: string
+    correlationId: string,
+    operation: string
   ): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.REQUEST_TIMEOUT_MS);
-
     try {
-      return await fetch(url, { ...options, signal: controller.signal });
+      return await externalFetch(url, {
+        ...options,
+        service: 'instagram',
+        operation,
+        correlationId,
+        timeoutMs: this.REQUEST_TIMEOUT_MS,
+        retry: { maxRetries: 0, retryMethods: [] },
+      });
     } catch (error) {
-      const message =
-        error instanceof Error && error.name === 'AbortError'
-          ? 'Request timed out'
-          : error instanceof Error
-            ? error.message
-            : 'Network error';
+      if (isExternalServiceError(error)) {
+        throw this.createError(
+          this.mapExternalErrorType(error.code),
+          error.message,
+          correlationId,
+          error.status,
+          error
+        );
+      }
 
+      const message = error instanceof Error ? error.message : 'Network error';
       throw this.createError(
         InstagramErrorType.NETWORK_ERROR,
         message,
@@ -330,8 +361,6 @@ export class InstagramOAuthServiceOptimized {
         undefined,
         error instanceof Error ? error : undefined
       );
-    } finally {
-      clearTimeout(timeoutId);
     }
   }
 
@@ -466,7 +495,8 @@ export class InstagramOAuthServiceOptimized {
             'User-Agent': 'Instagram-OAuth-Client/2.0',
           },
         },
-        correlationId
+        correlationId,
+        'oauth.exchange'
       );
 
       let data: any;
@@ -522,7 +552,8 @@ export class InstagramOAuthServiceOptimized {
             'User-Agent': 'Instagram-OAuth-Client/2.0',
           },
         },
-        correlationId
+        correlationId,
+        'oauth.longLived'
       );
 
       let data: any;
@@ -584,7 +615,8 @@ export class InstagramOAuthServiceOptimized {
             'User-Agent': 'Instagram-OAuth-Client/2.0',
           },
         },
-        correlationId
+        correlationId,
+        'oauth.refresh'
       );
 
       let data: any;
@@ -632,7 +664,8 @@ export class InstagramOAuthServiceOptimized {
             'User-Agent': 'Instagram-OAuth-Client/2.0',
           },
         },
-        correlationId
+        correlationId,
+        'user.me'
       );
 
       let meData: any;
@@ -661,7 +694,8 @@ export class InstagramOAuthServiceOptimized {
             'User-Agent': 'Instagram-OAuth-Client/2.0',
           },
         },
-        correlationId
+        correlationId,
+        'pages.list'
       );
 
       let pagesData: any;
@@ -719,7 +753,8 @@ export class InstagramOAuthServiceOptimized {
             'User-Agent': 'Instagram-OAuth-Client/2.0',
           },
         },
-        correlationId
+        correlationId,
+        'account.details'
       );
 
       let data: any;
@@ -760,7 +795,8 @@ export class InstagramOAuthServiceOptimized {
           method: 'DELETE',
           cache: 'no-store',
         },
-        correlationId
+        correlationId,
+        'permissions.revoke'
       );
 
       if (!response.ok) {

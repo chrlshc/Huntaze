@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { User, AuthState } from '@/lib/auth/types';
+import { useIsClient } from '@/hooks/useIsClient';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string, rememberMe?: boolean) => Promise<boolean>;
@@ -40,37 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     session: null,
     error: null
   });
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  // Initialize hydration
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
-  // Check authentication status on mount (client-side only)
-  useEffect(() => {
-    if (!isHydrated) return;
-    
-    checkAuth();
-  }, [isHydrated]);
-
-  // Handle route protection (client-side only)
-  useEffect(() => {
-    if (!isHydrated || authState.isLoading) return;
-
-    const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname?.startsWith(route));
-    const isAuthRoute = AUTH_ROUTES.some(route => pathname?.startsWith(route));
-
-    // Redirect unauthenticated users from protected routes to login
-    if (isProtectedRoute && !authState.isAuthenticated) {
-      router.push('/auth/login');
-    }
-
-    // Redirect authenticated users from auth routes to dashboard
-    if (isAuthRoute && authState.isAuthenticated) {
-      router.push('/dashboard');
-    }
-  }, [authState.isAuthenticated, authState.isLoading, pathname, router, isHydrated]);
+  const isHydrated = useIsClient();
 
   const checkAuth = async () => {
     try {
@@ -126,6 +97,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
     }
   };
+
+  // Check authentication status on mount (client-side only)
+  useEffect(() => {
+    if (!isHydrated) return;
+    const timeoutId = window.setTimeout(() => {
+      void checkAuth();
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  }, [isHydrated]);
+
+  // Handle route protection (client-side only)
+  useEffect(() => {
+    if (!isHydrated || authState.isLoading) return;
+
+    const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname?.startsWith(route));
+    const isAuthRoute = AUTH_ROUTES.some(route => pathname?.startsWith(route));
+
+    // Redirect unauthenticated users from protected routes to login
+    if (isProtectedRoute && !authState.isAuthenticated) {
+      router.push('/auth/login');
+    }
+
+    // Redirect authenticated users from auth routes to dashboard
+    if (isAuthRoute && authState.isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [authState.isAuthenticated, authState.isLoading, pathname, router, isHydrated]);
 
   const login = async (email: string, password: string, rememberMe?: boolean): Promise<boolean> => {
     if (!isHydrated) return false;

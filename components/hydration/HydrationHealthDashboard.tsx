@@ -26,10 +26,10 @@ export function HydrationHealthDashboard({
   refreshInterval = 5000,
   showDetailedErrors = false
 }: HydrationHealthDashboardProps) {
-  const [metrics, setMetrics] = useState<HydrationMetrics | null>(null);
-  const [recentErrors, setRecentErrors] = useState<HydrationError[]>([]);
-  const [recentAlerts, setRecentAlerts] = useState<HydrationAlert[]>([]);
-  const [healthReport, setHealthReport] = useState<any>(null);
+  const [metrics, setMetrics] = useState<HydrationMetrics | null>(() => hydrationMonitoringService.getMetrics());
+  const [recentErrors, setRecentErrors] = useState<HydrationError[]>(() => hydrationMonitoringService.getRecentErrors(10));
+  const [recentAlerts, setRecentAlerts] = useState<HydrationAlert[]>(() => hydrationMonitoringService.getRecentAlerts(5));
+  const [healthReport, setHealthReport] = useState<any>(() => hydrationMonitoringService.generateHealthReport());
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Mise à jour des données
@@ -46,9 +46,6 @@ export function HydrationHealthDashboard({
   };
 
   useEffect(() => {
-    // Mise à jour initiale
-    updateData();
-
     // Mise à jour périodique
     const interval = setInterval(updateData, refreshInterval);
 

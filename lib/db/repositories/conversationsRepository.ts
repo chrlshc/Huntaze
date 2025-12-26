@@ -7,6 +7,7 @@ export class ConversationsRepository {
     const result = await pool.query(
       `SELECT 
         id, user_id as "userId", fan_id as "fanId", platform,
+        unread_count as "unreadCount",
         last_message_at as "lastMessageAt",
         created_at as "createdAt", updated_at as "updatedAt"
       FROM conversations 
@@ -22,6 +23,7 @@ export class ConversationsRepository {
     const result = await pool.query(
       `SELECT 
         id, user_id as "userId", fan_id as "fanId", platform,
+        unread_count as "unreadCount",
         last_message_at as "lastMessageAt",
         created_at as "createdAt", updated_at as "updatedAt"
       FROM conversations 
@@ -38,6 +40,7 @@ export class ConversationsRepository {
       VALUES ($1, $2, $3)
       RETURNING 
         id, user_id as "userId", fan_id as "fanId", platform,
+        unread_count as "unreadCount",
         last_message_at as "lastMessageAt",
         created_at as "createdAt", updated_at as "updatedAt"`,
       [userId, fanId, platform || null]
@@ -61,11 +64,11 @@ export class ConversationsRepository {
     );
   }
 
-  static async resetUnreadCount(conversationId: number): Promise<void> {
+  static async resetUnreadCount(userId: number, conversationId: number): Promise<void> {
     const pool = getPool();
     await pool.query(
-      'UPDATE conversations SET unread_count = 0 WHERE id = $1',
-      [conversationId]
+      'UPDATE conversations SET unread_count = 0 WHERE id = $1 AND user_id = $2',
+      [conversationId, userId]
     );
   }
 }

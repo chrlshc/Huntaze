@@ -17,6 +17,8 @@
  */
 
 import { getModelEndpoint, PHI4_MULTIMODAL_CONFIG } from './azure-foundry-config';
+import { externalFetch } from '@/lib/services/external/http';
+import { ExternalServiceError } from '@/lib/services/external/errors';
 
 // ============================================================================
 // Types and Interfaces
@@ -515,7 +517,9 @@ export class Phi4MultimodalService {
       throw new Error('Phi-4 Multimodal endpoint or API key not configured');
     }
 
-    const response = await fetch(`${this.endpoint}/chat/completions`, {
+    const response = await externalFetch(`${this.endpoint}/chat/completions`, {
+      service: 'azure-ai',
+      operation: 'phi4.chat',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -526,14 +530,24 @@ export class Phi4MultimodalService {
         max_tokens: PHI4_MULTIMODAL_CONFIG.defaultParams.maxTokens,
         temperature: PHI4_MULTIMODAL_CONFIG.defaultParams.temperature,
       }),
+      cache: 'no-store',
+      timeoutMs: 20_000,
+      retry: { maxRetries: 0, retryMethods: [] },
+      throwOnHttpError: true,
     });
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Phi-4 Multimodal API error: ${response.status} - ${error}`);
+    try {
+      return (await response.json()) as ChatCompletionResponse;
+    } catch (error) {
+      throw new ExternalServiceError({
+        service: 'azure-ai',
+        code: 'INVALID_RESPONSE',
+        retryable: false,
+        status: response.status,
+        message: 'Phi-4 Multimodal returned invalid JSON',
+        cause: error,
+      });
     }
-
-    return response.json();
   }
 
   private parseResponse(

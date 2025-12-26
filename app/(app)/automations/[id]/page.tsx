@@ -11,7 +11,13 @@ import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErro
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { FlowBuilder } from '@/components/automations/FlowBuilder';
 import { ArrowLeft, Trash2 } from 'lucide-react';
-import type { AutomationFlow, AutomationStep, AutomationStatus } from '@/lib/automations/types';
+import type { z } from 'zod';
+import type { AutomationStep, AutomationStatus } from '@/lib/automations/types';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { automationDetailResponseSchema } from '@/lib/schemas/api-responses';
+
+type AutomationDetailResponse = z.infer<typeof automationDetailResponseSchema>;
+type AutomationFlowDto = AutomationDetailResponse['data'];
 
 // Huntaze Design Tokens
 const hzStyles = `
@@ -224,7 +230,7 @@ export default function EditAutomationPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [automation, setAutomation] = useState<AutomationFlow | null>(null);
+  const [automation, setAutomation] = useState<AutomationFlowDto | null>(null);
   
   // Form state
   const [name, setName] = useState('');
@@ -237,23 +243,25 @@ export default function EditAutomationPage() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/automations/${automationId}`);
-      const data = await response.json().catch(() => ({}));
+      const data = await internalApiFetch<AutomationDetailResponse>(
+        `/api/automations/${automationId}`,
+        { schema: automationDetailResponseSchema },
+      );
 
-      if (response.ok && data.success) {
-        setAutomation(data.data);
-        setName(data.data.name);
-        setDescription(data.data.description || '');
-        setSteps(data.data.steps);
-        setStatus(data.data.status);
-        return;
-      }
+      const normalizedSteps: AutomationStep[] = (data.data.steps ?? []).map((step) => ({
+        ...step,
+        config: step.config ?? {},
+      }));
 
+      setAutomation({ ...data.data, steps: normalizedSteps });
+      setName(data.data.name);
+      setDescription(data.data.description || '');
+      setSteps(normalizedSteps);
+      setStatus(data.data.status);
+      return;
+    } catch (error) {
       setAutomation(null);
-      setError(data.error || 'Automation not found');
-    } catch {
-      setAutomation(null);
-      setError('Failed to load automation');
+      setError(error instanceof Error ? error.message : 'Failed to load automation');
     } finally {
       setLoading(false);
     }
@@ -280,26 +288,23 @@ export default function EditAutomationPage() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/automations/${automationId}`, {
+      const data = await internalApiFetch<AutomationDetailResponse>(`/api/automations/${automationId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           name,
           description: description || undefined,
           steps,
           status,
-        }),
+        },
       });
-
-      const data = await response.json();
 
       if (data.success) {
         router.push('/automations');
       } else {
-        setError(data.error || 'Failed to save automation');
+        setError('Failed to save automation');
       }
-    } catch {
-      setError('Failed to save automation');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to save automation');
     } finally {
       setSaving(false);
     }
@@ -312,17 +317,10 @@ export default function EditAutomationPage() {
     }
 
     try {
-      const response = await fetch(`/api/automations/${automationId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        router.push('/automations');
-      } else {
-        setError('Failed to delete automation');
-      }
-    } catch {
-      setError('Failed to delete automation');
+      await internalApiFetch(`/api/automations/${automationId}`, { method: 'DELETE' });
+      router.push('/automations');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to delete automation');
     }
   };
 

@@ -17,6 +17,7 @@ import { ArrowLeft, Sparkles, Tag, Wand2, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import type { CreateOfferInput } from '@/lib/offers/types';
 import { DashboardErrorState } from '@/components/ui/DashboardLoadingState';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 
 type CreationMode = 'manual' | 'ai-pricing' | 'ai-bundle' | 'ai-discount';
 
@@ -148,20 +149,11 @@ export default function NewOfferPage() {
     setIsLoading(true);
     setSubmitError(null);
     try {
-      const response = await fetch('/api/offers', {
+      await internalApiFetch('/api/offers', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: data,
       });
-      
-      if (!response.ok) {
-        const message = await response.json().catch(() => null);
-        if (message && typeof message === 'object' && 'error' in message) {
-          throw new Error(String((message as any).error));
-        }
-        throw new Error('Failed to create offer');
-      }
-      
+
       router.push('/offers');
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : 'Failed to create offer');

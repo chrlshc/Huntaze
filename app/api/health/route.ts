@@ -20,6 +20,71 @@ import type { RouteHandler } from '@/lib/middleware/types';
 
 const logger = createLogger('health-api');
 
+type DbTarget = {
+  configured: boolean;
+  host: string;
+  port: string;
+  database: string;
+};
+
+type DbSslInfo = {
+  enabled: boolean;
+  mode: string;
+  rejectUnauthorized?: boolean;
+};
+
+function parseDatabaseUrl(conn?: string): URL | null {
+  if (!conn) return null;
+  try {
+    return new URL(conn);
+  } catch {
+    return null;
+  }
+}
+
+function describeDatabaseTarget(conn?: string): DbTarget {
+  const url = parseDatabaseUrl(conn);
+  if (!url) {
+    return {
+      configured: false,
+      host: 'unknown',
+      port: 'unknown',
+      database: 'unknown',
+    };
+  }
+
+  const database = url.pathname.replace(/^\//, '') || 'unknown';
+
+  return {
+    configured: true,
+    host: url.hostname || 'unknown',
+    port: url.port || '5432',
+    database,
+  };
+}
+
+function resolveSslInfo(conn?: string): DbSslInfo {
+  const url = parseDatabaseUrl(conn);
+  const rawMode = (url?.searchParams.get('sslmode') ?? process.env.PGSSLMODE ?? '').toLowerCase();
+  const mode = rawMode || 'default';
+
+  if (rawMode === 'disable') {
+    return { enabled: false, mode };
+  }
+
+  const shouldEnable = rawMode ? rawMode !== 'disable' : process.env.NODE_ENV === 'production';
+  if (!shouldEnable) {
+    return { enabled: false, mode };
+  }
+
+  const rejectUnauthorized = rawMode === 'verify-full' || rawMode === 'verify-ca';
+  return { enabled: true, mode, rejectUnauthorized };
+}
+
+function shouldExposeDbTarget(): boolean {
+  return process.env.E2E_TESTING === '1' || process.env.LOG_DB_TARGET === '1';
+}
+
 const handler: RouteHandler = async (req: NextRequest) => {
   const correlationId = getOrGenerateCorrelationId(req);
 
@@ -39,6 +104,14 @@ const handler: RouteHandler = async (req: NextRequest) => {
     const status = allCriticalHealthy ? 'healthy' : 'degraded';
     const statusCode = allCriticalHealthy ? 200 : 503;
 
+    const includeDbTarget = shouldExposeDbTarget();
+    const databaseTarget = includeDbTarget
+      ? {
+          ...describeDatabaseTarget(process.env.DATABASE_URL),
+          ssl: resolveSslInfo(process.env.DATABASE_URL),
+        }
+      : undefined;
+
     const health = {
       status,
       timestamp: new Date().toISOString(),
@@ -49,6 +122,7 @@ const handler: RouteHandler = async (req: NextRequest) => {
         region: process.env.AWS_REGION || process.env.VERCEL_REGION || 'unknown',
       },
       services,
+      ...(includeDbTarget ? { databaseTarget } : {}),
       correlationId,
     };
 

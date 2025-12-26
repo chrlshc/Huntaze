@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
 
@@ -33,11 +33,7 @@ export default function VariationManager({ parentContentId, parentContent, onVar
   const [variationText, setVariationText] = useState('');
   const [audiencePercentage, setAudiencePercentage] = useState(20);
 
-  useEffect(() => {
-    fetchVariations();
-  }, [parentContentId]);
-
-  const fetchVariations = async () => {
+  const fetchVariations = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`/api/content/variations?parentContentId=${parentContentId}`);
@@ -50,7 +46,11 @@ export default function VariationManager({ parentContentId, parentContent, onVar
     } finally {
       setLoading(false);
     }
-  };
+  }, [parentContentId]);
+
+  useEffect(() => {
+    fetchVariations();
+  }, [fetchVariations]);
 
   const createVariation = async () => {
     try {

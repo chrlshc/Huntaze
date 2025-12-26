@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { 
@@ -38,7 +38,7 @@ export const MotivationalElements: React.FC<MotivationalElementsProps> = ({
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
   const [motivationLevel, setMotivationLevel] = useState(0.5);
 
-  const motivationalMessages: MotivationalMessage[] = [
+  const motivationalMessages = useMemo<MotivationalMessage[]>(() => ([
     // Low confidence messages
     {
       id: 'low-conf-1',
@@ -152,38 +152,9 @@ export const MotivationalElements: React.FC<MotivationalElementsProps> = ({
       color: 'yellow',
       trigger: 'time_spent'
     }
-  ];
+  ]), []);
 
-  useEffect(() => {
-    checkForMotivationalTriggers();
-  }, [predictions, behaviorData, timeSpent]);
-
-  const checkForMotivationalTriggers = () => {
-    let trigger: string | null = null;
-    
-    // Check for low confidence
-    if (predictions?.successProbability < 0.4) {
-      trigger = 'low_confidence';
-    }
-    // Check for high progress
-    else if (predictions?.successProbability > 0.8) {
-      trigger = 'high_progress';
-    }
-    // Check for struggle indicators
-    else if (behaviorData?.struggleIndicators?.length > 0) {
-      trigger = 'struggle_detected';
-    }
-    // Check for time spent (engaged for a while)
-    else if (timeSpent > 300000) { // 5 minutes
-      trigger = 'time_spent';
-    }
-
-    if (trigger) {
-      showMotivationalMessage(trigger);
-    }
-  };
-
-  const showMotivationalMessage = (trigger: string) => {
+  const showMotivationalMessage = useCallback((trigger: string) => {
     const availableMessages = motivationalMessages.filter(
       msg => msg.trigger === trigger && !messageHistory.includes(msg.id)
     );
@@ -208,7 +179,39 @@ export const MotivationalElements: React.FC<MotivationalElementsProps> = ({
     setTimeout(() => {
       setActiveMessage(null);
     }, 4000);
-  };
+  }, [activeMessage, messageHistory, motivationalMessages, onInteraction]);
+
+  const checkForMotivationalTriggers = useCallback(() => {
+    let trigger: string | null = null;
+    
+    // Check for low confidence
+    if (predictions?.successProbability < 0.4) {
+      trigger = 'low_confidence';
+    }
+    // Check for high progress
+    else if (predictions?.successProbability > 0.8) {
+      trigger = 'high_progress';
+    }
+    // Check for struggle indicators
+    else if (behaviorData?.struggleIndicators?.length > 0) {
+      trigger = 'struggle_detected';
+    }
+    // Check for time spent (engaged for a while)
+    else if (timeSpent > 300000) { // 5 minutes
+      trigger = 'time_spent';
+    }
+
+    if (trigger) {
+      showMotivationalMessage(trigger);
+    }
+  }, [behaviorData, predictions, showMotivationalMessage, timeSpent]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      checkForMotivationalTriggers();
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  }, [checkForMotivationalTriggers]);
 
   const handleMessageDismiss = () => {
     if (activeMessage) {

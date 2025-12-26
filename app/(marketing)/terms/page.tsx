@@ -1,54 +1,109 @@
-// Enable static generation for optimal performance and SEO
-export const dynamic = 'force-static';
-
-
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Card } from '@/components/ui/card';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service - Huntaze',
-  description: 'Terms of Service for Huntaze - AI Platform for Content Creators',
+  title: 'Terms of Service | Huntaze',
+  description: 'Huntaze Terms of Service - Rules and guidelines for using our platform.',
 };
 
-export default function TermsPage() {
+export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white">
-      <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">Huntaze Terms of Service</h1>
-        
-        <div className="prose prose-lg max-w-none">
-          <p className="text-neutral-700 mb-6">
-            Last updated: 17 Aug 2025
-          </p>
+    <div className="min-h-screen bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Terms of Service</h1>
+        <p className="text-sm text-gray-500 mb-8">Last updated: December 23, 2024</p>
 
-          <Card className="p-6 mb-8">
-            <p className="text-neutral-700 mb-4">
-              Huntaze provides a web platform for creators to manage and publish social content. By using Huntaze, you agree:
-            </p>
-            
-            <ul className="list-disc pl-6 mb-4 text-neutral-700 space-y-2">
-              <li>You own or have rights to the content you upload.</li>
-              <li>You authorize Huntaze to publish content to your connected accounts only after your explicit action.</li>
-              <li>Fees, billing, and refunds follow the policies shown at checkout.</li>
-              <li>Prohibited uses: illegal content, IP infringement, harassment, spam.</li>
-              <li>TikTok integration: usage is subject to TikTok's Developer and Platform Policies. We may suspend access if policies are violated.</li>
-              <li>Termination: you can disconnect and close your account at any time.</li>
-            </ul>
-          </Card>
-
+        <div className="prose prose-gray max-w-none">
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">Contact</h2>
-            <p className="text-neutral-700">
-              Email: <a href="mailto:charles@huntaze.com" className="text-purple-600 hover:text-purple-700">charles@huntaze.com</a>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">1. Acceptance of Terms</h2>
+            <p className="text-gray-700 mb-4">
+              By accessing or using Huntaze (&quot;Service&quot;), you agree to be bound by these Terms of Service. 
+              If you do not agree to these terms, please do not use our Service.
             </p>
           </section>
 
-          <div className="mt-12 pt-8 border-t border-gray-200">
-            <Link href="/" className="text-purple-600 hover:text-purple-700 font-medium">
-              ← Back to Home
-            </Link>
-          </div>
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">2. Description of Service</h2>
+            <p className="text-gray-700 mb-4">
+              Huntaze is a social media management platform that helps content creators manage their 
+              presence across multiple platforms including Instagram, TikTok, and OnlyFans. Our services include:
+            </p>
+            <ul className="list-disc pl-6 text-gray-700 mb-4">
+              <li>Analytics and insights dashboard</li>
+              <li>Content scheduling and publishing</li>
+              <li>Fan engagement tools</li>
+              <li>Revenue tracking and optimization</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">3. Account Registration</h2>
+            <p className="text-gray-700 mb-4">
+              To use our Service, you must create an account and provide accurate information. 
+              You are responsible for maintaining the security of your account credentials.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">4. User Responsibilities</h2>
+            <p className="text-gray-700 mb-4">You agree to:</p>
+            <ul className="list-disc pl-6 text-gray-700 mb-4">
+              <li>Use the Service in compliance with all applicable laws</li>
+              <li>Not violate the terms of service of connected platforms</li>
+              <li>Not use the Service for any illegal or unauthorized purpose</li>
+              <li>Not attempt to gain unauthorized access to our systems</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">5. Third-Party Platforms</h2>
+            <p className="text-gray-700 mb-4">
+              Our Service integrates with third-party platforms (Instagram, TikTok, OnlyFans). 
+              Your use of these platforms is subject to their respective terms of service. 
+              We are not responsible for the actions or policies of these third parties.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">6. Intellectual Property</h2>
+            <p className="text-gray-700 mb-4">
+              You retain ownership of your content. By using our Service, you grant us a limited 
+              license to process and display your content as necessary to provide the Service.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">7. Limitation of Liability</h2>
+            <p className="text-gray-700 mb-4">
+              Huntaze is provided &quot;as is&quot; without warranties of any kind. We are not liable for 
+              any indirect, incidental, or consequential damages arising from your use of the Service.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">8. Termination</h2>
+            <p className="text-gray-700 mb-4">
+              We may terminate or suspend your account at any time for violations of these terms. 
+              You may also terminate your account at any time by contacting us.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">9. Changes to Terms</h2>
+            <p className="text-gray-700 mb-4">
+              We may update these terms from time to time. We will notify you of significant changes 
+              by posting a notice on our website or sending you an email.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">10. Contact</h2>
+            <p className="text-gray-700">
+              For questions about these Terms, contact us at{' '}
+              <a href="mailto:support@huntaze.com" className="text-blue-600 hover:underline">
+                support@huntaze.com
+              </a>
+            </p>
+          </section>
         </div>
       </div>
     </div>

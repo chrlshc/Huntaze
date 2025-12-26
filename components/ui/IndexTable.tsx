@@ -11,7 +11,7 @@ export interface Column<T> {
   header: string | React.ReactNode;
   width?: string;
   align?: 'left' | 'center' | 'right';
-  render?: (value: T[keyof T], row: T) => React.ReactNode;
+  render?: (value: T[keyof T], row: T, rowIndex: number) => React.ReactNode;
   truncate?: boolean;
   /** Mark column as numeric for right-alignment */
   numeric?: boolean;
@@ -220,7 +220,7 @@ export function IndexTable<T extends Record<string, unknown>>({
                     >
                       <div className={`index-table__cell-content ${shouldTruncate ? 'index-table__cell-content--truncate' : ''}`}>
                         {column.render 
-                          ? column.render(value, row)
+                          ? column.render(value, row, rowIndex)
                           : String(value ?? '')
                         }
                       </div>

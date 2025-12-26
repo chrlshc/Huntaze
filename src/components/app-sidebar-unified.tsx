@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
@@ -157,22 +158,24 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const isApp = useMemo(() => APP_PREFIXES.some((p) => pathname?.startsWith(p)), [pathname]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [userExpandedSections, setUserExpandedSections] = useState<Set<string>>(new Set());
   const drawerRef = useRef<HTMLDivElement>(null);
   const openBtnRef = useRef<HTMLButtonElement>(null);
 
   // Enable SSE for real-time updates
   useSSE(true);
 
-  // Auto-expand active section on mount and route change
-  useEffect(() => {
-    if (!pathname) return;
-    
+  const activeSectionId = useMemo(() => {
+    if (!pathname) return null;
     const activeSection = SIDEBAR_SECTIONS.find(section => isSectionActive(pathname, section));
-    if (activeSection && activeSection.items) {
-      setExpandedSections(prev => new Set([...prev, activeSection.id]));
-    }
+    return activeSection?.items ? activeSection.id : null;
   }, [pathname]);
+
+  const expandedSections = useMemo(() => {
+    const next = new Set(userExpandedSections);
+    if (activeSectionId) next.add(activeSectionId);
+    return next;
+  }, [activeSectionId, userExpandedSections]);
 
   // Flag body so global CSS can indent main on desktop
   useEffect(() => {
@@ -187,6 +190,7 @@ export default function AppSidebar() {
   useEffect(() => {
     if (!drawerOpen) return;
     const prevFocused = document.activeElement as HTMLElement | null;
+    const focusTarget = openBtnRef.current;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setDrawerOpen(false);
     };
@@ -197,12 +201,12 @@ export default function AppSidebar() {
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
-      (openBtnRef.current ?? prevFocused)?.focus();
+      (focusTarget ?? prevFocused)?.focus();
     };
   }, [drawerOpen]);
 
   const toggleSection = useCallback((sectionId: string) => {
-    setExpandedSections(prev => {
+    setUserExpandedSections(prev => {
       const next = new Set(prev);
       if (next.has(sectionId)) {
         next.delete(sectionId);
@@ -242,7 +246,7 @@ export default function AppSidebar() {
       <aside className="app-sidebar hidden lg:flex" data-testid="app-sidebar">
         <div className="app-sidebar-header">
           <Link href="/dashboard" className="app-sidebar-logo" aria-label="Beta dashboard">
-            <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-10 h-10" />
+            <Image src="/huntaze-logo-icon.svg" alt="Beta" width={40} height={40} className="w-10 h-10" />
             <span className="text-xl font-bold text-content-primary">Beta</span>
           </Link>
         </div>
@@ -304,7 +308,7 @@ export default function AppSidebar() {
             >
               <div className="mobile-drawer-header">
                 <div className="flex items-center gap-3">
-                  <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-10 h-10" />
+                  <Image src="/huntaze-logo-icon.svg" alt="Beta" width={40} height={40} className="w-10 h-10" />
                   <span className="text-xl font-bold text-content-primary">Beta</span>
                 </div>
                 <Button 

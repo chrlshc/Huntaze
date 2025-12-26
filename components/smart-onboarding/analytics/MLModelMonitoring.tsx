@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -79,13 +79,7 @@ export const MLModelMonitoring: React.FC<MLModelMonitoringProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'performance' | 'abtests'>('overview');
 
-  useEffect(() => {
-    fetchModelData();
-    const interval = setInterval(fetchModelData, refreshInterval);
-    return () => clearInterval(interval);
-  }, [refreshInterval]);
-
-  const fetchModelData = async () => {
+  const fetchModelData = useCallback(async () => {
     try {
       const [modelsResponse, abTestsResponse] = await Promise.all([
         fetch('/api/smart-onboarding/ml/model-metrics'),
@@ -117,7 +111,13 @@ export const MLModelMonitoring: React.FC<MLModelMonitoringProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [onModelAlert]);
+
+  useEffect(() => {
+    fetchModelData();
+    const interval = setInterval(fetchModelData, refreshInterval);
+    return () => clearInterval(interval);
+  }, [fetchModelData, refreshInterval]);
 
   const handleRetrain = async (modelId: string) => {
     try {

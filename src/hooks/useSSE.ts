@@ -88,5 +88,5 @@ export function useSSE(enabled: boolean = true) {
     return () => {
       es?.close()
     }
-  }, [enabled])
+  }, [enabled, permission, showLocalNotification])
 }

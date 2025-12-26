@@ -12,6 +12,7 @@ import { useAsyncOperation, AsyncErrorDisplay } from '@/components/dashboard/Asy
 import { Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { forceCompleteOnboarding } from '@/lib/services/onboarding';
 
 export default function SkipOnboarding() {
   if (process.env.NODE_ENV === 'production') {
@@ -33,13 +34,7 @@ export default function SkipOnboarding() {
   
   const skipOnboarding = async () => {
     const result = await execute(async () => {
-      const response = await fetch('/api/force-complete-onboarding');
-      
-      if (!response.ok) {
-        throw new Error('Failed to skip onboarding');
-      }
-      
-      return response.json();
+      return forceCompleteOnboarding();
     });
     
     if (result) {

@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { completeOnboarding } from '@/lib/services/onboarding';
 
 export default function CompleteOnboarding() {
   if (process.env.NODE_ENV === 'production') {
@@ -33,20 +34,14 @@ export default function CompleteOnboarding() {
     try {
       setStatus('Completing onboarding...');
       
-      const response = await fetch('/api/onboarding/complete', {
-        method: 'POST',
-      });
-      
-      if (response.ok) {
-        setStatus('Onboarding completed! Redirecting to dashboard...');
-        setTimeout(() => {
-          router.push('/dashboard');
-        }, 1000);
-      } else {
-        setStatus('Failed to complete onboarding');
-      }
-    } catch {
-      setStatus('Failed to complete onboarding');
+      await completeOnboarding();
+
+      setStatus('Onboarding completed! Redirecting to dashboard...');
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : 'Failed to complete onboarding');
     }
   };
 

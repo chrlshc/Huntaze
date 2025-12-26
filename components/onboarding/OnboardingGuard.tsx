@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { fetchOnboardingStatus } from '@/lib/services/onboarding';
 
 interface OnboardingGuardProps {
   children: React.ReactNode;
@@ -13,11 +14,7 @@ export default function OnboardingGuard({ children }: OnboardingGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    checkOnboarding();
-  }, [pathname]);
-
-  const checkOnboarding = async () => {
+  const checkOnboarding = useCallback(async () => {
     // Skip check for auth and onboarding pages
     if (pathname?.startsWith('/auth') || 
         pathname?.startsWith('/onboarding') ||
@@ -40,18 +37,16 @@ export default function OnboardingGuard({ children }: OnboardingGuardProps) {
         }
       } catch {}
 
-      const response = await fetch('/api/onboarding/status');
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          const isComplete = Boolean(result.data?.isComplete) ||
-            (typeof result.data?.progressPercentage === 'number' && result.data.progressPercentage >= 100) ||
-            (typeof result.data?.progress === 'number' && result.data.progress >= 100);
+      const result = await fetchOnboardingStatus();
+      if (result.success && result.data) {
+        const progressPercentage =
+          result.data.progressPercentage ?? result.data.progress ?? 0;
+        const isComplete =
+          Boolean(result.data.isComplete) || progressPercentage >= 100;
 
-          if (!isComplete) {
-            router.push('/onboarding/setup');
-            return;
-          }
+        if (!isComplete) {
+          router.push('/onboarding/setup');
+          return;
         }
       }
 
@@ -63,7 +58,11 @@ export default function OnboardingGuard({ children }: OnboardingGuardProps) {
     } finally {
       setIsChecking(false);
     }
-  };
+  }, [pathname, router]);
+
+  useEffect(() => {
+    checkOnboarding();
+  }, [checkOnboarding]);
 
   if (isChecking) {
     return (

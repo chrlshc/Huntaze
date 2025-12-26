@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -38,68 +38,10 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
   onInteraction
 }) => {
   const [activeFeedback, setActiveFeedback] = useState<FeedbackEvent[]>([]);
-  const [engagementLevel, setEngagementLevel] = useState(0);
+  const engagementLevelRef = useRef(0);
   const [progressStreak, setProgressStreak] = useState(0);
 
-  useEffect(() => {
-    // Monitor engagement changes
-    if (behaviorData?.engagementScore !== undefined) {
-      const newEngagement = behaviorData.engagementScore;
-      const previousEngagement = engagementLevel;
-      
-      setEngagementLevel(newEngagement);
-
-      // Trigger feedback based on engagement changes
-      if (newEngagement > previousEngagement + 0.2) {
-        showFeedback({
-          id: `engagement-${Date.now()}`,
-          type: 'encouragement',
-          message: 'Great engagement! You\'re really getting the hang of this!',
-          icon: 'fire',
-          color: 'yellow',
-          duration: 3000
-        });
-      } else if (newEngagement < 0.3 && previousEngagement > 0.5) {
-        showFeedback({
-          id: `low-engagement-${Date.now()}`,
-          type: 'encouragement',
-          message: 'Take your time - you\'re doing fine!',
-          icon: 'heart',
-          color: 'blue',
-          duration: 4000
-        });
-      }
-    }
-  }, [behaviorData?.engagementScore, engagementLevel]);
-
-  useEffect(() => {
-    // Monitor success probability changes
-    if (predictions?.successProbability !== undefined) {
-      const successRate = predictions.successProbability;
-      
-      if (successRate > 0.8) {
-        showFeedback({
-          id: `high-success-${Date.now()}`,
-          type: 'achievement',
-          message: 'Excellent! You\'re mastering this step!',
-          icon: 'trophy',
-          color: 'green',
-          duration: 3000
-        });
-      } else if (successRate > 0.6) {
-        showFeedback({
-          id: `good-progress-${Date.now()}`,
-          type: 'progress',
-          message: 'Nice progress! Keep it up!',
-          icon: 'sparkles',
-          color: 'blue',
-          duration: 2500
-        });
-      }
-    }
-  }, [predictions?.successProbability]);
-
-  const showFeedback = (feedback: FeedbackEvent) => {
+  const showFeedback = useCallback((feedback: FeedbackEvent) => {
     setActiveFeedback(prev => [...prev, feedback]);
     
     onInteraction('feedback_shown', {
@@ -112,7 +54,86 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
     setTimeout(() => {
       setActiveFeedback(prev => prev.filter(f => f.id !== feedback.id));
     }, feedback.duration || 3000);
-  };
+  }, [onInteraction, stepId]);
+
+  useEffect(() => {
+    // Monitor engagement changes
+    if (behaviorData?.engagementScore === undefined) return;
+    const newEngagement = behaviorData.engagementScore;
+    const previousEngagement = engagementLevelRef.current;
+    engagementLevelRef.current = newEngagement;
+
+    let timeoutId: number | undefined;
+
+    // Trigger feedback based on engagement changes
+    if (newEngagement > previousEngagement + 0.2) {
+      timeoutId = window.setTimeout(() => {
+        showFeedback({
+          id: `engagement-${Date.now()}`,
+          type: 'encouragement',
+          message: 'Great engagement! You\'re really getting the hang of this!',
+          icon: 'fire',
+          color: 'yellow',
+          duration: 3000
+        });
+      }, 0);
+    } else if (newEngagement < 0.3 && previousEngagement > 0.5) {
+      timeoutId = window.setTimeout(() => {
+        showFeedback({
+          id: `low-engagement-${Date.now()}`,
+          type: 'encouragement',
+          message: 'Take your time - you\'re doing fine!',
+          icon: 'heart',
+          color: 'blue',
+          duration: 4000
+        });
+      }, 0);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [behaviorData?.engagementScore, showFeedback]);
+
+  useEffect(() => {
+    // Monitor success probability changes
+    if (predictions?.successProbability === undefined) return;
+    const successRate = predictions.successProbability;
+
+    let timeoutId: number | undefined;
+      
+    if (successRate > 0.8) {
+      timeoutId = window.setTimeout(() => {
+        showFeedback({
+          id: `high-success-${Date.now()}`,
+          type: 'achievement',
+          message: 'Excellent! You\'re mastering this step!',
+          icon: 'trophy',
+          color: 'green',
+          duration: 3000
+        });
+      }, 0);
+    } else if (successRate > 0.6) {
+      timeoutId = window.setTimeout(() => {
+        showFeedback({
+          id: `good-progress-${Date.now()}`,
+          type: 'progress',
+          message: 'Nice progress! Keep it up!',
+          icon: 'sparkles',
+          color: 'blue',
+          duration: 2500
+        });
+      }, 0);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [predictions?.successProbability, showFeedback]);
 
   const handleFeedbackDismiss = (feedbackId: string) => {
     setActiveFeedback(prev => prev.filter(f => f.id !== feedbackId));

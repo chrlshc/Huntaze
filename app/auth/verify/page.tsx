@@ -23,58 +23,58 @@ function VerifyContent() {
   const [state, setState] = useState<VerificationState>('verifying');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  useEffect(() => {
-    const token = searchParams.get('token');
-    const userId = searchParams.get('userId');
+  const token = searchParams.get('token');
+  const userId = searchParams.get('userId');
+  const paramErrorMessage = !token || !userId ? 'Invalid verification link' : '';
 
-    if (!token || !userId) {
-      setState('error');
-      setErrorMessage('Invalid verification link');
-      return;
-    }
+  useEffect(() => {
+    if (!token || !userId) return;
+
+    const verifyEmail = async (tokenValue: string, userIdValue: string) => {
+      try {
+        const response = await fetch('/api/auth/verify-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: tokenValue, userId: userIdValue }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setState('success');
+          // Redirect to onboarding after a short delay
+          setTimeout(() => {
+            router.push('/onboarding');
+          }, 1500);
+        } else {
+          if (data.error === 'Token expired') {
+            setState('expired');
+          } else {
+            setState('error');
+            setErrorMessage(data.error || 'Verification failed');
+          }
+        }
+      } catch (error) {
+        setState('error');
+        setErrorMessage('An unexpected error occurred');
+      }
+    };
 
     // Verify the token
-    verifyEmail(token, userId);
-  }, [searchParams]);
-
-  const verifyEmail = async (token: string, userId: string) => {
-    try {
-      const response = await fetch('/api/auth/verify-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token, userId }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setState('success');
-        // Redirect to onboarding after a short delay
-        setTimeout(() => {
-          router.push('/onboarding');
-        }, 1500);
-      } else {
-        if (data.error === 'Token expired') {
-          setState('expired');
-        } else {
-          setState('error');
-          setErrorMessage(data.error || 'Verification failed');
-        }
-      }
-    } catch (error) {
-      setState('error');
-      setErrorMessage('An unexpected error occurred');
-    }
-  };
+    const timeoutId = window.setTimeout(() => {
+      void verifyEmail(token, userId);
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  }, [token, userId, router]);
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-[var(--bg-primary)] border border-[var(--bg-secondary)] rounded-xl p-8">
           {/* Verifying State */}
-          {state === 'verifying' && (
+          {state === 'verifying' && !paramErrorMessage && (
             <>
               <div className="flex justify-center mb-6">
                 <div className="w-16 h-16 rounded-full bg-[var(--bg-primary)] border border-[var(--bg-secondary)] flex items-center justify-center">
@@ -91,7 +91,7 @@ function VerifyContent() {
           )}
 
           {/* Success State */}
-          {state === 'success' && (
+          {state === 'success' && !paramErrorMessage && (
             <>
               <div className="flex justify-center mb-6">
                 <div className="w-16 h-16 rounded-full bg-[var(--bg-primary)] border border-[var(--bg-secondary)] flex items-center justify-center">
@@ -123,7 +123,7 @@ function VerifyContent() {
           )}
 
           {/* Expired State */}
-          {state === 'expired' && (
+          {state === 'expired' && !paramErrorMessage && (
             <>
               <div className="flex justify-center mb-6">
                 <div className="w-16 h-16 rounded-full bg-[var(--bg-primary)] border border-[var(--bg-secondary)] flex items-center justify-center">
@@ -160,7 +160,7 @@ function VerifyContent() {
           )}
 
           {/* Error State */}
-          {state === 'error' && (
+          {(state === 'error' || paramErrorMessage) && (
             <>
               <div className="flex justify-center mb-6">
                 <div className="w-16 h-16 rounded-full bg-[var(--bg-primary)] border border-[var(--bg-secondary)] flex items-center justify-center">
@@ -183,7 +183,7 @@ function VerifyContent() {
                 Verification failed
               </h1>
               <p className="text-[var(--text-primary)] text-center mb-6">
-                {errorMessage || 'Unable to verify your email. Please try again.'}
+                {paramErrorMessage || errorMessage || 'Unable to verify your email. Please try again.'}
               </p>
               <div className="flex justify-center">
                 <a

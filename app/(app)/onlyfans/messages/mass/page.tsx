@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import useSWR from 'swr';
 import {
   AlertCircle,
   Calendar,
@@ -13,15 +14,69 @@ import {
   Users,
 } from 'lucide-react';
 import { ShopifyPageLayout } from '@/components/layout/ShopifyPageLayout';
-import { ShopifyButton, ShopifyCard, ShopifyMetricCard, ShopifyMetricGrid } from '@/components/ui/shopify';
+import { ShopifyBanner, ShopifyButton, ShopifyCard, ShopifyMetricCard, ShopifyMetricGrid } from '@/components/ui/shopify';
 import { ShopifyInput } from '@/components/ui/shopify/ShopifyInput';
 import { ShopifyTextarea } from '@/components/ui/shopify/ShopifyTextarea';
 import { ShopifyToggle } from '@/components/ui/shopify/ShopifyToggle';
 import { ShopifyEmptyState } from '@/components/ui/shopify/ShopifyEmptyState';
-import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { getCsrfToken } from '@/lib/utils/csrf-client';
 
 type MassMessagingTab = 'compose' | 'scheduled' | 'sent';
 type RecurringFrequency = 'daily' | 'weekly' | 'monthly';
+
+interface CrmFan {
+  id: number;
+  name?: string;
+  valueCents?: number;
+  lastSeenAt?: string;
+  createdAt?: string;
+  tags?: string[];
+}
+
+interface CrmFansResponse {
+  fans: CrmFan[];
+}
+
+interface AudienceOption {
+  id: string;
+  name: string;
+  count: number;
+  description: string;
+  color: string;
+  recipientIds: number[];
+}
+
+interface MessageTemplate {
+  id: string;
+  name: string;
+  text: string;
+  category: string;
+}
+
+interface ScheduledMessage {
+  id: string;
+  status: 'scheduled' | 'sent' | 'failed';
+  scheduledFor: string;
+  message: string;
+  audience: string;
+  audienceCount: number;
+  recurring?: string;
+}
+
+interface SentMessage {
+  id: string;
+  status: 'sent' | 'failed';
+  sentAt: string;
+  message: string;
+  audience: string;
+  audienceCount: number;
+  delivered: number;
+  opened: number;
+  replied: number;
+}
+
+const fetcher = (url: string) => internalApiFetch<CrmFansResponse>(url);
 
 export default function OnlyFansMassMessagingPage() {
   const [activeTab, setActiveTab] = useState<MassMessagingTab>('compose');
@@ -31,138 +86,80 @@ export default function OnlyFansMassMessagingPage() {
   const [scheduleTime, setScheduleTime] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurringFrequency, setRecurringFrequency] = useState<RecurringFrequency>('daily');
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [sendSuccess, setSendSuccess] = useState(false);
 
-  if (!ENABLE_MOCK_DATA) {
-    return (
-      <ShopifyPageLayout
-        title="Mass messaging"
-        subtitle="Send OnlyFans messages to segments of your fanbase."
-      >
-        <ShopifyEmptyState
-          title="Mass messaging is not available yet"
-          description="Connect OnlyFans and enable messaging to start creating mass messaging campaigns."
-          action={{ label: 'Go to integrations', onClick: () => (window.location.href = '/integrations') }}
-        />
-      </ShopifyPageLayout>
-    );
-  }
+  const { data: fansData, error: fansError, isLoading: fansLoading, mutate: refreshFans } = useSWR(
+    '/api/crm/fans',
+    fetcher,
+  );
 
-  // Mock data
-  const audiences = [
-    { id: 'all', name: 'All Fans', count: 1234, description: 'Send to all your subscribers', color: 'blue' },
-    { id: 'vip', name: 'VIP Fans', count: 156, description: 'Your highest spending fans', color: 'purple' },
-    { id: 'active', name: 'Active Fans', count: 567, description: 'Fans active in last 7 days', color: 'green' },
-    { id: 'new', name: 'New Subscribers', count: 89, description: 'Subscribed in last 30 days', color: 'yellow' },
-    { id: 'at-risk', name: 'At-Risk Fans', count: 45, description: "Haven't engaged recently", color: 'red' },
-    { id: 'high-spenders', name: 'High Spenders', count: 78, description: 'Top 10% by spending', color: 'orange' },
-  ] as const;
+  const fans = useMemo(() => fansData?.fans ?? [], [fansData]);
+  const totalFans = fans.length;
+  const allRecipientIds = useMemo(() => fans.map((fan) => fan.id), [fans]);
 
-  const scheduledMessages = [
+  const audiences = useMemo<AudienceOption[]>(() => ([
     {
-      id: 1,
-      message: 'Good morning beautiful! Hope you have an amazing day 💕',
-      audience: 'All Fans',
-      audienceCount: 1234,
-      scheduledFor: '2025-11-15T09:00:00',
-      recurring: 'daily',
-      status: 'scheduled',
+      id: 'all',
+      name: 'All Fans',
+      count: totalFans,
+      description: 'Send to all your fans',
+      color: 'blue',
+      recipientIds: allRecipientIds,
     },
     {
-      id: 2,
-      message: 'Special VIP content coming your way tonight! 🔥',
-      audience: 'VIP Fans',
-      audienceCount: 156,
-      scheduledFor: '2025-11-15T20:00:00',
-      recurring: null,
-      status: 'scheduled',
+      id: 'vip',
+      name: 'VIP Fans',
+      count: 0,
+      description: 'Segment not configured yet',
+      color: 'purple',
+      recipientIds: [],
     },
     {
-      id: 3,
-      message: 'Weekend vibes! Check out my latest content 🎉',
-      audience: 'Active Fans',
-      audienceCount: 567,
-      scheduledFor: '2025-11-16T12:00:00',
-      recurring: 'weekly',
-      status: 'scheduled',
+      id: 'active',
+      name: 'Active Fans',
+      count: 0,
+      description: 'Segment not configured yet',
+      color: 'green',
+      recipientIds: [],
     },
-  ] as const;
+    {
+      id: 'new',
+      name: 'New Subscribers',
+      count: 0,
+      description: 'Segment not configured yet',
+      color: 'yellow',
+      recipientIds: [],
+    },
+    {
+      id: 'at-risk',
+      name: 'At-Risk Fans',
+      count: 0,
+      description: 'Segment not configured yet',
+      color: 'red',
+      recipientIds: [],
+    },
+    {
+      id: 'high-spenders',
+      name: 'High Spenders',
+      count: 0,
+      description: 'Segment not configured yet',
+      color: 'orange',
+      recipientIds: [],
+    },
+  ]), [allRecipientIds, totalFans]);
 
-  const sentMessages = [
-    {
-      id: 4,
-      message: 'Thank you for being such amazing fans! New content dropping soon 🎉',
-      audience: 'All Fans',
-      audienceCount: 1234,
-      sentAt: '2025-11-12T14:30:00',
-      delivered: 1198,
-      opened: 856,
-      replied: 67,
-      status: 'sent',
-    },
-    {
-      id: 5,
-      message: 'Weekend special just for my VIP members! Check it out 💎',
-      audience: 'VIP Fans',
-      audienceCount: 156,
-      sentAt: '2025-11-10T18:00:00',
-      delivered: 154,
-      opened: 142,
-      replied: 23,
-      status: 'sent',
-    },
-    {
-      id: 6,
-      message: "We miss you! Come back and see what's new 💕",
-      audience: 'At-Risk Fans',
-      audienceCount: 45,
-      sentAt: '2025-11-08T10:00:00',
-      delivered: 43,
-      opened: 28,
-      replied: 8,
-      status: 'sent',
-    },
-  ] as const;
-
-  const templates = [
-    {
-      id: 1,
-      name: 'Good Morning',
-      text: 'Good morning {{name}}! Hope you have an amazing day 💕',
-      category: 'greeting',
-    },
-    {
-      id: 2,
-      name: 'New Content Alert',
-      text: "Hey {{name}}! New exclusive content just dropped! Don't miss out 🔥",
-      category: 'promotion',
-    },
-    {
-      id: 3,
-      name: 'Thank You',
-      text: 'Thank you {{name}} for being such an amazing {{tier}} fan! You mean the world to me ❤️',
-      category: 'appreciation',
-    },
-    {
-      id: 4,
-      name: 'Weekend Special',
-      text: 'Weekend vibes {{name}}! Something special coming your way 🎉',
-      category: 'promotion',
-    },
-    {
-      id: 5,
-      name: 'Re-engagement',
-      text: "Hey {{name}}, we miss you! Come back and see what's new 💕",
-      category: 'reengagement',
-    },
-    {
-      id: 6,
-      name: 'VIP Exclusive',
-      text: "Exclusive content just for you {{name}}! You're one of my VIP fans 💎",
-      category: 'vip',
-    },
-  ] as const;
+  const scheduledMessages: ScheduledMessage[] = [];
+  const sentMessages: SentMessage[] = [];
+  const templates: MessageTemplate[] = [];
 
   const selectedAudienceData = audiences.find((audience) => audience.id === selectedAudience);
+  const selectedRecipients = selectedAudienceData?.recipientIds ?? [];
+  const totalDelivered = sentMessages.reduce((sum, message) => sum + (message.delivered || 0), 0);
+  const totalOpened = sentMessages.reduce((sum, message) => sum + (message.opened || 0), 0);
+  const openRate =
+    totalDelivered > 0 ? `${Math.round((totalOpened / totalDelivered) * 100)}%` : '--';
 
   const getAudienceChipClassName = (color: string) => {
     const colors: Record<string, string> = {
@@ -197,12 +194,158 @@ export default function OnlyFansMassMessagingPage() {
     setScheduleTime('');
     setIsRecurring(false);
     setRecurringFrequency('daily');
+    setSendError(null);
+    setSendSuccess(false);
   };
 
-  const handleSendMessage = () => {
-    if (!messageText.trim()) return;
-    clearComposer();
+  const handleSendMessage = async () => {
+    if (sending) return;
+    setSendError(null);
+    setSendSuccess(false);
+
+    if (!selectedAudienceData) {
+      setSendError('Select an audience to send to.');
+      return;
+    }
+
+    if (!messageText.trim()) {
+      setSendError('Enter a message before sending.');
+      return;
+    }
+
+    if (messageText.trim().length > 5000) {
+      setSendError('Message is too long. Keep it under 5000 characters.');
+      return;
+    }
+
+    if (selectedRecipients.length === 0) {
+      setSendError('This audience has no recipients yet.');
+      return;
+    }
+
+    if (selectedRecipients.length > 100) {
+      setSendError('Audience size exceeds 100 recipients. Please narrow the segment.');
+      return;
+    }
+
+    if (scheduleDate && scheduleTime) {
+      setSendError('Scheduling is not supported yet. Send the message now instead.');
+      return;
+    }
+
+    setSending(true);
+    try {
+      const csrfToken = await getCsrfToken();
+      await internalApiFetch('/api/messages/bulk', {
+        method: 'POST',
+        headers: {
+          'x-csrf-token': csrfToken,
+        },
+        body: {
+          recipientIds: selectedRecipients,
+          content: messageText.trim(),
+          mediaUrls: [],
+          campaignName: `Mass message - ${selectedAudienceData.name}`,
+          priority: 5,
+        },
+      });
+      clearComposer();
+      setSendSuccess(true);
+      setTimeout(() => setSendSuccess(false), 3000);
+    } catch (error) {
+      setSendError(error instanceof Error ? error.message : 'Failed to send message.');
+    } finally {
+      setSending(false);
+    }
   };
+
+  if (fansLoading) {
+    return (
+      <ShopifyPageLayout
+        title="Mass messaging"
+        subtitle="Send OnlyFans messages to segments of your fanbase."
+        actions={
+          <ShopifyButton
+            variant="primary"
+            size="sm"
+            icon={<Plus className="w-4 h-4" />}
+            onClick={() => setActiveTab('compose')}
+          >
+            New campaign
+          </ShopifyButton>
+        }
+      >
+        <ShopifyCard>
+          <ShopifyEmptyState
+            title="Loading audiences..."
+            description="Fetching your fan list for targeting."
+            icon={Users}
+          />
+        </ShopifyCard>
+      </ShopifyPageLayout>
+    );
+  }
+
+  if (fansError) {
+    return (
+      <ShopifyPageLayout
+        title="Mass messaging"
+        subtitle="Send OnlyFans messages to segments of your fanbase."
+        actions={
+          <ShopifyButton
+            variant="primary"
+            size="sm"
+            icon={<Plus className="w-4 h-4" />}
+            onClick={() => setActiveTab('compose')}
+          >
+            New campaign
+          </ShopifyButton>
+        }
+      >
+        <ShopifyCard>
+          <ShopifyEmptyState
+            title="Failed to load audiences"
+            description={fansError instanceof Error ? fansError.message : 'Please try again.'}
+            icon={AlertCircle}
+            action={{ label: 'Retry', onClick: () => void refreshFans() }}
+          />
+        </ShopifyCard>
+      </ShopifyPageLayout>
+    );
+  }
+
+  if (totalFans === 0) {
+    return (
+      <ShopifyPageLayout
+        title="Mass messaging"
+        subtitle="Send OnlyFans messages to segments of your fanbase."
+        actions={
+          <ShopifyButton
+            variant="primary"
+            size="sm"
+            icon={<Plus className="w-4 h-4" />}
+            onClick={() => setActiveTab('compose')}
+          >
+            New campaign
+          </ShopifyButton>
+        }
+      >
+        <ShopifyCard>
+          <ShopifyEmptyState
+            title="No fans yet"
+            description="Connect OnlyFans to start building audiences for bulk messaging."
+            icon={Users}
+            action={{
+              label: 'Go to integrations',
+              onClick: () => {
+                window.location.href = '/integrations';
+              },
+            }}
+          />
+        </ShopifyCard>
+      </ShopifyPageLayout>
+    );
+  }
 
   return (
     <ShopifyPageLayout
@@ -220,9 +363,9 @@ export default function OnlyFansMassMessagingPage() {
       }
     >
       <ShopifyMetricGrid columns={4}>
-        <ShopifyMetricCard label="Total Fans" value="1,234" icon={Users} />
-        <ShopifyMetricCard label="Messages Sent" value="2,468" icon={Send} trend={15} trendLabel="this week" />
-        <ShopifyMetricCard label="Open Rate" value="72%" icon={Eye} />
+        <ShopifyMetricCard label="Total Fans" value={totalFans.toLocaleString()} icon={Users} />
+        <ShopifyMetricCard label="Messages Sent" value={totalDelivered.toLocaleString()} icon={Send} />
+        <ShopifyMetricCard label="Open Rate" value={openRate} icon={Eye} />
         <ShopifyMetricCard label="Scheduled" value={scheduledMessages.length} icon={Clock} />
       </ShopifyMetricGrid>
 
@@ -288,20 +431,31 @@ export default function OnlyFansMassMessagingPage() {
               <section>
                 <h3 className="text-[16px] font-semibold text-[#1a1a1a] mb-4">Quick templates</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {templates.map((template) => (
-                    <button
-                      key={template.id}
-                      type="button"
-                      onClick={() => setMessageText(template.text)}
-                      className="p-4 border border-[var(--border-default)] rounded-2xl text-left hover:bg-[var(--shopify-bg-surface-hover)] hover:border-[var(--border-emphasis)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--shopify-border-focus)]"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-medium text-[#1a1a1a]">{template.name}</h4>
-                        <span className="text-xs text-[#6b7177] capitalize">{template.category}</span>
-                      </div>
-                      <p className="text-sm text-[#6b7177] line-clamp-2">{template.text}</p>
-                    </button>
-                  ))}
+                  {templates.length === 0 ? (
+                    <div className="col-span-full">
+                      <ShopifyEmptyState
+                        title="No templates yet"
+                        description="Create a template from a successful message."
+                        icon={MessageSquare}
+                        variant="compact"
+                      />
+                    </div>
+                  ) : (
+                    templates.map((template) => (
+                      <button
+                        key={template.id}
+                        type="button"
+                        onClick={() => setMessageText(template.text)}
+                        className="p-4 border border-[var(--border-default)] rounded-2xl text-left hover:bg-[var(--shopify-bg-surface-hover)] hover:border-[var(--border-emphasis)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--shopify-border-focus)]"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="font-medium text-[#1a1a1a]">{template.name}</h4>
+                          <span className="text-xs text-[#6b7177] capitalize">{template.category}</span>
+                        </div>
+                        <p className="text-sm text-[#6b7177] line-clamp-2">{template.text}</p>
+                      </button>
+                    ))
+                  )}
                 </div>
                 <p className="text-sm text-[#6b7177] mt-3">
                   Use variables:{' '}
@@ -318,6 +472,22 @@ export default function OnlyFansMassMessagingPage() {
               <section>
                 <h3 className="text-[16px] font-semibold text-[#1a1a1a] mb-4">Compose message</h3>
                 <div className="space-y-4">
+                  {sendError && (
+                    <ShopifyBanner
+                      status="critical"
+                      title="Message not sent"
+                      description={sendError}
+                      onDismiss={() => setSendError(null)}
+                    />
+                  )}
+                  {sendSuccess && (
+                    <ShopifyBanner
+                      status="success"
+                      title="Message queued"
+                      description="Your campaign is queued for delivery."
+                      onDismiss={() => setSendSuccess(false)}
+                    />
+                  )}
                   <div>
                     <ShopifyTextarea
                       label="Message"
@@ -424,7 +594,8 @@ export default function OnlyFansMassMessagingPage() {
                     <ShopifyButton
                       variant="primary"
                       onClick={handleSendMessage}
-                      disabled={!messageText.trim() || !selectedAudience}
+                      disabled={!messageText.trim() || !selectedAudience || selectedRecipients.length === 0}
+                      loading={sending}
                       icon={<Send className="w-4 h-4" />}
                     >
                       {scheduleDate && scheduleTime ? 'Schedule message' : 'Send now'}
@@ -442,46 +613,56 @@ export default function OnlyFansMassMessagingPage() {
                 <p className="text-sm text-[#6b7177]">{scheduledMessages.length} messages</p>
               </div>
 
-              {scheduledMessages.map((message) => (
-                <div
-                  key={message.id}
-                  className="p-5 border border-[var(--border-default)] rounded-2xl hover:bg-[var(--shopify-bg-surface-hover)] transition-colors"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        {getStatusIcon(message.status)}
-                        <span className="text-sm font-medium text-[#6b7177]">
-                          <Calendar className="w-4 h-4 inline mr-1" />
-                          {new Date(message.scheduledFor).toLocaleString()}
-                        </span>
-                        {message.recurring && (
-                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fffbeb] text-[#92400e] border border-[#fde68a]">
-                            {message.recurring}
+              {scheduledMessages.length === 0 ? (
+                <ShopifyEmptyState
+                  title="No scheduled messages"
+                  description="Schedule a message to see it here."
+                  icon={Calendar}
+                  action={{ label: 'Compose message', onClick: () => setActiveTab('compose') }}
+                  variant="compact"
+                />
+              ) : (
+                scheduledMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className="p-5 border border-[var(--border-default)] rounded-2xl hover:bg-[var(--shopify-bg-surface-hover)] transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          {getStatusIcon(message.status)}
+                          <span className="text-sm font-medium text-[#6b7177]">
+                            <Calendar className="w-4 h-4 inline mr-1" />
+                            {new Date(message.scheduledFor).toLocaleString()}
                           </span>
-                        )}
+                          {message.recurring && (
+                            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fffbeb] text-[#92400e] border border-[#fde68a]">
+                              {message.recurring}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[#1a1a1a] mb-2">{message.message}</p>
+                        <p className="text-sm text-[#6b7177]">
+                          To: <span className="font-medium text-[#1a1a1a]">{message.audience}</span> (
+                          {message.audienceCount} fans)
+                        </p>
                       </div>
-                      <p className="text-[#1a1a1a] mb-2">{message.message}</p>
-                      <p className="text-sm text-[#6b7177]">
-                        To: <span className="font-medium text-[#1a1a1a]">{message.audience}</span> (
-                        {message.audienceCount} fans)
-                      </p>
-                    </div>
-                    <div className="flex gap-2 flex-shrink-0">
-                      <ShopifyButton variant="ghost" size="sm" onClick={() => console.log('Edit scheduled', message.id)}>
-                        Edit
-                      </ShopifyButton>
-                      <ShopifyButton
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => console.log('Cancel scheduled', message.id)}
-                      >
-                        Cancel
-                      </ShopifyButton>
+                      <div className="flex gap-2 flex-shrink-0">
+                        <ShopifyButton variant="ghost" size="sm" onClick={() => console.log('Edit scheduled', message.id)}>
+                          Edit
+                        </ShopifyButton>
+                        <ShopifyButton
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => console.log('Cancel scheduled', message.id)}
+                        >
+                          Cancel
+                        </ShopifyButton>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           )}
 
@@ -492,50 +673,62 @@ export default function OnlyFansMassMessagingPage() {
                 <p className="text-sm text-[#6b7177]">{sentMessages.length} messages</p>
               </div>
 
-              {sentMessages.map((message) => (
-                <div
-                  key={message.id}
-                  className="p-5 border border-[var(--border-default)] rounded-2xl hover:bg-[var(--shopify-bg-surface-hover)] transition-colors"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        {getStatusIcon(message.status)}
-                        <span className="text-sm font-medium text-[#6b7177]">
-                          Sent {new Date(message.sentAt).toLocaleString()}
-                        </span>
-                      </div>
-                      <p className="text-[#1a1a1a] mb-2">{message.message}</p>
-                      <p className="text-sm text-[#6b7177] mb-3">
-                        To: <span className="font-medium text-[#1a1a1a]">{message.audience}</span> (
-                        {message.audienceCount} fans)
-                      </p>
+              {sentMessages.length === 0 ? (
+                <ShopifyEmptyState
+                  title="No sent messages yet"
+                  description="Send a campaign to track delivery performance."
+                  icon={Send}
+                  action={{ label: 'Compose message', onClick: () => setActiveTab('compose') }}
+                  variant="compact"
+                />
+              ) : (
+                sentMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className="p-5 border border-[var(--border-default)] rounded-2xl hover:bg-[var(--shopify-bg-surface-hover)] transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          {getStatusIcon(message.status)}
+                          <span className="text-sm font-medium text-[#6b7177]">
+                            Sent {new Date(message.sentAt).toLocaleString()}
+                          </span>
+                        </div>
+                        <p className="text-[#1a1a1a] mb-2">{message.message}</p>
+                        <p className="text-sm text-[#6b7177] mb-3">
+                          To: <span className="font-medium text-[#1a1a1a]">{message.audience}</span> (
+                          {message.audienceCount} fans)
+                        </p>
 
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-[#6b7177]">
-                        <div>
-                          <span className="font-semibold text-[#1a1a1a]">{message.delivered}</span> delivered
-                        </div>
-                        <div>
-                          <span className="font-semibold text-[#1a1a1a]">{message.opened}</span> opened
-                        </div>
-                        <div>
-                          <span className="font-semibold text-[#1a1a1a]">{message.replied}</span> replied
-                        </div>
-                        <div>
-                          <span className="font-semibold text-[#008060]">
-                            {((message.opened / message.delivered) * 100).toFixed(1)}%
-                          </span>{' '}
-                          open rate
+                        <div className="flex flex-wrap items-center gap-4 text-sm text-[#6b7177]">
+                          <div>
+                            <span className="font-semibold text-[#1a1a1a]">{message.delivered}</span> delivered
+                          </div>
+                          <div>
+                            <span className="font-semibold text-[#1a1a1a]">{message.opened}</span> opened
+                          </div>
+                          <div>
+                            <span className="font-semibold text-[#1a1a1a]">{message.replied}</span> replied
+                          </div>
+                          <div>
+                            <span className="font-semibold text-[#008060]">
+                              {message.delivered > 0
+                                ? `${((message.opened / message.delivered) * 100).toFixed(1)}%`
+                                : '--'}
+                            </span>{' '}
+                            open rate
+                          </div>
                         </div>
                       </div>
+
+                      <ShopifyButton variant="ghost" size="sm" onClick={() => console.log('View sent', message.id)}>
+                        View details
+                      </ShopifyButton>
                     </div>
-
-                    <ShopifyButton variant="ghost" size="sm" onClick={() => console.log('View sent', message.id)}>
-                      View details
-                    </ShopifyButton>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           )}
         </div>

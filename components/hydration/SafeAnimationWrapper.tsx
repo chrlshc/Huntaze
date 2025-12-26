@@ -61,7 +61,7 @@ export function SafeAnimationWrapper({
     }, startDelay);
 
     return () => clearTimeout(timer);
-  }, [delay, duration, easing, animationDelay]);
+  }, [delay, duration, easing, animationDelay, randomDelay]);
 
   if (randomDelay && seed) {
     return (
@@ -185,13 +185,15 @@ export function useScrollAnimation(threshold = 0.1) {
         { threshold }
       );
 
-      if (elementRef.current) {
-        observer.observe(elementRef.current);
+      const currentElement = elementRef.current;
+
+      if (currentElement) {
+        observer.observe(currentElement);
       }
 
       return () => {
-        if (elementRef.current) {
-          observer.unobserve(elementRef.current);
+        if (currentElement) {
+          observer.unobserve(currentElement);
         }
       };
     }

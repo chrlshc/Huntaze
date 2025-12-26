@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { ChurnRiskFan } from '@/lib/services/revenue/types';
 import { LoadingState } from '@/components/revenue/shared/LoadingState';
 import { EmptyState } from '@/components/revenue/shared/EmptyState';
@@ -190,9 +191,11 @@ export function ChurnRiskList({ fans, onReEngage, onViewDetails, loading }: Chur
                 {/* Avatar */}
                 <div className="flex-shrink-0">
                   {fan.avatar ? (
-                    <img
+                    <Image
                       src={fan.avatar}
                       alt={fan.name}
+                      width={48}
+                      height={48}
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (

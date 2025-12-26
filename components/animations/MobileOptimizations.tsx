@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 
 interface DeviceInfo {
@@ -192,12 +193,14 @@ export function OptimizedImage({
       
       {/* Actual image */}
       {isInView && (
-        <img
+        <Image
           src={src}
           alt={alt}
+          fill
+          sizes="100vw"
           className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity`}
           onLoad={() => setIsLoaded(true)}
-          loading={priority ? 'eager' : 'lazy'}
+          priority={priority}
         />
       )}
     </div>

@@ -8,6 +8,8 @@
 
 import type { SegmentationValidationResult, FanSegment } from './types';
 import { VALID_FAN_SEGMENTS, isValidFanSegment, isValidChurnProbability } from './types';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 const SEGMENTATION_TIMEOUT_MS = 15000;
 
@@ -54,19 +56,17 @@ export class SegmentationValidator {
     const startTime = Date.now();
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), SEGMENTATION_TIMEOUT_MS);
-
-      const response = await fetch(this.apiUrl, {
+      const response = await externalFetch(this.apiUrl, {
+        service: 'ai-segmentation',
+        operation: 'validate',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ fans }),
-        signal: controller.signal,
+        timeoutMs: SEGMENTATION_TIMEOUT_MS,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
-
-      clearTimeout(timeoutId);
 
       const responseTimeMs = Date.now() - startTime;
 
@@ -83,7 +83,10 @@ export class SegmentationValidator {
         };
       }
 
-      const data: SegmentationAPIResponse = await response.json();
+      const data: SegmentationAPIResponse = await response.json().catch(() => ({
+        success: false,
+        segmentedFans: [],
+      } as SegmentationAPIResponse));
 
       // Validate response structure
       const validSegments = this.validateSegments(data);
@@ -105,7 +108,7 @@ export class SegmentationValidator {
     } catch (error) {
       const responseTimeMs = Date.now() - startTime;
 
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error) && error.code === 'TIMEOUT') {
         return {
           success: false,
           responseTimeMs,

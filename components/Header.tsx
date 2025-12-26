@@ -43,7 +43,6 @@ export default function Header() {
               alt="Huntaze logo"
               width={28}
               height={28}
-              priority
             />
             <span className="text-base font-semibold" style={{ color: '#ffffff' }}>Beta</span>
           </Link>
@@ -96,7 +95,6 @@ export default function Header() {
               alt="Huntaze logo"
               width={22}
               height={22}
-              priority
             />
             <span className="text-xs font-semibold" style={{ color: '#ffffff' }}>Beta</span>
           </Link>

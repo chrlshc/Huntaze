@@ -8,11 +8,19 @@ export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
 import useSWR from 'swr';
+import type { z } from 'zod';
 import { ButlerTip } from '@/components/ui/ButlerTip';
 import '@/styles/polaris-analytics.css';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { DashboardErrorState, DashboardLoadingState } from '@/components/ui/DashboardLoadingState';
-import { standardFetcher } from '@/lib/swr';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import {
+  automationsCompareResponseSchema,
+  automationsListResponseSchema,
+  automationFlowSchema,
+  automationStepSchema,
+} from '@/lib/schemas/api-responses';
 import {
   Zap,
   Plus,
@@ -24,39 +32,13 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-type AutomationStatus = 'active' | 'paused' | 'draft';
+type AutomationsApiResponse = z.infer<typeof automationsListResponseSchema>;
+type AutomationFlowDto = z.infer<typeof automationFlowSchema>;
+type AutomationStatus = AutomationFlowDto['status'];
+type AutomationStep = z.infer<typeof automationStepSchema>;
 
-type AutomationStep = {
-  id: string;
-  type: 'trigger' | 'condition' | 'action';
-  name: string;
-  config: Record<string, unknown>;
-};
-
-type AutomationFlowDto = {
-  id: string;
-  name: string;
-  status: AutomationStatus;
-  steps?: AutomationStep[];
-};
-
-type AutomationsApiResponse = {
-  success: boolean;
-  data: AutomationFlowDto[];
-};
-
-type AutomationComparison = {
-  automationId: string;
-  metrics: {
-    totalExecutions: number;
-    successRate: number;
-    averageStepsExecuted?: number;
-  };
-};
-
-type AutomationsCompareResponse = {
-  comparisons: AutomationComparison[];
-};
+type AutomationsCompareResponse = z.infer<typeof automationsCompareResponseSchema>;
+type AutomationComparison = AutomationsCompareResponse['comparisons'][number];
 
 type UiAutomation = {
   id: string;
@@ -114,12 +96,18 @@ const PCard = ({ children, title, noPadding, headerAction }: {
 export default function AutomationsPage() {
   const { data: flowsResponse, error: flowsError, isLoading: flowsLoading, mutate } = useSWR<AutomationsApiResponse>(
     '/api/automations',
-    standardFetcher
+    (url: string) =>
+      internalApiFetch<AutomationsApiResponse>(url, {
+        schema: automationsListResponseSchema,
+      })
   );
 
   const { data: compareResponse } = useSWR<AutomationsCompareResponse>(
     '/api/automations/analytics?type=compare',
-    standardFetcher
+    (url: string) =>
+      internalApiFetch<AutomationsCompareResponse>(url, {
+        schema: automationsCompareResponseSchema,
+      })
   );
 
   const flows = flowsResponse?.data ?? [];
@@ -177,6 +165,23 @@ export default function AutomationsPage() {
             message={flowsError instanceof Error ? flowsError.message : 'Failed to load automations'}
             onRetry={() => void mutate()}
           />
+        </div>
+      </ContentPageErrorBoundary>
+    );
+  }
+
+  if (!flowsLoading && !flowsError && automations.length === 0) {
+    return (
+      <ContentPageErrorBoundary pageName="Automations">
+        <div className="polaris-analytics">
+          <div className="content-wrapper" style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
+            <EmptyState
+              variant="no-data"
+              title="No automations yet"
+              description="Create your first automation to start saving time."
+              action={{ label: 'Create automation', onClick: () => (window.location.href = '/automations/new') }}
+            />
+          </div>
         </div>
       </ContentPageErrorBoundary>
     );

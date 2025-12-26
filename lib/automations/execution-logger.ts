@@ -243,7 +243,7 @@ export class ExecutionLogger {
   /**
    * Map Prisma model to ExecutionLogEntry
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   private mapToLogEntry(execution: any): ExecutionLogEntry {
     return {
       id: execution.id,

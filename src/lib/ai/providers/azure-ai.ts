@@ -47,11 +47,21 @@ export async function callAzureAI(opts: {
     throw new Error(`Azure AI ${opts.model} not configured. Check ${opts.model.toUpperCase()}_ENDPOINT and ${opts.model.toUpperCase()}_API_KEY`);
   }
 
+  // 🛡️ SÉCURITÉ: Limites par défaut pour éviter les factures infinies
+  // 2000 tokens ~= 1500 mots, suffisant pour la plupart des cas
+  const DEFAULT_MAX_TOKENS = 2000;
+  const MAX_ALLOWED_TOKENS = 8000; // Hard limit de sécurité
+
+  const safeMaxTokens = Math.min(
+    opts.maxTokens ?? DEFAULT_MAX_TOKENS,
+    MAX_ALLOWED_TOKENS
+  );
+
   // Build request body
   const requestBody: any = {
     messages: opts.messages,
     temperature: opts.temperature ?? 0.6,
-    max_tokens: opts.maxTokens,
+    max_tokens: safeMaxTokens,
     stream: false,
   };
 

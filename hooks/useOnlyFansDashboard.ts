@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { integrationsStatusResponseSchema } from '@/lib/schemas/api-responses';
 
 import type {
   DashboardActionListDTO,
@@ -57,26 +59,20 @@ export function useOnlyFansDashboard({
 
   const buildUrl = useCallback(
     (opts?: { refresh?: boolean }) => {
-      if (typeof window === 'undefined') return DASHBOARD_ENDPOINT;
-      const url = new URL(DASHBOARD_ENDPOINT, window.location.origin);
-      if (accountId) {
-        url.searchParams.set('accountId', accountId);
-      }
-      if (opts?.refresh) {
-        url.searchParams.set('refresh', '1');
-      }
-      return url.toString();
+      const params = new URLSearchParams();
+      if (accountId) params.set('accountId', accountId);
+      if (opts?.refresh) params.set('refresh', '1');
+      const query = params.toString();
+      return query ? `${DASHBOARD_ENDPOINT}?${query}` : DASHBOARD_ENDPOINT;
     },
     [accountId],
   );
 
   const buildStreamUrl = useCallback(() => {
-    if (typeof window === 'undefined') return DASHBOARD_STREAM_ENDPOINT;
-    const url = new URL(DASHBOARD_STREAM_ENDPOINT, window.location.origin);
-    if (accountId) {
-      url.searchParams.set('accountId', accountId);
-    }
-    return url.toString();
+    const params = new URLSearchParams();
+    if (accountId) params.set('accountId', accountId);
+    const query = params.toString();
+    return query ? `${DASHBOARD_STREAM_ENDPOINT}?${query}` : DASHBOARD_STREAM_ENDPOINT;
   }, [accountId]);
 
   // Check if user has a real OnlyFans OAuth connection
@@ -87,13 +83,12 @@ export function useOnlyFansDashboard({
     }
 
     try {
-      const response = await fetch('/api/integrations/status');
-      if (!response.ok) {
-        setHasCheckedConnection(true);
-        return false;
-      }
-      
-      const { integrations } = await response.json();
+      const data = await internalApiFetch<{
+        success?: boolean;
+        data?: { integrations?: any[] };
+        integrations?: any[];
+      }>('/api/integrations/status', { schema: integrationsStatusResponseSchema });
+      const integrations = data.data?.integrations || data.integrations || [];
       const onlyFansIntegration = integrations.find(
         (int: any) => int.provider === 'onlyfans' && int.isConnected
       );
@@ -136,11 +131,7 @@ export function useOnlyFansDashboard({
 
     try {
       const endpoint = buildUrl({ refresh });
-      const response = await fetch(endpoint, { cache: 'no-store' });
-      if (!response.ok) {
-        throw new Error(`Dashboard request failed with status ${response.status}`);
-      }
-      const payload: OnlyFansDashboardPayload = await response.json();
+      const payload = await internalApiFetch<OnlyFansDashboardPayload>(endpoint, { cache: 'no-store' });
       
       // Check if the data source indicates real vs mock data
       const isRealData = payload.metadata?.source === 'upstream' || payload.metadata?.source === 'api';

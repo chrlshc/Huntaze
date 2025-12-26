@@ -409,7 +409,7 @@ Réponds UNIQUEMENT en JSON valide:
     assets: ContentAssetsResult;
     totalCostUsd: number;
   }> {
-    let totalCost = 0;
+    const totalCost = 0;
 
     // Pass A: Vision timeline
     const timeline = await this.analyzeFrames(frameUrls);

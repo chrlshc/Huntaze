@@ -3,20 +3,20 @@ import { useEffect, useRef, useState } from 'react';
 
 // Hook de gestion install PWA + détection PWA/iOS
 export function usePWAInstall() {
-  const [isIOS, setIsIOS] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
-  const [canInstall, setCanInstall] = useState(false); // Android/Chromium
-  const bipRef = useRef<any>(null); // BeforeInstallPromptEvent
-
-  useEffect(() => {
+  const [isIOS] = useState(() => {
+    if (typeof navigator === 'undefined') return false;
     const ua = navigator.userAgent || '';
-    setIsIOS(/iPhone|iPad|iPod/i.test(ua));
-
+    return /iPhone|iPad|iPod/i.test(ua);
+  });
+  const [isStandalone] = useState(() => {
+    if (typeof window === 'undefined') return false;
     const standalone =
       window.matchMedia?.('(display-mode: standalone)').matches ||
       (navigator as any).standalone === true; // iOS Safari
-    setIsStandalone(!!standalone);
-  }, []);
+    return !!standalone;
+  });
+  const [canInstall, setCanInstall] = useState(false); // Android/Chromium
+  const bipRef = useRef<any>(null); // BeforeInstallPromptEvent
 
   useEffect(() => {
     const onBIP = (e: Event) => {
@@ -39,4 +39,3 @@ export function usePWAInstall() {
 
   return { isIOS, isStandalone, canInstall, promptInstall };
 }
-

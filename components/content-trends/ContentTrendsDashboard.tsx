@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,12 +34,7 @@ export function ContentTrendsDashboard() {
   const [loading, setLoading] = useState(false);
   const [trendsLoading, setTrendsLoading] = useState(true);
 
-  // Fetch trending content on component mount
-  useEffect(() => {
-    fetchTrends();
-  }, [platform]);
-
-  const fetchTrends = async () => {
+  const fetchTrends = useCallback(async () => {
     try {
       setTrendsLoading(true);
       const response = await fetch(`/api/ai/content-trends/trends?platform=${platform}&timeframe=24h`);
@@ -53,7 +48,12 @@ export function ContentTrendsDashboard() {
     } finally {
       setTrendsLoading(false);
     }
-  };
+  }, [platform]);
+
+  // Fetch trending content on component mount
+  useEffect(() => {
+    fetchTrends();
+  }, [fetchTrends]);
 
   const analyzeContent = async () => {
     if (!contentUrl.trim()) return;

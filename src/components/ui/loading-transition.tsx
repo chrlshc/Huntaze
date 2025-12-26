@@ -12,7 +12,7 @@
 
 'use client';
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LoadingTransitionProps {
@@ -43,17 +43,12 @@ const LoadingTransition: React.FC<LoadingTransitionProps> = ({
   onTransitionComplete,
   'aria-label': ariaLabel = 'Content loading'
 }) => {
-  const [showContent, setShowContent] = useState(!isLoading);
-
   useEffect(() => {
     if (!isLoading && !error) {
       const timer = setTimeout(() => {
-        setShowContent(true);
         onTransitionComplete?.();
       }, duration);
       return () => clearTimeout(timer);
-    } else {
-      setShowContent(false);
     }
   }, [isLoading, error, duration, onTransitionComplete]);
 

@@ -25,6 +25,8 @@ interface QuickReply {
   loading: boolean;
 }
 
+const BASE_TIMESTAMP = Date.UTC(2024, 0, 1, 12, 0, 0);
+
 export function SmartMessageInbox() {
   const [fans] = useState<Fan[]>([
     {
@@ -32,7 +34,7 @@ export function SmartMessageInbox() {
       name: 'Sarah M.',
       avatar: '👩',
       lastMessage: 'Hey! How are you?',
-      timestamp: new Date(Date.now() - 300000),
+      timestamp: new Date(BASE_TIMESTAMP - 300000),
       unread: 2,
       value: 15000,
     },
@@ -41,7 +43,7 @@ export function SmartMessageInbox() {
       name: 'Emma L.',
       avatar: '👱‍♀️',
       lastMessage: 'Miss you babe 💕',
-      timestamp: new Date(Date.now() - 600000),
+      timestamp: new Date(BASE_TIMESTAMP - 600000),
       unread: 1,
       value: 8500,
     },
@@ -50,7 +52,7 @@ export function SmartMessageInbox() {
       name: 'Jessica K.',
       avatar: '👩‍🦰',
       lastMessage: 'Can I see more?',
-      timestamp: new Date(Date.now() - 900000),
+      timestamp: new Date(BASE_TIMESTAMP - 900000),
       unread: 3,
       value: 12000,
     },

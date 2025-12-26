@@ -317,10 +317,10 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
  * Response from GET /api/integrations/status
  * Includes all connected accounts with summary statistics
  */
-export interface IntegrationStatusApiResponse extends ApiResponse<{
+export type IntegrationStatusApiResponse = ApiResponse<{
   integrations: IntegrationApiData[];
   summary: IntegrationSummary;
-}> {}
+}>;
 
 /**
  * Integration data from API (serialized format)
@@ -376,47 +376,47 @@ export interface IntegrationSummary {
  * 
  * Response from POST /api/integrations/connect/:provider
  */
-export interface ConnectIntegrationApiResponse extends ApiResponse<{
+export type ConnectIntegrationApiResponse = ApiResponse<{
   authUrl: string;
   state: string;
   expiresAt: string; // ISO 8601 string
   provider: Provider;
-}> {}
+}>;
 
 /**
  * OAuth callback API response
  * 
  * Response from GET /api/integrations/callback/:provider
  */
-export interface OAuthCallbackApiResponse extends ApiResponse<{
+export type OAuthCallbackApiResponse = ApiResponse<{
   provider: Provider;
   accountId: string;
   accountName: string;
   redirectUrl: string;
-}> {}
+}>;
 
 /**
  * Disconnect integration API response
  * 
  * Response from DELETE /api/integrations/disconnect/:provider/:accountId
  */
-export interface DisconnectIntegrationApiResponse extends ApiResponse<{
+export type DisconnectIntegrationApiResponse = ApiResponse<{
   provider: Provider;
   accountId: string;
   message: string;
-}> {}
+}>;
 
 /**
  * Refresh token API response
  * 
  * Response from POST /api/integrations/refresh/:provider/:accountId
  */
-export interface RefreshTokenApiResponse extends ApiResponse<{
+export type RefreshTokenApiResponse = ApiResponse<{
   provider: Provider;
   accountId: string;
   expiresAt: string; // ISO 8601 string
   message: string;
-}> {}
+}>;
 
 // ============================================================================
 // Logging Types

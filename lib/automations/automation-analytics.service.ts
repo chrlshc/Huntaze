@@ -269,7 +269,7 @@ export class AutomationAnalyticsService {
   /**
    * Calculate metrics from execution records
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   private calculateMetrics(executions: any[]): ExecutionMetrics {
     if (executions.length === 0) {
       return {

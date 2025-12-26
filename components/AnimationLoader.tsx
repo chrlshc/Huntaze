@@ -6,7 +6,7 @@ export default function AnimationLoader() {
   useEffect(() => {
     // Force reflow to ensure animations start
     const forceReflow = () => {
-      document.body.offsetHeight;
+      document.body.getBoundingClientRect();
       window.scrollTo(0, 0);
     };
 

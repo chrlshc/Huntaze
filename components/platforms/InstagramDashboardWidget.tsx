@@ -5,18 +5,13 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
 
 export default function InstagramDashboardWidget() {
   const [account, setAccount] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // TODO: Fetch Instagram account data
-    setLoading(false);
-  }, []);
+  const loading = false;
 
   if (loading) {
     return (

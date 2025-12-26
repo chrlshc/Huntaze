@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import useSWR from 'swr';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -9,27 +10,28 @@ import {
   Loader2,
   Check,
   Plus,
-  DollarSign,
   Sparkles,
   Image,
   Video,
   FileText
 } from 'lucide-react';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 import type { BundleSuggestion, ContentItem } from '@/lib/offers/types';
 
 interface AIBundleCreatorProps {
   onCreateBundle: (bundle: BundleSuggestion) => void;
 }
 
-// Mock content items
-const mockContent: ContentItem[] = [
-  { id: 'c1', title: 'Summer Photoshoot Set', type: 'photo', price: 25, salesCount: 150 },
-  { id: 'c2', title: 'Behind the Scenes Video', type: 'video', price: 15, salesCount: 280 },
-  { id: 'c3', title: 'Exclusive Interview', type: 'video', price: 50, salesCount: 45 },
-  { id: 'c4', title: 'Beach Collection', type: 'photo', price: 35, salesCount: 90 },
-  { id: 'c5', title: 'Q&A Session Recording', type: 'video', price: 20, salesCount: 120 },
-  { id: 'c6', title: 'Personal Story PDF', type: 'document', price: 10, salesCount: 200 },
-];
+type ContentApiResponse = {
+  data?: {
+    items?: Array<{
+      id: string;
+      title: string;
+      type: string;
+      metadata?: Record<string, unknown>;
+    }>;
+  };
+};
 
 const contentTypeIcons: Record<string, typeof Image> = {
   photo: Image,
@@ -37,59 +39,84 @@ const contentTypeIcons: Record<string, typeof Image> = {
   document: FileText,
 };
 
+function normalizeContentType(type: string): string {
+  if (type === 'image') return 'photo';
+  if (type === 'text') return 'document';
+  return type;
+}
+
 export function AIBundleCreator({ onCreateBundle }: AIBundleCreatorProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [suggestions, setSuggestions] = useState<BundleSuggestion[]>([]);
   const [selectedContent, setSelectedContent] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const { data: contentData, error: contentError, isLoading: contentLoading } = useSWR<ContentApiResponse>(
+    '/api/content?limit=50&offset=0',
+    (url) => internalApiFetch<ContentApiResponse>(url)
+  );
+
+  const contentItems = useMemo<ContentItem[]>(() => {
+    const items = contentData?.data?.items ?? [];
+    return items.map((item) => {
+      const metadata = item.metadata ?? {};
+      const priceCents =
+        typeof metadata.priceCents === 'number' && Number.isFinite(metadata.priceCents)
+          ? metadata.priceCents
+          : 0;
+      const price =
+        typeof metadata.price === 'number' && Number.isFinite(metadata.price)
+          ? metadata.price
+          : priceCents > 0
+            ? priceCents / 100
+            : 0;
+      const salesCount =
+        typeof metadata.salesCount === 'number' && Number.isFinite(metadata.salesCount)
+          ? metadata.salesCount
+          : 0;
+
+      return {
+        id: item.id,
+        title: item.title,
+        type: normalizeContentType(item.type),
+        price,
+        salesCount,
+      };
+    });
+  }, [contentData]);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
+    setError(null);
 
     try {
-      const response = await fetch('/api/ai/offers/bundles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content: mockContent,
-          fanPreferences: [],
-        }),
-      });
+      if (contentItems.length < 2) {
+        setError('Add at least two content items to generate bundles');
+        return;
+      }
 
-      if (!response.ok) throw new Error('Failed to generate bundles');
+      const data = await internalApiFetch<{ suggestions?: BundleSuggestion[] }>(
+        '/api/ai/offers/bundles',
+        {
+          method: 'POST',
+          body: {
+            contentItems,
+            fanPreferences: [],
+          },
+        },
+      );
 
-      const data = await response.json();
-      setSuggestions(data.suggestions || getMockSuggestions());
+      setSuggestions(Array.isArray(data?.suggestions) ? data.suggestions : []);
+      if (!data?.suggestions?.length) {
+        setError('No bundle suggestions returned');
+      }
     } catch (err) {
-      // Use mock data on error for demo
-      setSuggestions(getMockSuggestions());
+      setSuggestions([]);
+      setError(err instanceof Error ? err.message : 'Failed to generate bundles');
     } finally {
       setIsGenerating(false);
     }
   };
-
-  const getMockSuggestions = (): BundleSuggestion[] => [
-    {
-      name: 'Ultimate Fan Bundle',
-      contentIds: ['c1', 'c2', 'c3'],
-      suggestedPrice: 75,
-      expectedValue: 'Save $15 (17% off)',
-      reasoning: 'Combines your top-selling photo set with exclusive video content. High engagement potential based on fan purchase patterns.',
-    },
-    {
-      name: 'Video Lover Pack',
-      contentIds: ['c2', 'c3', 'c5'],
-      suggestedPrice: 70,
-      expectedValue: 'Save $15 (18% off)',
-      reasoning: 'Perfect for fans who prefer video content. Groups all video items at an attractive discount.',
-    },
-    {
-      name: 'Starter Collection',
-      contentIds: ['c2', 'c6'],
-      suggestedPrice: 20,
-      expectedValue: 'Save $5 (20% off)',
-      reasoning: 'Entry-level bundle for new fans. Low price point encourages first purchase.',
-    },
-  ];
 
   const toggleContent = (contentId: string) => {
     setSelectedContent(prev => 
@@ -99,7 +126,7 @@ export function AIBundleCreator({ onCreateBundle }: AIBundleCreatorProps) {
     );
   };
 
-  const getContentById = (id: string) => mockContent.find(c => c.id === id);
+  const getContentById = (id: string) => contentItems.find(c => c.id === id);
 
   const calculateBundleValue = (contentIds: string[]) => {
     return contentIds.reduce((sum, id) => {
@@ -133,7 +160,16 @@ export function AIBundleCreator({ onCreateBundle }: AIBundleCreatorProps) {
         </h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-          {mockContent.map((item) => {
+          {contentLoading && (
+            <div className="text-sm text-muted-foreground">Loading content...</div>
+          )}
+          {!contentLoading && contentError && (
+            <div className="text-sm text-red-500">Failed to load content</div>
+          )}
+          {!contentLoading && !contentError && contentItems.length === 0 && (
+            <div className="text-sm text-muted-foreground">No content available yet.</div>
+          )}
+          {contentItems.map((item) => {
             const Icon = contentTypeIcons[item.type] || FileText;
             return (
               <div
@@ -179,9 +215,13 @@ export function AIBundleCreator({ onCreateBundle }: AIBundleCreatorProps) {
           </div>
         )}
 
+        {error && (
+          <div className="mb-4 text-sm text-red-500">{error}</div>
+        )}
+
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating}
+          disabled={isGenerating || contentLoading || contentItems.length < 2}
           className="w-full"
         >
           {isGenerating ? (
@@ -209,7 +249,6 @@ export function AIBundleCreator({ onCreateBundle }: AIBundleCreatorProps) {
           <div className="space-y-4">
             {suggestions.map((bundle, index) => {
               const totalValue = calculateBundleValue(bundle.contentIds);
-              const savings = totalValue - bundle.suggestedPrice;
               
               return (
                 <div

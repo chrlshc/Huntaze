@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { contentValidationService, ValidationResult } from '@/lib/services/contentValidationService';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -15,18 +15,15 @@ interface ContentValidatorProps {
 }
 
 export default function ContentValidator({ content, onValidationChange }: ContentValidatorProps) {
-  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const validationResult = useMemo(
+    () => contentValidationService.validateContent(content),
+    [content]
+  );
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    const result = contentValidationService.validateContent(content);
-    setValidationResult(result);
-    onValidationChange?.(result);
-  }, [content]);
-
-  if (!validationResult) {
-    return null;
-  }
+    onValidationChange?.(validationResult);
+  }, [validationResult, onValidationChange]);
 
   const { isValid, issues, score } = validationResult;
   const errors = issues.filter(i => i.type === 'error');

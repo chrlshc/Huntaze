@@ -6,9 +6,9 @@ import { contentService } from '@/lib/api/services/content.service';
 import { successResponse, errorResponse } from '@/lib/api/utils/response';
 
 interface RouteContext {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 /**
@@ -17,7 +17,7 @@ interface RouteContext {
  */
 export const GET = withRateLimit(withAuth(async (req: AuthenticatedRequest, context: RouteContext) => {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
 
     const content = await contentService.getContent(parseInt(req.user.id), id);
 
@@ -61,7 +61,7 @@ export const PUT = withRateLimit(
     withValidation(updateContentSchema, async (req, body, context: RouteContext) => {
       try {
         const authenticatedReq = req as AuthenticatedRequest;
-        const { id } = context.params;
+        const { id } = await context.params;
         const content = await contentService.updateContent(parseInt(authenticatedReq.user.id), id, body);
         return Response.json(successResponse(content));
       } catch (error: any) {
@@ -89,7 +89,7 @@ export const PUT = withRateLimit(
  */
 export const DELETE = withRateLimit(withAuth(async (req: AuthenticatedRequest, context: RouteContext) => {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
 
     await contentService.deleteContent(parseInt(req.user.id), id);
 

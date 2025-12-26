@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from 'react'
 
 type Theme = 'light' | 'dark' | 'system'
 
@@ -15,55 +15,44 @@ export const ThemeContext = createContext<ThemeContextType | undefined>(undefine
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const defaultTheme = (process.env.NEXT_PUBLIC_DEFAULT_THEME as Theme) || 'light'
   const [theme, setTheme] = useState<Theme>(defaultTheme)
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
-  const [mounted, setMounted] = useState(false)
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
 
-  useEffect(() => {
-    setMounted(true)
-    const stored = localStorage.getItem('theme') as Theme | null
-    // Always prefer the configured default during this debug phase.
-    // This avoids being stuck in a persisted dark mode.
-    const initial = defaultTheme || stored || 'light'
-    setTheme(initial)
-    localStorage.setItem('theme', initial)
-    // Clean up any stale dark class immediately
-    document.documentElement.classList.remove('dark')
-    document.documentElement.classList.add(initial === 'dark' ? 'dark' : 'light')
-  }, [])
-
-  useEffect(() => {
-    const root = window.document.documentElement
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    
-    const resolved = theme === 'system' ? systemTheme : theme
-    setResolvedTheme(resolved)
-
-    root.classList.remove('light', 'dark')
-    root.classList.add(resolved)
-    
-    if (mounted) {
-      localStorage.setItem('theme', theme)
-    }
-  }, [theme, mounted])
-
-  // Listen for system theme changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const handleChange = () => {
-      if (theme === 'system') {
-        const newTheme = mediaQuery.matches ? 'dark' : 'light'
-        setResolvedTheme(newTheme)
-        window.document.documentElement.classList.remove('light', 'dark')
-        window.document.documentElement.classList.add(newTheme)
+  const systemTheme = useSyncExternalStore(
+    (callback) => {
+      if (typeof window === 'undefined') return () => {}
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const handler = () => callback()
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', handler)
+        return () => mediaQuery.removeEventListener('change', handler)
       }
-    }
+      mediaQuery.addListener(handler)
+      return () => mediaQuery.removeListener(handler)
+    },
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light',
+    () => 'light'
+  )
 
-    mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
-  }, [theme])
+  const resolvedTheme = theme === 'system' ? systemTheme : theme
+
+  useEffect(() => {
+    if (!isClient) return
+    const root = window.document.documentElement
+    root.classList.remove('light', 'dark')
+    root.classList.add(resolvedTheme)
+    localStorage.setItem('theme', theme)
+  }, [theme, resolvedTheme, isClient])
 
   // Prevent flash of incorrect theme
-  if (!mounted) {
+  if (!isClient) {
     return null
   }
 

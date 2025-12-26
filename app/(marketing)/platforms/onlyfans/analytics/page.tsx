@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { 
   Users, 
@@ -42,25 +42,7 @@ export default function OnlyFansAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
-  useEffect(() => {
-    loadAnalyticsData();
-  }, [timeRange]);
-
-  const loadAnalyticsData = async () => {
-    setLoading(true);
-    try {
-      await Promise.all([
-        loadKPIs(),
-        loadTopFans(),
-      ]);
-    } catch (error) {
-      console.error('Failed to load analytics:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadKPIs = async () => {
+  const loadKPIs = useCallback(async () => {
     try {
       const [fansResponse, conversationsResponse] = await Promise.all([
         fetch('/api/crm/fans'),
@@ -93,9 +75,9 @@ export default function OnlyFansAnalyticsPage() {
     } catch (error) {
       console.error('Failed to load KPIs:', error);
     }
-  };
+  }, []);
 
-  const loadTopFans = async () => {
+  const loadTopFans = useCallback(async () => {
     try {
       const response = await fetch('/api/crm/fans');
       if (response.ok) {
@@ -112,7 +94,25 @@ export default function OnlyFansAnalyticsPage() {
     } catch (error) {
       console.error('Failed to load top fans:', error);
     }
-  };
+  }, []);
+
+  const loadAnalyticsData = useCallback(async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        loadKPIs(),
+        loadTopFans(),
+      ]);
+    } catch (error) {
+      console.error('Failed to load analytics:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [loadKPIs, loadTopFans]);
+
+  useEffect(() => {
+    loadAnalyticsData();
+  }, [loadAnalyticsData, timeRange]);
 
   const exportData = async () => {
     try {

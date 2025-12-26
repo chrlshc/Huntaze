@@ -235,7 +235,7 @@ export class AutomationService {
   /**
    * Map Prisma model to AutomationFlow type
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   private mapToAutomationFlow(automation: any): AutomationFlow {
     return {
       id: automation.id,

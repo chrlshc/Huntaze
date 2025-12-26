@@ -18,7 +18,7 @@ interface TimeSeriesPoint {
   value: number;
 }
 
-interface RevenueChartProps {
+export interface RevenueChartProps {
   data: TimeSeriesPoint[];
   comparisonData?: TimeSeriesPoint[];
   mode: 'daily' | 'cumulative';

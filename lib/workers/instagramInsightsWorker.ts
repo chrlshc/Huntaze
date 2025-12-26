@@ -4,6 +4,8 @@
  */
 
 import { query } from '../db';
+import { externalFetchJson } from '@/lib/services/external/http';
+import { ExternalServiceError } from '@/lib/services/external/errors';
 
 interface InstagramInsight {
   name: string;
@@ -33,6 +35,36 @@ interface AccountInsights {
   reach: number;
   impressions: number;
   profile_views: number;
+}
+
+type GraphApiError = {
+  message?: string;
+  code?: number;
+  type?: string;
+  fbtrace_id?: string;
+  error_subcode?: number;
+};
+
+type GraphApiResponse<T> = T & { error?: GraphApiError };
+
+function mapGraphError(error: GraphApiError, operation: string): ExternalServiceError {
+  const retryable = error.code === 4 || error.code === 17 || error.code === 613;
+  const code =
+    error.code === 190
+      ? 'UNAUTHORIZED'
+      : retryable
+        ? 'RATE_LIMIT'
+        : error.code === 10
+          ? 'FORBIDDEN'
+          : 'BAD_REQUEST';
+
+  return new ExternalServiceError({
+    service: 'instagram',
+    code,
+    retryable,
+    message: error.message || `Instagram API error (${operation})`,
+    details: { error },
+  });
 }
 
 /**
@@ -122,13 +154,22 @@ async function syncAccountMetrics(account: any): Promise<void> {
     const since = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60); // Last 7 days
     const until = Math.floor(Date.now() / 1000);
 
-    const url = `https://graph.facebook.com/v18.0/${account.ig_business_id}/insights?metric=${metrics.join(',')}&period=${period}&since=${since}&until=${until}&access_token=${account.access_token}`;
+    const url = `https://graph.facebook.com/v18.0/${account.ig_business_id}/insights?metric=${metrics.join(',')}&period=${period}&since=${since}&until=${until}`;
 
-    const response = await fetch(url);
-    const data = await response.json();
+    const data = await externalFetchJson<GraphApiResponse<{ data?: InstagramInsight[] }>>(url, {
+      service: 'instagram',
+      operation: 'insights.account',
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${account.access_token}`,
+      },
+      cache: 'no-store',
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, retryMethods: ['GET'] },
+    });
 
-    if (!response.ok) {
-      throw new Error(`Instagram API error: ${data.error?.message || 'Unknown error'}`);
+    if (data.error) {
+      throw mapGraphError(data.error, 'insights.account');
     }
 
     // Parse insights
@@ -232,18 +273,27 @@ async function syncSingleMediaInsights(media: any, accessToken: string): Promise
       ? ['impressions', 'reach', 'engagement', 'saved', 'video_views', 'likes', 'comments', 'shares']
       : ['impressions', 'reach', 'engagement', 'saved', 'likes', 'comments', 'shares'];
 
-    const url = `https://graph.facebook.com/v18.0/${media.ig_id}/insights?metric=${metrics.join(',')}&access_token=${accessToken}`;
+    const url = `https://graph.facebook.com/v18.0/${media.ig_id}/insights?metric=${metrics.join(',')}`;
 
-    const response = await fetch(url);
-    const data = await response.json();
+    const data = await externalFetchJson<GraphApiResponse<{ data?: InstagramInsight[] }>>(url, {
+      service: 'instagram',
+      operation: 'insights.media',
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: 'no-store',
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, retryMethods: ['GET'] },
+    });
 
-    if (!response.ok) {
+    if (data.error) {
       // If media is too old or insights not available, skip silently
-      if (data.error?.code === 10 || data.error?.code === 100) {
+      if (data.error.code === 10 || data.error.code === 100) {
         console.log(`[Instagram Insights Worker] Insights not available for media ${media.ig_id}`);
         return;
       }
-      throw new Error(`Instagram API error: ${data.error?.message || 'Unknown error'}`);
+      throw mapGraphError(data.error, 'insights.media');
     }
 
     // Parse insights

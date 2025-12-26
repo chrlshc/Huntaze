@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config';
-import path from 'path';
 import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
 import { config } from 'dotenv';
 import fs from 'fs';
 
@@ -8,11 +8,11 @@ import fs from 'fs';
 config({ path: fs.existsSync('.env.test') ? '.env.test' : '.env.test.example' });
 
 export default defineConfig(() => ({
-  plugins: [react()],
+  plugins: [react(), tsconfigPaths({ projects: ['./tsconfig.vitest.json'] })],
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./tests/setup.tsx'],
+    setupFiles: ['./vitest.setup.ts', './tests/setup.tsx'],
     include: ['tests/unit/**/*.test.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
@@ -41,11 +41,6 @@ export default defineConfig(() => ({
         '**/mockData',
         '**/.next',
       ],
-    },
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './'),
     },
   },
 }));

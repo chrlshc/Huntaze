@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
-import { useEffect, useState } from 'react';
+import { useIsClient } from '@/hooks/useIsClient';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BarChart3, FileText, Home, Megaphone, Settings, Video, Zap, Plug } from 'lucide-react';
@@ -118,12 +118,7 @@ export function Sidebar() {
   const { currentSection } = useNavigationContext();
   const { isOpen, close, sidebarRef } = useMobileSidebar();
   const isOnlyFansSettingsActive = pathname?.startsWith('/onlyfans/settings');
-  const [mounted, setMounted] = useState(false);
-
-  // SSR safety - only render portal after mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsClient();
 
   // Close sidebar on navigation (mobile)
   const handleNavClick = () => {

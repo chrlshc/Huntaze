@@ -192,10 +192,12 @@ export function GoodNestingExample() {
   );
 }
 
-export default {
+const nestingExamples = {
   ContainerNestingExample,
   CardNestingExample,
   MixedNestingExample,
   BadNestingExample,
   GoodNestingExample,
 };
+
+export default nestingExamples;

@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles, TrendingUp, Target, ArrowRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { useIsClient } from '@/hooks/useIsClient';
 
 interface Achievement {
   icon: React.ReactNode;
@@ -26,12 +27,10 @@ export default function CompletionCelebration({
   unlockedFeatures,
   creatorLevel
 }: CompletionCelebrationProps) {
-  const [isAnimating, setIsAnimating] = useState(false);
+  const isAnimating = useIsClient();
   const router = useRouter();
 
   useEffect(() => {
-    setIsAnimating(true);
-    
     // Trigger confetti
     const duration = 5000;
     const animationEnd = Date.now() + duration;

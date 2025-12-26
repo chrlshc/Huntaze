@@ -14,6 +14,7 @@ import '@/styles/polaris-analytics.css';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { InfoTooltip } from '@/components/analytics/InfoTooltip';
 import type { AutomationStep } from '@/lib/automations/types';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 import { AssistantIcon } from '@/components/icons/AssistantIcon';
 import {
   Sparkles,
@@ -71,6 +72,16 @@ const actionTypes = [
 ];
 
 type BuilderMode = 'ai' | 'manual';
+type AutomationBuilderResponse = {
+  success: boolean;
+  data?: {
+    name: string;
+    description: string;
+    steps: AutomationStep[];
+    confidence: number;
+  };
+  error?: string;
+};
 
 export default function NewAutomationPage() {
   const router = useRouter();
@@ -106,21 +117,18 @@ export default function NewAutomationPage() {
     setGeneratedFlow(null);
 
     try {
-      const response = await fetch('/api/ai/automation-builder', {
+      const data = await internalApiFetch<AutomationBuilderResponse>('/api/ai/automation-builder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: prompt }),
+        body: { action: 'build_flow', description: prompt },
       });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (data.success && data.data) {
         setGeneratedFlow(data.data);
       } else {
         setError(data.error || 'Erreur lors de la génération');
       }
-    } catch {
-      setError('Impossible de se connecter au service IA');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Impossible de se connecter au service IA');
     } finally {
       setGenerating(false);
     }
@@ -170,21 +178,18 @@ export default function NewAutomationPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/automations', {
+      const data = await internalApiFetch<{ success: boolean; error?: string }>('/api/automations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, description, steps, status }),
+        body: { name, description, steps, status },
       });
-
-      const data = await response.json();
 
       if (data.success) {
         router.push('/automations');
       } else {
         setError(data.error || 'Erreur lors de la sauvegarde');
       }
-    } catch {
-      setError('Erreur lors de la sauvegarde');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);
     }

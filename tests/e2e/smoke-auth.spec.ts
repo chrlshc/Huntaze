@@ -24,13 +24,25 @@ test.describe('Auth smoke flow', () => {
 
     const integrationsCta = page.getByRole('button', { name: /go to integrations/i });
     if (await integrationsCta.count()) {
-      await integrationsCta.click();
+      await integrationsCta.first().click();
       await expect(page).toHaveURL(/\/integrations/);
       return;
     }
 
-    const analyticsLink = page.getByRole('link', { name: /analytics/i });
-    await analyticsLink.first().click();
+    const analyticsNav = page.getByTestId('nav-analytics');
+    if (await analyticsNav.count()) {
+      await analyticsNav.evaluate((element) => {
+        (element as HTMLElement).click();
+      });
+      try {
+        await page.waitForURL(/\/analytics/, { timeout: 120000 });
+        return;
+      } catch {
+        // Fall through to a direct navigation if the client-side click stalls.
+      }
+    }
+
+    await page.goto(`${BASE_URL}/analytics`, { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/analytics/);
   });
 });

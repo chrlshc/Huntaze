@@ -16,6 +16,8 @@
 
 import crypto from 'crypto';
 import { TikTokCredentialValidator, TikTokCredentials } from '@/lib/validation';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 const TIKTOK_AUTH_URL = 'https://www.tiktok.com/v2/auth/authorize';
 const TIKTOK_TOKEN_URL = 'https://open.tiktokapis.com/v2/oauth/token/';
@@ -152,30 +154,18 @@ export class TikTokOAuthService {
   private async fetchWithTimeout(
     url: string,
     options: RequestInit,
+    correlationId: string,
+    operation: string,
     timeoutMs: number = REQUEST_TIMEOUT_MS
   ): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-    try {
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-      });
-      return response;
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw this.createError(
-          TikTokErrorCode.TIMEOUT_ERROR,
-          `Request timeout after ${timeoutMs}ms`,
-          '',
-          true
-        );
-      }
-      throw error;
-    } finally {
-      clearTimeout(timeoutId);
-    }
+    return externalFetch(url, {
+      ...options,
+      service: 'tiktok',
+      operation,
+      correlationId,
+      timeoutMs,
+      retry: { maxRetries: 0, retryMethods: [] },
+    });
   }
 
   /**
@@ -220,7 +210,7 @@ export class TikTokOAuthService {
     for (let attempt = 1; attempt <= RETRY_CONFIG.maxAttempts; attempt++) {
       try {
         const startTime = Date.now();
-        const response = await this.fetchWithTimeout(url, options);
+        const response = await this.fetchWithTimeout(url, options, correlationId, operation);
         const duration = Date.now() - startTime;
 
         const data = await response.json();
@@ -255,15 +245,27 @@ export class TikTokOAuthService {
 
         return data as T;
       } catch (error) {
-        lastError = error instanceof Error ? error : new Error(String(error));
+        const normalized = isExternalServiceError(error)
+          ? this.createError(
+              this.mapExternalErrorCode(error.code),
+              error.message,
+              correlationId,
+              error.retryable,
+              error.status
+            )
+          : error instanceof Error
+            ? error
+            : new Error(String(error));
+
+        lastError = normalized;
 
         // Check if error is retryable
-        const isRetryable = (error as TikTokAPIError).retryable || false;
+        const isRetryable = (normalized as TikTokAPIError).retryable || false;
 
         // Log error
         console.error(`[TikTokOAuth] ${operation} - Error (attempt ${attempt}/${RETRY_CONFIG.maxAttempts})`, {
           error: lastError.message,
-          code: (error as TikTokAPIError).code,
+          code: (normalized as TikTokAPIError).code,
           retryable: isRetryable,
           correlationId,
         });
@@ -304,6 +306,26 @@ export class TikTokOAuthService {
       return TikTokErrorCode.API_ERROR;
     }
     return TikTokErrorCode.API_ERROR;
+  }
+
+  private mapExternalErrorCode(code: string): TikTokErrorCode {
+    switch (code) {
+      case 'TIMEOUT':
+        return TikTokErrorCode.TIMEOUT_ERROR;
+      case 'NETWORK_ERROR':
+        return TikTokErrorCode.NETWORK_ERROR;
+      case 'RATE_LIMIT':
+        return TikTokErrorCode.RATE_LIMIT;
+      case 'UNAUTHORIZED':
+      case 'FORBIDDEN':
+        return TikTokErrorCode.INVALID_TOKEN;
+      case 'BAD_REQUEST':
+        return TikTokErrorCode.VALIDATION_ERROR;
+      case 'UPSTREAM_5XX':
+        return TikTokErrorCode.API_ERROR;
+      default:
+        return TikTokErrorCode.API_ERROR;
+    }
   }
 
   /**

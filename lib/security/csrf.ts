@@ -16,7 +16,7 @@ export function generateCSRFToken(): string {
   }
   // Node.js fallback without importing 'crypto' at module scope (avoids edge bundling issues)
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+     
     const nodeCrypto = require('crypto') as typeof import('crypto');
     return nodeCrypto.randomBytes(16).toString('hex');
   } catch {
@@ -35,7 +35,7 @@ export function verifyCSRFToken(
   if (headerToken.length !== cookieToken.length) return false;
   // Prefer constant-time byte comparison. Use Node's timingSafeEqual when available; otherwise fallback.
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+     
     const nodeCrypto = require('crypto') as typeof import('crypto');
     return nodeCrypto.timingSafeEqual(Buffer.from(headerToken), Buffer.from(cookieToken));
   } catch {

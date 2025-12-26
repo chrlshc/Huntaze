@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 
@@ -192,28 +192,28 @@ export function PrefetchLink({
   children: React.ReactNode;
   prefetchOn?: 'hover' | 'focus' | 'visible';
 }) {
-  const [isPrefetched, setIsPrefetched] = useState(false);
+  const isPrefetched = useRef(false);
   const { ref, inView } = useInViewLocal({
     triggerOnce: true,
     rootMargin: '50px'
   });
 
-  const prefetch = () => {
-    if (!isPrefetched && href) {
+  const prefetch = useCallback(() => {
+    if (!isPrefetched.current && href) {
       // Prefetch the route
       const link = document.createElement('link');
       link.rel = 'prefetch';
       link.href = href;
       document.head.appendChild(link);
-      setIsPrefetched(true);
+      isPrefetched.current = true;
     }
-  };
+  }, [href]);
 
   useEffect(() => {
     if (prefetchOn === 'visible' && inView) {
       prefetch();
     }
-  }, [inView, prefetchOn]);
+  }, [inView, prefetch, prefetchOn]);
 
   return (
     <a
@@ -292,7 +292,7 @@ export function useOptimizedFetch(url: string, options?: RequestInit) {
     return () => {
       cancelled = true;
     };
-  }, [url]);
+  }, [options, url]);
 
   return { data, error, isLoading };
 }

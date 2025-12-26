@@ -34,44 +34,33 @@ export function AdaptiveImage({
   onLoad,
   onError,
 }: AdaptiveImageProps) {
-  const { imageSettings, isAboveFold } = useMobileOptimization();
+  const { imageSettings } = useMobileOptimization();
   const imageRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(priority);
   const [hasError, setHasError] = useState(false);
 
-  // Determine if image is above fold
   useEffect(() => {
-    if (priority || !imageRef.current) {
-      setIsVisible(true);
-      return;
-    }
+    if (priority || !imageRef.current) return;
 
     const element = imageRef.current;
-    const aboveFold = isAboveFold(element);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        rootMargin: '50px', // Start loading 50px before entering viewport
+      }
+    );
 
-    if (aboveFold) {
-      setIsVisible(true);
-    } else {
-      // Use Intersection Observer for below-fold images
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setIsVisible(true);
-              observer.disconnect();
-            }
-          });
-        },
-        {
-          rootMargin: '50px', // Start loading 50px before entering viewport
-        }
-      );
+    observer.observe(element);
 
-      observer.observe(element);
-
-      return () => observer.disconnect();
-    }
-  }, [priority, isAboveFold]);
+    return () => observer.disconnect();
+  }, [priority]);
 
   const handleError = (error: any) => {
     setHasError(true);

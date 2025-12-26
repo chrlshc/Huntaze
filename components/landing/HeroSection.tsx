@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Play, Star } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { useIsClient } from '@/hooks/useIsClient';
 
 interface HeroSectionProps {
   title: string;
@@ -16,11 +17,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ title, subtitle, ctaText, ctaHref, showVideo = true }: HeroSectionProps) {
-  const [isClient, setIsClient] = useState(false);
-  
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const isClient = useIsClient();
   
   // Render without animations on server-side to prevent hydration issues
   if (!isClient) {

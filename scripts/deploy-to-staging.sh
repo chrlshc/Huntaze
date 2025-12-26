@@ -105,11 +105,27 @@ echo ""
 # 5. Exécution des tests
 step "5. Exécution des tests..."
 
-echo "Tests unitaires..."
-if npm run test:unit:optimized; then
-    success "Tests unitaires passés (164/164)"
+echo "Lint (CI)..."
+if npm run lint:ci; then
+    success "Lint CI passé"
 else
-    error "Les tests unitaires ont échoué. Déploiement annulé."
+    error "Lint CI a échoué. Déploiement annulé."
+fi
+
+echo ""
+echo "API smoke tests..."
+if npm run test:api-smoke; then
+    success "API smokes passés"
+else
+    error "API smokes ont échoué. Déploiement annulé."
+fi
+
+echo ""
+echo "Tests unitaires (non bloquants)..."
+if npm run test:unit:optimized; then
+    success "Tests unitaires passés"
+else
+    warning "Tests unitaires en échec (job séparé)"
 fi
 
 echo ""

@@ -1,4 +1,9 @@
 import { cookies } from 'next/headers';
+import { externalFetch, externalFetchJson } from '@/lib/services/external/http';
+import {
+  ExternalServiceError,
+  isExternalServiceError,
+} from '@/lib/services/external/errors';
 
 export interface TikTokUser {
   id: string;
@@ -11,6 +16,27 @@ export interface TikTokVideoUploadResponse {
   upload_url?: string;
   error?: string;
 }
+
+type TikTokApiError = {
+  code?: string;
+  message?: string;
+  log_id?: string;
+};
+
+type TikTokInitResponse = {
+  data?: {
+    publish_id?: string;
+    upload_url?: string;
+  };
+  error?: TikTokApiError;
+};
+
+type TikTokPublishResponse = {
+  data?: {
+    publish_id?: string;
+  };
+  error?: TikTokApiError;
+};
 
 export class TikTokService {
   private accessToken: string | null = null;
@@ -51,7 +77,9 @@ export class TikTokService {
         ? 'https://open-sandbox.tiktok.com/v2/post/publish/inbox/video/init/'
         : 'https://open-api.tiktok.com/v2/post/publish/inbox/video/init/';
 
-      const initResponse = await fetch(initUrl, {
+      const initData = await externalFetchJson<TikTokInitResponse>(initUrl, {
+        service: 'tiktok',
+        operation: 'publish.init',
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -66,17 +94,35 @@ export class TikTokService {
           },
         }),
         cache: 'no-store',
+        timeoutMs: 15_000,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
 
-      const initData = await initResponse.json();
-      
-      if (!initResponse.ok || initData.error) {
-        return { error: initData.error?.message || 'Failed to initialize upload' };
+      if (initData.error) {
+        throw new ExternalServiceError({
+          service: 'tiktok',
+          code: 'BAD_REQUEST',
+          retryable: false,
+          message: initData.error.message || 'Failed to initialize upload',
+          details: { error: initData.error },
+        });
       }
 
       // Step 2: Upload video chunks
-      const uploadUrl = initData.data.upload_url;
-      const uploadResponse = await fetch(uploadUrl, {
+      const uploadUrl = initData.data?.upload_url;
+      const publishId = initData.data?.publish_id;
+      if (!uploadUrl || !publishId) {
+        throw new ExternalServiceError({
+          service: 'tiktok',
+          code: 'INVALID_RESPONSE',
+          retryable: false,
+          message: 'TikTok init response missing upload URL',
+        });
+      }
+
+      await externalFetch(uploadUrl, {
+        service: 'tiktok',
+        operation: 'publish.upload',
         method: 'PUT',
         headers: {
           'Content-Type': 'video/mp4',
@@ -84,25 +130,26 @@ export class TikTokService {
         },
         body: videoFile,
         cache: 'no-store',
+        timeoutMs: 60_000,
+        retry: { maxRetries: 0, retryMethods: [] },
+        throwOnHttpError: true,
       });
-
-      if (!uploadResponse.ok) {
-        return { error: 'Failed to upload video' };
-      }
 
       // Step 3: Publish video
       const publishUrl = this.isSandbox
         ? 'https://open-sandbox.tiktok.com/v2/post/publish/video/complete/'
         : 'https://open-api.tiktok.com/v2/post/publish/video/complete/';
 
-      const publishResponse = await fetch(publishUrl, {
+      const publishData = await externalFetchJson<TikTokPublishResponse>(publishUrl, {
+        service: 'tiktok',
+        operation: 'publish.complete',
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          publish_id: initData.data.publish_id,
+          publish_id: publishId,
           caption: caption,
           privacy_level: 'PUBLIC',
           disable_duet: false,
@@ -110,19 +157,32 @@ export class TikTokService {
           disable_stitch: false,
         }),
         cache: 'no-store',
+        timeoutMs: 15_000,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
 
-      const publishData = await publishResponse.json();
-      
-      if (!publishResponse.ok || publishData.error) {
-        return { error: publishData.error?.message || 'Failed to publish video' };
+      if (publishData.error) {
+        throw new ExternalServiceError({
+          service: 'tiktok',
+          code: 'BAD_REQUEST',
+          retryable: false,
+          message: publishData.error.message || 'Failed to publish video',
+          details: { error: publishData.error },
+        });
       }
 
       return {
-        publish_id: publishData.data.publish_id,
+        publish_id: publishData.data?.publish_id,
         upload_url: uploadUrl,
       };
     } catch (error) {
+      if (isExternalServiceError(error)) {
+        const message =
+          error.code === 'RATE_LIMIT'
+            ? 'TikTok rate limit reached. Please try again later'
+            : 'TikTok service unavailable. Please try again later';
+        return { error: message };
+      }
       console.error('TikTok upload error:', error);
       return { error: 'An error occurred during upload' };
     }

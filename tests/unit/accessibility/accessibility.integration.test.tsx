@@ -9,6 +9,8 @@
  * Validates: Requirements 9.1, 9.2, 9.3, 9.4
  */
 
+/* eslint-disable @next/next/no-img-element -- test fixtures intentionally use raw img tags */
+
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';

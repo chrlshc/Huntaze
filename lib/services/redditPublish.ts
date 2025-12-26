@@ -8,7 +8,7 @@
  */
 
 import { externalFetch } from '@/lib/services/external/http';
-import { ExternalServiceError, mapHttpStatusToExternalCode } from '@/lib/services/external/errors';
+import { ExternalServiceError, isExternalServiceError, mapHttpStatusToExternalCode } from '@/lib/services/external/errors';
 
 const REDDIT_API_URL = 'https://oauth.reddit.com';
 
@@ -257,23 +257,42 @@ export class RedditPublishService {
       // Ensure post ID has t3_ prefix
       const fullId = postId.startsWith('t3_') ? postId : `t3_${postId}`;
 
-      const response = await fetch(`${REDDIT_API_URL}/api/info?id=${fullId}`, {
+      const response = await externalFetch(`${REDDIT_API_URL}/api/info?id=${fullId}`, {
+        service: 'reddit',
+        operation: 'post.info',
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'User-Agent': this.userAgent,
         },
         cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        throw new Error(data.message || data.error || 'Failed to get post info');
+        const mapped = mapHttpStatusToExternalCode(response.status);
+        throw new ExternalServiceError({
+          service: 'reddit',
+          code: mapped.code,
+          retryable: mapped.retryable,
+          status: response.status,
+          message: data.message || data.error || 'Failed to get post info',
+          details: data.error ? { error: data.error } : undefined,
+        });
       }
 
       const post = data.data?.children?.[0]?.data;
       if (!post) {
-        throw new Error('Post not found');
+        throw new ExternalServiceError({
+          service: 'reddit',
+          code: 'NOT_FOUND',
+          retryable: false,
+          status: response.status,
+          message: 'Post not found',
+        });
       }
 
       return {
@@ -291,10 +310,16 @@ export class RedditPublishService {
         selftext: post.selftext,
       };
     } catch (error) {
-      console.error('Reddit get post info error:', error);
-      throw new Error(
-        `Failed to get post info: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      if (isExternalServiceError(error)) {
+        throw error;
+      }
+      throw new ExternalServiceError({
+        service: 'reddit',
+        code: 'UNKNOWN',
+        retryable: false,
+        message: 'Failed to get post info',
+        cause: error,
+      });
     }
   }
 
@@ -314,7 +339,9 @@ export class RedditPublishService {
         id: fullId,
       });
 
-      const response = await fetch(`${REDDIT_API_URL}/api/del`, {
+      const response = await externalFetch(`${REDDIT_API_URL}/api/del`, {
+        service: 'reddit',
+        operation: 'post.delete',
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -323,17 +350,34 @@ export class RedditPublishService {
         },
         body: formData.toString(),
         cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Failed to delete post');
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || data.error) {
+        const mapped = mapHttpStatusToExternalCode(response.status);
+        throw new ExternalServiceError({
+          service: 'reddit',
+          code: mapped.code,
+          retryable: mapped.retryable,
+          status: response.status,
+          message: data.message || data.error || 'Failed to delete post',
+          details: data.error ? { error: data.error } : undefined,
+        });
       }
     } catch (error) {
-      console.error('Reddit delete post error:', error);
-      throw new Error(
-        `Failed to delete post: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      if (isExternalServiceError(error)) {
+        throw error;
+      }
+      throw new ExternalServiceError({
+        service: 'reddit',
+        code: 'UNKNOWN',
+        retryable: false,
+        message: 'Failed to delete post',
+        cause: error,
+      });
     }
   }
 
@@ -357,7 +401,9 @@ export class RedditPublishService {
         api_type: 'json',
       });
 
-      const response = await fetch(`${REDDIT_API_URL}/api/editusertext`, {
+      const response = await externalFetch(`${REDDIT_API_URL}/api/editusertext`, {
+        service: 'reddit',
+        operation: 'post.edit',
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -366,23 +412,42 @@ export class RedditPublishService {
         },
         body: formData.toString(),
         cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.json?.errors?.length > 0) {
         const errors = data.json?.errors || [];
-        const errorMessage = errors.map((e: any[]) => e.join(': ')).join(', ') || 'Edit failed';
-        throw new Error(errorMessage);
+        const errorMessage =
+          errors.map((e: any[]) => e.join(': ')).join(', ') ||
+          data.message ||
+          'Edit failed';
+        const mapped = mapHttpStatusToExternalCode(response.status);
+        throw new ExternalServiceError({
+          service: 'reddit',
+          code: mapped.code,
+          retryable: mapped.retryable,
+          status: response.status,
+          message: errorMessage,
+          details: errors.length > 0 ? { errors } : undefined,
+        });
       }
 
       // Get updated post info
       return this.getPostInfo(postId, accessToken);
     } catch (error) {
-      console.error('Reddit edit post error:', error);
-      throw new Error(
-        `Failed to edit post: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      if (isExternalServiceError(error)) {
+        throw error;
+      }
+      throw new ExternalServiceError({
+        service: 'reddit',
+        code: 'UNKNOWN',
+        retryable: false,
+        message: 'Failed to edit post',
+        cause: error,
+      });
     }
   }
 
@@ -400,26 +465,45 @@ export class RedditPublishService {
     violation_reason: string;
   }>> {
     try {
-      const response = await fetch(`${REDDIT_API_URL}/r/${subreddit}/about/rules`, {
+      const response = await externalFetch(`${REDDIT_API_URL}/r/${subreddit}/about/rules`, {
+        service: 'reddit',
+        operation: 'subreddit.rules',
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'User-Agent': this.userAgent,
         },
         cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        throw new Error(data.message || 'Failed to get rules');
+        const mapped = mapHttpStatusToExternalCode(response.status);
+        throw new ExternalServiceError({
+          service: 'reddit',
+          code: mapped.code,
+          retryable: mapped.retryable,
+          status: response.status,
+          message: data.message || data.error || 'Failed to get rules',
+          details: data.error ? { error: data.error } : undefined,
+        });
       }
 
       return data.rules || [];
     } catch (error) {
-      console.error('Reddit get rules error:', error);
-      throw new Error(
-        `Failed to get subreddit rules: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      if (isExternalServiceError(error)) {
+        throw error;
+      }
+      throw new ExternalServiceError({
+        service: 'reddit',
+        code: 'UNKNOWN',
+        retryable: false,
+        message: 'Failed to get subreddit rules',
+        cause: error,
+      });
     }
   }
 }

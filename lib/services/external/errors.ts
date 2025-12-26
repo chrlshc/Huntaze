@@ -41,7 +41,7 @@ export class ExternalServiceError extends Error {
     this.details = options.details;
 
     if (options.cause !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       (this as any).cause = options.cause;
     }
   }

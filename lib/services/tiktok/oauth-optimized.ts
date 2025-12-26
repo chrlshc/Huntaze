@@ -20,6 +20,8 @@ import { TikTokCredentialValidator, TikTokCredentials } from '@/lib/validation';
 import { tiktokLogger } from './logger';
 import { circuitBreakerRegistry } from './circuit-breaker';
 import { createTikTokError, mapErrorCode, isRetryable } from './errors';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 import {
   TikTokAuthUrl,
   TikTokTokens,
@@ -88,36 +90,65 @@ export class TikTokOAuthServiceOptimized {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  private mapExternalErrorType(code: string): TikTokErrorType {
+    switch (code) {
+      case 'TIMEOUT':
+        return TikTokErrorType.TIMEOUT_ERROR;
+      case 'NETWORK_ERROR':
+        return TikTokErrorType.NETWORK_ERROR;
+      case 'RATE_LIMIT':
+        return TikTokErrorType.RATE_LIMIT_ERROR;
+      case 'UNAUTHORIZED':
+        return TikTokErrorType.AUTH_ERROR;
+      case 'FORBIDDEN':
+        return TikTokErrorType.SCOPE_NOT_AUTHORIZED;
+      case 'BAD_REQUEST':
+        return TikTokErrorType.VALIDATION_ERROR;
+      case 'UPSTREAM_5XX':
+        return TikTokErrorType.SERVER_ERROR;
+      default:
+        return TikTokErrorType.API_ERROR;
+    }
+  }
+
   /**
    * Fetch with timeout
    */
   private async fetchWithTimeout(
     url: string,
     options: RequestInit,
-    timeoutMs: number = REQUEST_TIMEOUT_MS,
-    correlationId: string
+    correlationId: string,
+    operation: string,
+    timeoutMs: number = REQUEST_TIMEOUT_MS
   ): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
     try {
-      const response = await fetch(url, {
+      return await externalFetch(url, {
         ...options,
-        signal: controller.signal,
+        service: 'tiktok',
+        operation,
+        correlationId,
+        timeoutMs,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
-      return response;
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error)) {
+        const type = this.mapExternalErrorType(error.code);
         throw createTikTokError(
-          TikTokErrorType.TIMEOUT_ERROR,
-          `Request timeout after ${timeoutMs}ms`,
+          type,
+          error.message,
           correlationId,
-          true
+          error.retryable,
+          error.status
         );
       }
-      throw error;
-    } finally {
-      clearTimeout(timeoutId);
+
+      const message = error instanceof Error ? error.message : 'Network error';
+      throw createTikTokError(
+        TikTokErrorType.NETWORK_ERROR,
+        message,
+        correlationId,
+        true
+      );
     }
   }
 
@@ -142,7 +173,7 @@ export class TikTokOAuthServiceOptimized {
       for (let attempt = 1; attempt <= RETRY_CONFIG.maxAttempts; attempt++) {
         try {
           const startTime = Date.now();
-          const response = await this.fetchWithTimeout(url, options, REQUEST_TIMEOUT_MS, correlationId);
+          const response = await this.fetchWithTimeout(url, options, correlationId, operation, REQUEST_TIMEOUT_MS);
           const duration = Date.now() - startTime;
 
           const data = await response.json();

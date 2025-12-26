@@ -73,6 +73,7 @@ export function ThreeColumnChat({
   const [filter, setFilter] = useState<'all' | 'unread' | 'vip' | 'new'>('all');
   const [showFanInfo, setShowFanInfo] = useState(true);
   const [sending, setSending] = useState(false);
+  const [nowMs] = useState(() => Date.now());
 
   // Filter conversations based on search and filter
   const filteredConversations = conversations.filter(conv => {
@@ -90,7 +91,7 @@ export function ThreeColumnChat({
     id: selectedConv.fanId,
     name: selectedConv.fanName,
     avatar: selectedConv.fanAvatar,
-    joinDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30), // 30 days ago
+    joinDate: new Date(nowMs - 1000 * 60 * 60 * 24 * 30), // 30 days ago
     totalSpent: selectedConv.totalSpent,
     messageCount: selectedConv.messageCount,
     lastActive: selectedConv.lastMessageTime,

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, ChevronDown, MessageCircle, Camera, Play, Users2 } from 'lucide-react'
 import { events } from '@/src/lib/analytics'
@@ -42,7 +43,7 @@ export default function HeaderShopify() {
           <div className="flex items-center gap-8">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3">
-              <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-9 h-9" />
+              <Image src="/huntaze-logo-icon.svg" alt="Beta" width={36} height={36} className="w-9 h-9" />
               <span className="text-[22px] font-bold text-white">Beta</span>
             </Link>
             

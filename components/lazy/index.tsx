@@ -161,7 +161,7 @@ export const PayoutTimeline = dynamic(
 /**
  * Utility function to create lazy-loaded component with custom loading
  */
-export function createLazyComponent<P = {}>(
+export function createLazyComponent<P = Record<string, unknown>>(
   importFn: () => Promise<{ default: ComponentType<P> }>,
   options?: {
     loading?: ComponentType;

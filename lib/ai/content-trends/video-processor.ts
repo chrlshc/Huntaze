@@ -12,6 +12,8 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import { v4 as uuidv4 } from 'uuid';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 // ============================================================================
 // Types and Interfaces
@@ -173,13 +175,32 @@ export class VideoProcessor {
 
     // If it's a URL, download it
     if (source.startsWith('http://') || source.startsWith('https://')) {
-      const response = await fetch(source);
-      if (!response.ok) {
-        throw new VideoProcessingError(`Failed to download video: ${response.statusText}`, 'DOWNLOAD_FAILED');
+      try {
+        const response = await externalFetch(source, {
+          service: 'video-source',
+          operation: 'download',
+          method: 'GET',
+          cache: 'no-store',
+          timeoutMs: 30_000,
+          retry: { maxRetries: 1, retryMethods: ['GET'] },
+          throwOnHttpError: true,
+        });
+        const buffer = Buffer.from(await response.arrayBuffer());
+        await fs.writeFile(videoPath, buffer);
+        return videoPath;
+      } catch (error) {
+        if (isExternalServiceError(error)) {
+          throw new VideoProcessingError(
+            'Failed to download video from external source',
+            'DOWNLOAD_FAILED',
+            { service: error.service, code: error.code }
+          );
+        }
+        throw new VideoProcessingError(
+          `Failed to download video: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          'DOWNLOAD_FAILED'
+        );
       }
-      const buffer = Buffer.from(await response.arrayBuffer());
-      await fs.writeFile(videoPath, buffer);
-      return videoPath;
     }
 
     // Assume it's a local file path

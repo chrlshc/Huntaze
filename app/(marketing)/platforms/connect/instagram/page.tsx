@@ -7,7 +7,7 @@
  * via Facebook OAuth
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
@@ -18,21 +18,31 @@ export default function InstagramConnectPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Check for OAuth callback results
-    if (!searchParams) return;
-    
-    const errorParam = searchParams.get('error');
-    const messageParam = searchParams.get('message');
-    const successParam = searchParams.get('success');
-    const usernameParam = searchParams.get('username');
+  const getErrorMessage = (errorCode: string, message: string | null): string => {
+    const errorMessages: Record<string, string> = {
+      access_denied: 'You denied access to your Instagram account. Please try again and grant the required permissions.',
+      invalid_state: 'Security validation failed. Please try connecting again.',
+      no_business_account: message || 'No Instagram Business or Creator account found. Please convert your Instagram account to a Business or Creator account and link it to a Facebook Page.',
+      callback_failed: message || 'Failed to complete Instagram connection. Please try again.',
+      oauth_init_failed: message || 'Failed to start Instagram connection. Please check your configuration.',
+    };
 
-    if (errorParam) {
-      setError(getErrorMessage(errorParam, messageParam));
-    } else if (successParam === 'true') {
-      setSuccess(`Successfully connected Instagram account @${usernameParam || 'your account'}!`);
-    }
-  }, [searchParams]);
+    return errorMessages[errorCode] || message || 'An unknown error occurred. Please try again.';
+  };
+
+  const errorParam = searchParams?.get('error');
+  const messageParam = searchParams?.get('message');
+  const successParam = searchParams?.get('success');
+  const usernameParam = searchParams?.get('username');
+
+  const callbackError = errorParam ? getErrorMessage(errorParam, messageParam) : null;
+  const callbackSuccess = !errorParam && successParam === 'true'
+    ? `Successfully connected Instagram account @${usernameParam || 'your account'}!`
+    : null;
+
+  const displayError = error ?? callbackError;
+  const displaySuccess = success ?? callbackSuccess;
+  const isConnected = Boolean(displaySuccess);
 
   const handleConnect = async () => {
     setIsConnecting(true);
@@ -46,18 +56,6 @@ export default function InstagramConnectPage() {
       setError('Failed to initiate Instagram connection');
       setIsConnecting(false);
     }
-  };
-
-  const getErrorMessage = (errorCode: string, message: string | null): string => {
-    const errorMessages: Record<string, string> = {
-      access_denied: 'You denied access to your Instagram account. Please try again and grant the required permissions.',
-      invalid_state: 'Security validation failed. Please try connecting again.',
-      no_business_account: message || 'No Instagram Business or Creator account found. Please convert your Instagram account to a Business or Creator account and link it to a Facebook Page.',
-      callback_failed: message || 'Failed to complete Instagram connection. Please try again.',
-      oauth_init_failed: message || 'Failed to start Instagram connection. Please check your configuration.',
-    };
-
-    return errorMessages[errorCode] || message || 'An unknown error occurred. Please try again.';
   };
 
   return (
@@ -81,7 +79,7 @@ export default function InstagramConnectPage() {
         {/* Main Card */}
         <Card className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           {/* Success Message */}
-          {success && (
+          {displaySuccess && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-start">
                 <svg className="w-5 h-5 text-green-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
@@ -89,14 +87,14 @@ export default function InstagramConnectPage() {
                 </svg>
                 <div>
                   <h3 className="text-sm font-medium text-green-800">Success!</h3>
-                  <p className="text-sm text-green-700 mt-1">{success}</p>
+                  <p className="text-sm text-green-700 mt-1">{displaySuccess}</p>
                 </div>
               </div>
             </div>
           )}
 
           {/* Error Message */}
-          {error && (
+          {displayError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-start">
                 <svg className="w-5 h-5 text-red-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
@@ -104,7 +102,7 @@ export default function InstagramConnectPage() {
                 </svg>
                 <div>
                   <h3 className="text-sm font-medium text-red-800">Connection Failed</h3>
-                  <p className="text-sm text-red-700 mt-1">{error}</p>
+                  <p className="text-sm text-red-700 mt-1">{displayError}</p>
                 </div>
               </div>
             </div>
@@ -161,9 +159,9 @@ export default function InstagramConnectPage() {
           {/* Connect Button */}
           <button
             onClick={handleConnect}
-            disabled={isConnecting || !!success}
+            disabled={isConnecting || isConnected}
             className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all ${
-              isConnecting || success
+              isConnecting || isConnected
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:from-purple-600 hover:via-pink-600 hover:to-orange-600 shadow-lg hover:shadow-xl'
             }`}
@@ -176,7 +174,7 @@ export default function InstagramConnectPage() {
                 </svg>
                 Connecting...
               </span>
-            ) : success ? (
+            ) : isConnected ? (
               'Connected ✓'
             ) : (
               'Connect Instagram Business'

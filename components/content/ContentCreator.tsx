@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import ContentEditorWithAutoSave from './ContentEditorWithAutoSave';
 import MediaPicker from './MediaPicker';
 import { Button } from "@/components/ui/button";
@@ -66,9 +67,11 @@ export default function ContentCreator({
               <div key={media.id} className="relative group">
                 <div className="aspect-square relative bg-gray-100 rounded overflow-hidden">
                   {media.type === 'image' ? (
-                    <img
+                    <Image
                       src={media.thumbnailUrl || media.originalUrl}
                       alt={media.filename}
+                      width={512}
+                      height={512}
                       className="w-full h-full object-cover"
                     />
                   ) : (

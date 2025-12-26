@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ProductivityMetrics } from '@/lib/services/productivityMetricsService';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -14,11 +14,7 @@ export default function ProductivityDashboard({ userId }: ProductivityDashboardP
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('30');
 
-  useEffect(() => {
-    fetchMetrics();
-  }, [userId, period]);
-
-  const fetchMetrics = async () => {
+  const fetchMetrics = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`/api/content/metrics?userId=${userId}&period=${period}`);
@@ -31,7 +27,11 @@ export default function ProductivityDashboard({ userId }: ProductivityDashboardP
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, period]);
+
+  useEffect(() => {
+    fetchMetrics();
+  }, [fetchMetrics]);
 
   if (loading) {
     return <div className="text-center py-8 text-gray-500">Loading metrics...</div>;

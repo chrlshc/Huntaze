@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { useState } from "react";
@@ -26,7 +27,7 @@ export default function AppShell({ children, navBadges }: { children: React.Reac
             <Menu className="h-5 w-5" />
           </Button>
           <Link href="/app/app" className="hidden md:inline-flex items-center gap-2">
-            <img src="/logo.svg" alt="Huntaze" className="h-6" />
+            <Image src="/logo.svg" alt="Huntaze" width={24} height={24} className="h-6 w-6" />
           </Link>
         </div>
         <div className="flex items-center gap-3">

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -99,11 +99,7 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTimeRange, setSelectedTimeRange] = useState(timeRange);
 
-  useEffect(() => {
-    fetchReports();
-  }, [selectedTimeRange]);
-
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     setIsLoading(true);
     try {
       const [reportsResponse, roiResponse] = await Promise.all([
@@ -128,7 +124,11 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedTimeRange]);
+
+  useEffect(() => {
+    fetchReports();
+  }, [fetchReports]);
 
   const handleExportReport = () => {
     if (onExportReport) {

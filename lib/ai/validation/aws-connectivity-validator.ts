@@ -11,6 +11,8 @@
  */
 
 import { AWSConnectivityResult, AWSConnectivityValidator } from './types';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 // Environment configuration
 const AI_ROUTER_URL = process.env.AI_ROUTER_URL || 'http://localhost:8000';
@@ -101,18 +103,16 @@ export class AWSConnectivityValidatorService implements AWSConnectivityValidator
    */
   async checkRouterEndpoint(): Promise<boolean> {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-      const response = await fetch(`${this.routerUrl}/health`, {
+      const response = await externalFetch(`${this.routerUrl}/health`, {
+        service: 'ai-router',
+        operation: 'health.check',
         method: 'GET',
-        signal: controller.signal,
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
+        timeoutMs: 5000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
       });
-
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         this.errors.push(
@@ -121,7 +121,7 @@ export class AWSConnectivityValidatorService implements AWSConnectivityValidator
         return false;
       }
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       
       // Verify health response structure
       if (data.status !== 'healthy' && data.status !== 'ok') {
@@ -131,7 +131,7 @@ export class AWSConnectivityValidatorService implements AWSConnectivityValidator
 
       return true;
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error) && error.code === 'TIMEOUT') {
         this.errors.push('Router Endpoint: Request timeout (5s)');
       } else {
         const message = error instanceof Error ? error.message : 'Unknown router error';

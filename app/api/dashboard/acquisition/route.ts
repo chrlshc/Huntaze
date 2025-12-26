@@ -12,29 +12,113 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth/config';
+import { prisma } from '@/lib/prisma';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 import type { AcquisitionResponse, Platform } from '@/lib/dashboard/types';
+
+export const dynamic = 'force-dynamic';
+
+const DEFAULT_RANGE_DAYS = 30;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+function parseDateParam(value: string | null): Date | null {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function toUtcStart(date: Date): Date {
+  const d = new Date(date);
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
+}
+
+function toUtcEnd(date: Date): Date {
+  const d = new Date(date);
+  d.setUTCHours(23, 59, 59, 999);
+  return d;
+}
+
+function addUtcDays(date: Date, days: number): Date {
+  const d = new Date(date);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d;
+}
+
+function resolveDateRange(fromParam: string | null, toParam: string | null) {
+  const toInput = parseDateParam(toParam) ?? new Date();
+  const fromInput = parseDateParam(fromParam) ?? addUtcDays(toInput, -(DEFAULT_RANGE_DAYS - 1));
+  const startDay = toUtcStart(fromInput);
+  const endDay = toUtcStart(toInput);
+
+  if (Number.isNaN(startDay.getTime()) || Number.isNaN(endDay.getTime()) || startDay > endDay) {
+    return null;
+  }
+
+  return {
+    queryStart: startDay,
+    queryEnd: toUtcEnd(toInput),
+  };
+}
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = Number.parseInt(session.user.id, 10);
+    if (!Number.isFinite(userId)) {
+      return NextResponse.json({ error: 'Invalid user id' }, { status: 400 });
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const from = searchParams.get('from');
     const to = searchParams.get('to');
 
-    // TODO: Replace with real data fetching in future versions
-    // For v0.1, return mock data
-    const mockResponse: AcquisitionResponse = {
-      funnel: {
-        views: 125000,
-        profileClicks: 8500,
-        linkTaps: 3200,
-        newSubs: 102
+    const range = resolveDateRange(from, to);
+    if (!range) {
+      return NextResponse.json({ error: 'Invalid date range' }, { status: 400 });
+    }
+
+    if (ENABLE_MOCK_DATA) {
+      const mockResponse: AcquisitionResponse = {
+        funnel: {
+          views: 125000,
+          profileClicks: 8500,
+          linkTaps: 3200,
+          newSubs: 102,
+        },
+        platformMetrics: generateMockPlatformMetrics(),
+        topContent: generateMockTopContent(),
+        insight: 'TikTok: many views, few clicks',
+      };
+
+      return NextResponse.json(mockResponse);
+    }
+
+    const newSubs = await prisma.subscriptions.count({
+      where: {
+        user_id: userId,
+        started_at: { gte: range.queryStart, lte: range.queryEnd },
       },
-      platformMetrics: generateMockPlatformMetrics(),
-      topContent: generateMockTopContent(),
-      insight: 'TikTok: many views, few clicks'
+    });
+
+    const response: AcquisitionResponse = {
+      funnel: {
+        views: null,
+        profileClicks: null,
+        linkTaps: null,
+        newSubs,
+      },
+      platformMetrics: [],
+      topContent: [],
     };
 
-    return NextResponse.json(mockResponse);
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error fetching acquisition data:', error);
     return NextResponse.json(
@@ -72,12 +156,12 @@ function generateMockPlatformMetrics() {
 function generateMockTopContent() {
   const platforms: Platform[] = ['TikTok', 'Instagram', 'Twitter'];
   const titles = [
-    'Behind the scenes of my latest shoot 📸',
-    'Q&A: Your questions answered! 💬',
-    'Exclusive preview of upcoming content 🔥',
-    'Day in the life vlog ✨',
-    'Special announcement coming soon! 🎉',
-    'Throwback to my favorite moment 💕'
+    'Behind the scenes of my latest shoot',
+    'Q&A: Your questions answered',
+    'Exclusive preview of upcoming content',
+    'Day in the life vlog',
+    'Special announcement coming soon',
+    'Throwback to my favorite moment'
   ];
   
   const content = [];

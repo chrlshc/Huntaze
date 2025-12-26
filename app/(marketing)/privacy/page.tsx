@@ -1,83 +1,115 @@
-// Enable static generation for optimal performance and SEO
-export const dynamic = 'force-static';
-
-
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Card } from '@/components/ui/card';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - Huntaze',
-  description: 'Privacy Policy for Huntaze - AI Platform for Content Creators',
+  title: 'Privacy Policy | Huntaze',
+  description: 'Huntaze Privacy Policy - How we collect, use, and protect your data.',
 };
 
-export default function PrivacyPage() {
+export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white">
-      <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">Huntaze Privacy Policy</h1>
-        
-        <div className="prose prose-lg max-w-none">
-          <p className="text-neutral-700 mb-6">
-            Last updated: 17 Aug 2025
-          </p>
+    <div className="min-h-screen bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
+        <p className="text-sm text-gray-500 mb-8">Last updated: December 23, 2024</p>
 
-          <Card className="p-6 mb-8 space-y-6">
-            <section>
-              <h2 className="text-xl font-semibold mb-3">Data we process</h2>
-              <p className="text-neutral-700">
-                Account info, content you upload, OAuth tokens for connected platforms.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">Purpose</h2>
-              <p className="text-neutral-700">
-                Scheduling/publishing content you request, analytics, support, security.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">Storage</h2>
-              <p className="text-neutral-700">
-                Sensitive tokens are encrypted at rest (AES‑256‑GCM with a dedicated key); access is restricted.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">Sharing</h2>
-              <p className="text-neutral-700">
-                We share data only with service providers necessary to run Huntaze (e.g., hosting, analytics) and the platforms you connect (e.g., TikTok) to perform your actions.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">Retention</h2>
-              <p className="text-neutral-700">
-                Data is retained while your account is active; you can request deletion at any time.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">Your rights (GDPR)</h2>
-              <p className="text-neutral-700">
-                Access, rectification, deletion, portability, objection.
-              </p>
-            </section>
-          </Card>
-
+        <div className="prose prose-gray max-w-none">
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">Contact</h2>
-            <p className="text-neutral-700">
-              Email: <a href="mailto:charles@huntaze.com" className="text-purple-600 hover:text-purple-700">charles@huntaze.com</a>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">1. Introduction</h2>
+            <p className="text-gray-700 mb-4">
+              Huntaze (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting your privacy. 
+              This Privacy Policy explains how we collect, use, disclose, and safeguard your information 
+              when you use our platform.
             </p>
           </section>
 
-          <div className="mt-12 pt-8 border-t border-gray-200">
-            <Link href="/" className="text-purple-600 hover:text-purple-700 font-medium">
-              ← Back to Home
-            </Link>
-          </div>
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">2. Information We Collect</h2>
+            <p className="text-gray-700 mb-4">We collect information that you provide directly to us:</p>
+            <ul className="list-disc pl-6 text-gray-700 mb-4">
+              <li>Account information (email, name)</li>
+              <li>Social media account connections (Instagram, TikTok, OnlyFans)</li>
+              <li>OAuth tokens for connected platforms</li>
+              <li>Content and analytics data from connected platforms</li>
+              <li>Usage data and preferences</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">3. How We Use Your Information</h2>
+            <p className="text-gray-700 mb-4">We use the information we collect to:</p>
+            <ul className="list-disc pl-6 text-gray-700 mb-4">
+              <li>Provide, maintain, and improve our services</li>
+              <li>Display analytics and insights from your connected accounts</li>
+              <li>Enable content scheduling and publishing features</li>
+              <li>Send you technical notices and support messages</li>
+              <li>Respond to your comments and questions</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">4. Data Retention</h2>
+            <p className="text-gray-700 mb-4">
+              We retain your personal information for as long as your account is active or as needed 
+              to provide you services. OAuth tokens are stored securely and can be revoked at any time 
+              by disconnecting your accounts.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">5. Data Sharing</h2>
+            <p className="text-gray-700 mb-4">
+              We do not sell your personal information. We may share your information only:
+            </p>
+            <ul className="list-disc pl-6 text-gray-700 mb-4">
+              <li>With your consent</li>
+              <li>To comply with legal obligations</li>
+              <li>With service providers who assist in our operations</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">6. Your Rights</h2>
+            <p className="text-gray-700 mb-4">You have the right to:</p>
+            <ul className="list-disc pl-6 text-gray-700 mb-4">
+              <li>Access your personal data</li>
+              <li>Correct inaccurate data</li>
+              <li>Request deletion of your data</li>
+              <li>Disconnect connected accounts at any time</li>
+              <li>Export your data</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">7. Data Deletion</h2>
+            <p className="text-gray-700 mb-4">
+              To request deletion of your data:
+            </p>
+            <ol className="list-decimal pl-6 text-gray-700 mb-4">
+              <li>Go to Settings → Connected Accounts → Disconnect all accounts</li>
+              <li>Or email us at <a href="mailto:support@huntaze.com" className="text-blue-600 hover:underline">support@huntaze.com</a> with subject &quot;Data Deletion Request&quot;</li>
+            </ol>
+            <p className="text-gray-700">
+              We will process your request within 30 days and delete all associated tokens and data.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">8. Security</h2>
+            <p className="text-gray-700 mb-4">
+              We implement appropriate technical and organizational measures to protect your personal 
+              information, including encryption of sensitive data and secure storage of OAuth tokens.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">9. Contact Us</h2>
+            <p className="text-gray-700 mb-4">
+              If you have questions about this Privacy Policy, please contact us at:
+            </p>
+            <p className="text-gray-700">
+              Email: <a href="mailto:support@huntaze.com" className="text-blue-600 hover:underline">support@huntaze.com</a>
+            </p>
+          </section>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useWebVitals } from '@/hooks/useWebVitals';
 import { Card } from '@/components/ui/card';
 
@@ -34,6 +34,28 @@ interface PerformanceDashboardProps {
   showHistorical?: boolean;
 }
 
+function getMetricStatus(
+  value: number,
+  goodThreshold: number,
+  poorThreshold: number
+): 'good' | 'needs-improvement' | 'poor' {
+  if (value <= goodThreshold) return 'good';
+  if (value <= poorThreshold) return 'needs-improvement';
+  return 'poor';
+}
+
+function calculatePerformanceGrade(metrics: PerformanceMetric[]): string {
+  const goodCount = metrics.filter(m => m.status === 'good').length;
+  const totalCount = metrics.length;
+  const score = goodCount / totalCount;
+  
+  if (score >= 0.9) return 'A';
+  if (score >= 0.75) return 'B';
+  if (score >= 0.5) return 'C';
+  if (score >= 0.25) return 'D';
+  return 'F';
+}
+
 export function PerformanceDashboard({ 
   refreshInterval = 30000,
   showHistorical = true 
@@ -46,7 +68,7 @@ export function PerformanceDashboard({
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch metrics from CloudWatch
-  const fetchMetrics = async () => {
+  const fetchMetrics = useCallback(async () => {
     try {
       const response = await fetch('/api/performance/summary');
       if (!response.ok) throw new Error('Failed to fetch metrics');
@@ -106,37 +128,13 @@ export function PerformanceDashboard({
       console.error('Error fetching performance metrics:', error);
       setIsLoading(false);
     }
-  };
+  }, [showHistorical, webVitals]);
 
   useEffect(() => {
     fetchMetrics();
     const interval = setInterval(fetchMetrics, refreshInterval);
     return () => clearInterval(interval);
-  }, [refreshInterval, showHistorical]);
-
-  // Helper function to determine metric status
-  function getMetricStatus(
-    value: number, 
-    goodThreshold: number, 
-    poorThreshold: number
-  ): 'good' | 'needs-improvement' | 'poor' {
-    if (value <= goodThreshold) return 'good';
-    if (value <= poorThreshold) return 'needs-improvement';
-    return 'poor';
-  }
-
-  // Calculate overall performance grade
-  function calculatePerformanceGrade(metrics: PerformanceMetric[]): string {
-    const goodCount = metrics.filter(m => m.status === 'good').length;
-    const totalCount = metrics.length;
-    const percentage = (goodCount / totalCount) * 100;
-    
-    if (percentage >= 90) return 'A';
-    if (percentage >= 75) return 'B';
-    if (percentage >= 50) return 'C';
-    if (percentage >= 25) return 'D';
-    return 'F';
-  }
+  }, [fetchMetrics, refreshInterval]);
 
   // Get color for metric status
   function getStatusColor(status: string): string {

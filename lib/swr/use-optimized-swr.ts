@@ -9,10 +9,11 @@
 
 'use client';
 
-import { useEffect, useRef } from 'react';
-import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
+import { useEffect, useMemo } from 'react';
+import { type SWRConfiguration, type SWRResponse } from 'swr';
 import { getConfigForEndpoint, getEnvironmentConfig } from './config';
 import { createCancellableFetcher, standardFetcher } from './optimized-fetcher';
+import { useInternalSWR } from './use-internal-swr';
 
 export interface UseOptimizedSWROptions extends SWRConfiguration {
   /**
@@ -55,21 +56,17 @@ export function useOptimizedSWR<Data = any, Error = any>(
   } = options;
   
   // Create cancellable fetcher if needed
-  const fetcherRef = useRef<ReturnType<typeof createCancellableFetcher> | null>(null);
-  
+  const cancellableFetcher = useMemo(() => {
+    if (!enableCancellation || !key) return null;
+    return createCancellableFetcher();
+  }, [enableCancellation, key]);
+
   useEffect(() => {
-    if (enableCancellation && key) {
-      fetcherRef.current = createCancellableFetcher();
-    }
-    
     return () => {
-      // Cancel pending requests on unmount
-      if (fetcherRef.current) {
-        fetcherRef.current.abort();
-        fetcherRef.current = null;
-      }
+      // Cancel pending requests on unmount or key change
+      cancellableFetcher?.abort();
     };
-  }, [key, enableCancellation]);
+  }, [cancellableFetcher]);
   
   // Get automatic configuration based on endpoint
   const autoConfig = key && useEnvConfig 
@@ -86,11 +83,11 @@ export function useOptimizedSWR<Data = any, Error = any>(
   
   // Choose fetcher
   const fetcher = customFetcher 
-    || (fetcherRef.current?.fetcher)
+    || (cancellableFetcher?.fetcher)
     || standardFetcher;
   
   // Use SWR with optimized configuration
-  const result = useSWR<Data, Error>(key, fetcher, finalConfig);
+  const result = useInternalSWR<Data, Error>(key, fetcher, finalConfig);
   
   // Log in development for debugging
   useEffect(() => {

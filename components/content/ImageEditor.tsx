@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable @next/next/no-img-element -- image editor relies on raw <img> for filters and dynamic sizing */
+
 import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";

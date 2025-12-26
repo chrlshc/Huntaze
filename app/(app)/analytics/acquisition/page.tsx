@@ -13,12 +13,14 @@ import { useState } from 'react';
 import useSWR from 'swr';
 import { PageLayout } from '@/components/ui/PageLayout';
 import { ShopifyCard } from '@/components/ui/shopify/ShopifyCard';
+import { ShopifyEmptyState } from '@/components/ui/shopify/ShopifyEmptyState';
 import { DateRangeSelector } from '../components/DateRangeSelector';
 import { ConversionFunnel } from '../components/ConversionFunnel';
 import { PlatformBattle } from '../components/PlatformBattle';
 import { TopContent } from '../components/TopContent';
 import { fetchAcquisitionData, getErrorMessage } from '@/lib/dashboard/api';
 import type { DateRange } from '@/lib/dashboard/types';
+import { AlertTriangle, Target } from 'lucide-react';
 
 export default function AcquisitionPage() {
   // State
@@ -73,22 +75,14 @@ export default function AcquisitionPage() {
         actions={<DateRangeSelector value={dateRange} onChange={setDateRange} />}
       >
         <div className="flex items-center justify-center h-[400px]">
-          <div className="text-center">
-            <div className="text-4xl mb-4">⚠️</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Data temporarily unavailable
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              {getErrorMessage(error)}
-            </p>
-            <button
-              type="button"
-              onClick={() => void mutate()}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
+          <ShopifyCard className="w-full max-w-2xl">
+            <ShopifyEmptyState
+              icon={AlertTriangle}
+              title="Data temporarily unavailable"
+              description={getErrorMessage(error)}
+              action={{ label: 'Retry', onClick: () => void mutate() }}
+            />
+          </ShopifyCard>
         </div>
       </PageLayout>
     );
@@ -103,22 +97,14 @@ export default function AcquisitionPage() {
         actions={<DateRangeSelector value={dateRange} onChange={setDateRange} />}
       >
         <div className="flex items-center justify-center h-[400px]">
-          <div className="text-center">
-            <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No data for selected period
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Try selecting a different date range
-            </p>
-            <button
-              type="button"
-              onClick={() => void mutate()}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
+          <ShopifyCard className="w-full max-w-2xl">
+            <ShopifyEmptyState
+              icon={Target}
+              title="No data for selected period"
+              description="Try selecting a different date range"
+              action={{ label: 'Retry', onClick: () => void mutate() }}
+            />
+          </ShopifyCard>
         </div>
       </PageLayout>
     );

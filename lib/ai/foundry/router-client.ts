@@ -12,6 +12,9 @@
 // Types and Interfaces
 // ============================================================================
 
+import { externalFetch, type ExternalRequestOptions } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
+
 export interface RouterClientConfig {
   /** Base URL of the AI Router service (AWS ECS, Lambda, or API Gateway) */
   baseUrl: string;
@@ -235,20 +238,21 @@ export class RouterClient {
     this.validateRequest(request);
 
     const endpoint = `${this.baseUrl}/route`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await this.request(
+        endpoint,
+        {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(request),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+        },
+        this.timeout,
+        'route',
+        { maxRetries: 0, retryMethods: [] }
+      );
 
       // Handle HTTP errors
       if (!response.ok) {
@@ -259,7 +263,6 @@ export class RouterClient {
       const data = await response.json();
       return this.parseResponse(data);
     } catch (error) {
-      clearTimeout(timeoutId);
       throw this.handleFetchError(error, endpoint);
     }
   }
@@ -276,33 +279,39 @@ export class RouterClient {
 
     const streamEndpoint = `${this.baseUrl}/route/stream`;
     const fallbackEndpoint = `${this.baseUrl}/route`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
     try {
       // Try streaming endpoint first
-      let response = await fetch(streamEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'text/event-stream',
-        },
-        body: JSON.stringify(request),
-        signal: controller.signal,
-      });
-
-      // Fallback to standard endpoint if streaming not available
-      if (response.status === 404) {
-        response = await fetch(fallbackEndpoint, {
+      let response = await this.request(
+        streamEndpoint,
+        {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Accept: 'text/event-stream',
           },
           body: JSON.stringify(request),
-          signal: controller.signal,
-        });
+        },
+        this.timeout,
+        'route.stream',
+        { maxRetries: 0, retryMethods: [] }
+      );
 
-        clearTimeout(timeoutId);
+      // Fallback to standard endpoint if streaming not available
+      if (response.status === 404) {
+        response = await this.request(
+          fallbackEndpoint,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request),
+          },
+          this.timeout,
+          'route',
+          { maxRetries: 0, retryMethods: [] }
+        );
 
         if (!response.ok) {
           await this.handleHttpError(response, fallbackEndpoint);
@@ -313,8 +322,6 @@ export class RouterClient {
         yield parsed.output;
         return;
       }
-
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         await this.handleHttpError(response, streamEndpoint);
@@ -338,7 +345,6 @@ export class RouterClient {
         yield decoder.decode(value, { stream: true });
       }
     } catch (error) {
-      clearTimeout(timeoutId);
       throw this.handleFetchError(error, streamEndpoint);
     }
   }
@@ -350,16 +356,15 @@ export class RouterClient {
    */
   async healthCheck(): Promise<HealthCheckResponse> {
     const endpoint = `${this.baseUrl}/health`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout for health check
 
     try {
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+      const response = await this.request(
+        endpoint,
+        { method: 'GET' },
+        5_000,
+        'health',
+        { maxRetries: 1, retryMethods: ['GET'] }
+      );
 
       if (!response.ok) {
         throw new RouterError(
@@ -372,7 +377,6 @@ export class RouterClient {
 
       return await response.json();
     } catch (error) {
-      clearTimeout(timeoutId);
       throw this.handleFetchError(error, endpoint);
     }
   }
@@ -472,6 +476,33 @@ export class RouterClient {
       return error;
     }
 
+    if (isExternalServiceError(error)) {
+      if (error.code === 'TIMEOUT') {
+        return new RouterError(
+          `Request timed out after ${this.timeout / 1000}s`,
+          RouterErrorCode.TIMEOUT_ERROR,
+          error.status,
+          endpoint
+        );
+      }
+
+      if (error.code === 'NETWORK_ERROR') {
+        return new RouterError(
+          `Cannot reach router at ${endpoint}: ${error.message}`,
+          RouterErrorCode.CONNECTION_ERROR,
+          error.status,
+          endpoint
+        );
+      }
+
+      return new RouterError(
+        error.message,
+        RouterErrorCode.SERVICE_ERROR,
+        error.status,
+        endpoint
+      );
+    }
+
     if (error instanceof Error) {
       // Timeout error
       if (error.name === 'AbortError') {
@@ -512,6 +543,27 @@ export class RouterClient {
       undefined,
       endpoint
     );
+  }
+
+  /**
+   * Shared external request helper
+   */
+  private async request(
+    endpoint: string,
+    options: RequestInit,
+    timeoutMs: number,
+    operation: string,
+    retry?: ExternalRequestOptions['retry']
+  ): Promise<Response> {
+    return externalFetch(endpoint, {
+      ...options,
+      service: 'ai-router',
+      operation,
+      cache: 'no-store',
+      timeoutMs,
+      retry: retry ?? { maxRetries: 0, retryMethods: [] },
+      throwOnHttpError: false,
+    });
   }
 
   /**
@@ -567,20 +619,21 @@ export class RouterClient {
    */
   async analyzeMultimodal(request: MultimodalRequest): Promise<MultimodalResponse> {
     const endpoint = `${this.baseUrl}/multimodal/analyze`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
     try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await this.request(
+        endpoint,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(request),
         },
-        body: JSON.stringify(request),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+        this.timeout,
+        'multimodal.analyze',
+        { maxRetries: 0, retryMethods: [] }
+      );
 
       if (!response.ok) {
         await this.handleHttpError(response, endpoint);
@@ -589,7 +642,6 @@ export class RouterClient {
       const data = await response.json();
       return data as MultimodalResponse;
     } catch (error) {
-      clearTimeout(timeoutId);
       throw this.handleFetchError(error, endpoint);
     }
   }
@@ -602,26 +654,27 @@ export class RouterClient {
    */
   async submitAudioTranscription(request: AudioTranscriptionRequest): Promise<AudioTranscriptionResponse> {
     const endpoint = `${this.baseUrl}/audio/transcribe`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
     try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await this.request(
+        endpoint,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            audio_url: request.audio_url,
+            language: request.language || 'en-US',
+            enable_diarization: request.enable_diarization ?? true,
+            enable_word_timestamps: request.enable_word_timestamps ?? true,
+            client_tier: request.client_tier,
+          }),
         },
-        body: JSON.stringify({
-          audio_url: request.audio_url,
-          language: request.language || 'en-US',
-          enable_diarization: request.enable_diarization ?? true,
-          enable_word_timestamps: request.enable_word_timestamps ?? true,
-          client_tier: request.client_tier,
-        }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+        this.timeout,
+        'audio.transcribe',
+        { maxRetries: 0, retryMethods: [] }
+      );
 
       if (!response.ok) {
         await this.handleHttpError(response, endpoint);
@@ -630,7 +683,6 @@ export class RouterClient {
       const data = await response.json();
       return data as AudioTranscriptionResponse;
     } catch (error) {
-      clearTimeout(timeoutId);
       throw this.handleFetchError(error, endpoint);
     }
   }
@@ -643,16 +695,15 @@ export class RouterClient {
    */
   async getTranscriptionStatus(jobId: string): Promise<AudioTranscriptionResponse> {
     const endpoint = `${this.baseUrl}/audio/transcribe/${jobId}`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout for status check
 
     try {
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+      const response = await this.request(
+        endpoint,
+        { method: 'GET' },
+        30_000,
+        'audio.transcribe.status',
+        { maxRetries: 1, retryMethods: ['GET'] }
+      );
 
       if (!response.ok) {
         await this.handleHttpError(response, endpoint);
@@ -661,7 +712,6 @@ export class RouterClient {
       const data = await response.json();
       return data as AudioTranscriptionResponse;
     } catch (error) {
-      clearTimeout(timeoutId);
       throw this.handleFetchError(error, endpoint);
     }
   }

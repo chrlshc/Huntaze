@@ -13,10 +13,10 @@ export type SearchInputProps = {
   inputClassName?: string;
   disabled?: boolean;
   showClearButton?: boolean;
-  inputProps?: Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'>;
+  inputProps?: Omit<React.ComponentPropsWithoutRef<'input'>, 'value'>;
 };
 
-export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function SearchInput(
+export const SearchInput = forwardRef<React.ElementRef<'input'>, SearchInputProps>(function SearchInput(
   {
     value,
     onChange,

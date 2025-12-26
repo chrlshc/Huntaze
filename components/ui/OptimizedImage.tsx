@@ -59,13 +59,15 @@ export function OptimizedImage({
       setShouldLoad(true);
     });
 
-    if (observer && imgRef.current) {
-      observer.observe(imgRef.current);
+    const currentElement = imgRef.current;
+
+    if (observer && currentElement) {
+      observer.observe(currentElement);
     }
 
     return () => {
-      if (observer && imgRef.current) {
-        observer.unobserve(imgRef.current);
+      if (observer && currentElement) {
+        observer.unobserve(currentElement);
       }
     };
   }, [priority, shouldLoad]);

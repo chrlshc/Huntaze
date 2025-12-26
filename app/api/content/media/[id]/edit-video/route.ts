@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { videoEditService } from '@/lib/services/videoEditService';
 import { mediaAssetsRepository } from '@/lib/db/repositories/mediaAssetsRepository';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 export const runtime = 'nodejs';
 
@@ -33,7 +35,33 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const body = await request.json();
     const { trim, captions, thumbnailTimestamp } = body;
 
-    const response = await fetch(media.originalUrl);
+    let response: Response;
+    try {
+      response = await externalFetch(media.originalUrl, {
+        service: 'media-storage',
+        operation: 'download',
+        method: 'GET',
+        cache: 'no-store',
+        timeoutMs: 30_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
+      });
+    } catch (error) {
+      if (isExternalServiceError(error)) {
+        return NextResponse.json(
+          { error: { code: 'MEDIA_UNAVAILABLE', message: 'Media storage unavailable' } },
+          { status: 502 }
+        );
+      }
+      throw error;
+    }
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: { code: 'MEDIA_UNAVAILABLE', message: 'Failed to download media' } },
+        { status: 502 }
+      );
+    }
+
     let videoBuffer = Buffer.from(await response.arrayBuffer()) as Buffer;
 
     if (trim) {

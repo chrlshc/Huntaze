@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { fetchWithRetry, fetchMultiAccountWithRetry } from '@/lib/utils/fetch-with-retry';
+import { getCsrfToken } from '@/lib/utils/csrf-client';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { integrationsStatusResponseSchema } from '@/lib/schemas/api-responses';
 
 export interface Integration {
   id?: number;
@@ -28,6 +30,10 @@ export interface UseIntegrationsReturn {
  * Get user-friendly error message based on error type
  */
 function getUserFriendlyErrorMessage(error: any, operation: string): string {
+  if (error?.code === 'NETWORK_ERROR' || error?.kind === 'Network' || error?.status === 0) {
+    return 'Connection failed. Please check your internet connection.';
+  }
+
   // Network errors
   if (error instanceof TypeError && error.message.includes('fetch')) {
     return 'Connection failed. Please check your internet connection.';
@@ -69,8 +75,14 @@ export function useIntegrations(): UseIntegrationsReturn {
       setLoading(true);
       setError(null);
       
-      // Use fetchWithRetry for automatic retry logic (fail fast to avoid long skeletons)
-      const data = await fetchWithRetry('/api/integrations/status', {}, { timeout: 8000, maxRetries: 1 });
+      const data = await internalApiFetch<{
+        success?: boolean;
+        data?: { integrations?: any[] };
+        integrations?: any[];
+      }>('/api/integrations/status', {
+        timeoutMs: 8000,
+        schema: integrationsStatusResponseSchema,
+      });
       
       // Handle both old and new response formats
       const integrationsData = data.data?.integrations || data.integrations || [];
@@ -100,31 +112,24 @@ export function useIntegrations(): UseIntegrationsReturn {
   const connect = useCallback(async (provider: string) => {
     try {
       setError(null);
-      
-      const response = await fetch(`/api/integrations/connect/${provider}`, {
+      const csrfToken = await getCsrfToken();
+      const data = await internalApiFetch<{ data?: { authUrl?: string }; authUrl?: string }>(
+        `/api/integrations/connect/${provider}`,
+        {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken,
         },
-        body: JSON.stringify({
+        body: {
           redirectUrl: `${window.location.origin}/integrations`,
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const error: any = new Error(
-          errorData.error?.message || `Failed to initiate connection: ${response.statusText}`
-        );
-        error.status = response.status;
-        throw error;
-      }
-      
-      const data = await response.json();
+        },
+        },
+      );
       
       // Redirect to OAuth URL
-      if (data.data?.authUrl || data.authUrl) {
-        window.location.href = data.data?.authUrl || data.authUrl;
+      const authUrl = data.data?.authUrl ?? data.authUrl;
+      if (authUrl) {
+        window.location.assign(authUrl);
       } else {
         throw new Error('No authorization URL received from server');
       }
@@ -139,14 +144,13 @@ export function useIntegrations(): UseIntegrationsReturn {
   const disconnect = useCallback(async (provider: string, accountId: string) => {
     try {
       setError(null);
-      
-      // Use fetchMultiAccountWithRetry for better logging and retry logic
-      await fetchMultiAccountWithRetry(
-        `/api/integrations/disconnect/${provider}/${accountId}`,
-        provider,
-        accountId,
-        { method: 'DELETE' }
-      );
+      const csrfToken = await getCsrfToken();
+      await internalApiFetch(`/api/integrations/disconnect/${provider}/${accountId}`, {
+        method: 'DELETE',
+        headers: {
+          'x-csrf-token': csrfToken,
+        },
+      });
       
       // Refresh integrations list
       await fetchIntegrations();

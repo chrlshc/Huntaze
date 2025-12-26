@@ -1,5 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSession, validateOwnership } from '@/lib/auth/session';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 /**
  * GET /api/revenue/payouts/export
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest) {
     const session = await getSession();
     
     if (!session) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -19,14 +20,14 @@ export async function GET(request: NextRequest) {
     const format = searchParams.get('format') || 'csv';
 
     if (!creatorId) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'creatorId is required' },
         { status: 400 }
       );
     }
 
     if (!['csv', 'pdf'].includes(format)) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'format must be "csv" or "pdf"' },
         { status: 400 }
       );
@@ -34,7 +35,14 @@ export async function GET(request: NextRequest) {
 
     // Verify creator owns this data
     if (!validateOwnership(session, creatorId)) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Payout exports are not available in real mode yet' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
     }
 
     console.log('[API] Export payouts request:', {
@@ -42,9 +50,6 @@ export async function GET(request: NextRequest) {
       format,
       timestamp: new Date().toISOString(),
     });
-
-    // TODO: Replace with actual backend service call
-    // const payouts = await backendPayoutService.getPayoutSchedule(creatorId);
 
     // Generate CSV
     const csv = [
@@ -73,7 +78,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[API] Export error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );

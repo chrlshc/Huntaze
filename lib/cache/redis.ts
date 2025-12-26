@@ -227,8 +227,10 @@ export async function getCacheStats(): Promise<{
 }
 
 // Export a getter function instead of the client directly
-export default {
+const redisCache = {
   get client() {
     return getRedis();
   }
 };
+
+export default redisCache;

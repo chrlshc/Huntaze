@@ -26,16 +26,26 @@ export function AsyncScript({
   onError,
   critical = false,
 }: AsyncScriptProps) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(() => {
+    if (typeof document === 'undefined' || !id) return false;
+    return Boolean(document.getElementById(id));
+  });
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    if (loaded) {
+      onLoad?.();
+    }
+  }, [loaded, onLoad]);
+
+  useEffect(() => {
+    if (loaded) return;
+
     // Check if script already exists
     const existingScript = id ? document.getElementById(id) : null;
     if (existingScript) {
-      setLoaded(true);
-      onLoad?.();
-      return;
+      const timeoutId = window.setTimeout(() => setLoaded(true), 0);
+      return () => clearTimeout(timeoutId);
     }
 
     // Create script element
@@ -51,10 +61,7 @@ export function AsyncScript({
     }
 
     // Handle load
-    script.onload = () => {
-      setLoaded(true);
-      onLoad?.();
-    };
+    script.onload = () => setLoaded(true);
 
     // Handle error
     script.onerror = () => {
@@ -82,7 +89,7 @@ export function AsyncScript({
         script.parentNode.removeChild(script);
       }
     };
-  }, [src, id, strategy, critical, onLoad, onError]);
+  }, [src, id, strategy, critical, onError, loaded]);
 
   return null;
 }
@@ -91,14 +98,22 @@ export function AsyncScript({
  * Hook for loading scripts programmatically
  */
 export function useAsyncScript(props: AsyncScriptProps) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(() => {
+    if (typeof document === 'undefined' || !props.id) return false;
+    return Boolean(document.getElementById(props.id));
+  });
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    if (loaded) {
+      props.onLoad?.();
+      return;
+    }
+
     const existingScript = props.id ? document.getElementById(props.id) : null;
     if (existingScript) {
-      setLoaded(true);
-      return;
+      const timeoutId = window.setTimeout(() => setLoaded(true), 0);
+      return () => clearTimeout(timeoutId);
     }
 
     const script = document.createElement('script');
@@ -111,10 +126,7 @@ export function useAsyncScript(props: AsyncScriptProps) {
       script.async = true;
     }
 
-    script.onload = () => {
-      setLoaded(true);
-      props.onLoad?.();
-    };
+    script.onload = () => setLoaded(true);
 
     script.onerror = () => {
       const err = new Error(`Failed to load script: ${props.src}`);
@@ -139,7 +151,7 @@ export function useAsyncScript(props: AsyncScriptProps) {
         script.parentNode.removeChild(script);
       }
     };
-  }, [props]);
+  }, [loaded, props]);
 
   return { loaded, error };
 }

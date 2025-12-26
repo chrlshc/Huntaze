@@ -12,6 +12,8 @@
 import * as crypto from 'crypto';
 import { tiktokLogger } from './tiktok/logger';
 import { CircuitBreaker } from './tiktok/circuit-breaker';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 import {
   TikTokError,
   TikTokErrorType,
@@ -211,23 +213,49 @@ export class TikTokOAuthServiceOptimized {
     });
   }
 
+  private mapExternalErrorType(code: string): TikTokErrorType {
+    switch (code) {
+      case 'TIMEOUT':
+        return TikTokErrorType.TIMEOUT_ERROR;
+      case 'NETWORK_ERROR':
+        return TikTokErrorType.NETWORK_ERROR;
+      case 'RATE_LIMIT':
+        return TikTokErrorType.RATE_LIMIT_ERROR;
+      case 'UNAUTHORIZED':
+        return TikTokErrorType.AUTH_ERROR;
+      case 'FORBIDDEN':
+        return TikTokErrorType.SCOPE_NOT_AUTHORIZED;
+      case 'BAD_REQUEST':
+        return TikTokErrorType.VALIDATION_ERROR;
+      case 'UPSTREAM_5XX':
+        return TikTokErrorType.SERVER_ERROR;
+      default:
+        return TikTokErrorType.API_ERROR;
+    }
+  }
+
   private async fetchWithTimeout(
     url: string,
     options: RequestInit,
-    correlationId: string
+    correlationId: string,
+    operation: string
   ): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.REQUEST_TIMEOUT_MS);
-
     try {
-      return await fetch(url, { ...options, signal: controller.signal });
+      return await externalFetch(url, {
+        ...options,
+        service: 'tiktok',
+        operation,
+        correlationId,
+        timeoutMs: this.REQUEST_TIMEOUT_MS,
+        retry: { maxRetries: 0, retryMethods: [] },
+      });
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error)) {
         throw this.createError(
-          TikTokErrorType.TIMEOUT_ERROR,
-          'Request timed out',
+          this.mapExternalErrorType(error.code),
+          error.message,
           correlationId,
-          undefined,
+          error.status,
           error
         );
       }
@@ -239,8 +267,6 @@ export class TikTokOAuthServiceOptimized {
         undefined,
         error instanceof Error ? error : undefined
       );
-    } finally {
-      clearTimeout(timeoutId);
     }
   }
 
@@ -332,20 +358,25 @@ export class TikTokOAuthServiceOptimized {
     tiktokLogger.info('Exchanging code for tokens', { correlationId });
     
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(TIKTOK_TOKEN_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await this.fetchWithTimeout(
+        TIKTOK_TOKEN_URL,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            client_key: this.clientKey,
+            client_secret: this.clientSecret,
+            code,
+            grant_type: 'authorization_code',
+            redirect_uri: this.redirectUri,
+          }),
+          cache: 'no-store',
         },
-        body: new URLSearchParams({
-          client_key: this.clientKey,
-          client_secret: this.clientSecret,
-          code,
-          grant_type: 'authorization_code',
-          redirect_uri: this.redirectUri,
-        }),
-        cache: 'no-store',
-      }, correlationId);
+        correlationId,
+        'oauth.exchange'
+      );
 
       let data: any;
       try {
@@ -374,19 +405,24 @@ export class TikTokOAuthServiceOptimized {
     tiktokLogger.info('Refreshing access token', { correlationId });
     
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(TIKTOK_TOKEN_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await this.fetchWithTimeout(
+        TIKTOK_TOKEN_URL,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            client_key: this.clientKey,
+            client_secret: this.clientSecret,
+            grant_type: 'refresh_token',
+            refresh_token: refreshToken,
+          }),
+          cache: 'no-store',
         },
-        body: new URLSearchParams({
-          client_key: this.clientKey,
-          client_secret: this.clientSecret,
-          grant_type: 'refresh_token',
-          refresh_token: refreshToken,
-        }),
-        cache: 'no-store',
-      }, correlationId);
+        correlationId,
+        'oauth.refresh'
+      );
 
       let data: any;
       try {
@@ -415,17 +451,22 @@ export class TikTokOAuthServiceOptimized {
     tiktokLogger.info('Getting user info', { correlationId });
 
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(TIKTOK_USER_INFO_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
+      const response = await this.fetchWithTimeout(
+        TIKTOK_USER_INFO_URL,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fields: ['open_id', 'union_id', 'avatar_url', 'display_name'],
+          }),
+          cache: 'no-store',
         },
-        body: JSON.stringify({
-          fields: ['open_id', 'union_id', 'avatar_url', 'display_name'],
-        }),
-        cache: 'no-store',
-      }, correlationId);
+        correlationId,
+        'user.info'
+      );
 
       let data: any;
       try {

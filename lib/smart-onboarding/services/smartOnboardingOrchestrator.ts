@@ -165,7 +165,7 @@ class JourneyStateManager {
 
     try {
       // Get current journey with retry
-      let journey = await retryWithBackoff(
+      const journey = await retryWithBackoff(
         () => this.loadJourneyFromDb(journeyId),
         { maxRetries: 2, initialDelay: 500 }
       );
@@ -264,7 +264,7 @@ class JourneyStateManager {
       // let journey = await smartOnboardingCache.getOnboardingJourney(journeyId);
       
       // Load from database with retry
-      let journey = await retryWithBackoff(
+      const journey = await retryWithBackoff(
         () => this.loadJourneyFromDb(journeyId),
         { maxRetries: 2, initialDelay: 500 }
       );

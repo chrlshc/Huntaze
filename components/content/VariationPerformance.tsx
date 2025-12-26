@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
 
@@ -36,11 +36,7 @@ export default function VariationPerformance({ contentId }: VariationPerformance
   const [winner, setWinner] = useState<Winner | null>(null);
   const [summary, setSummary] = useState<any>(null);
 
-  useEffect(() => {
-    fetchStats();
-  }, [contentId]);
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -60,7 +56,11 @@ export default function VariationPerformance({ contentId }: VariationPerformance
     } finally {
       setLoading(false);
     }
-  };
+  }, [contentId]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   if (loading) {
     return (

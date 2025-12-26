@@ -12,7 +12,7 @@
 import { useEffect, useCallback } from 'react';
 import { useOnboarding } from './useOnboarding';
 import SetupGuide from './SetupGuide';
-import { UserRole } from './types';
+import { OnboardingStep, UserRole } from './types';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
 
@@ -22,6 +22,7 @@ interface SetupGuideContainerProps {
   market?: string;
   onLearnMore?: (stepId: string) => void;
   onError?: (error: Error) => void;
+  onStateChange?: (state: { steps: OnboardingStep[]; progress: number; loading: boolean }) => void;
 }
 
 export default function SetupGuideContainer({
@@ -30,6 +31,7 @@ export default function SetupGuideContainer({
   market,
   onLearnMore,
   onError,
+  onStateChange,
 }: SetupGuideContainerProps) {
   const {
     steps,
@@ -52,6 +54,10 @@ export default function SetupGuideContainer({
   useEffect(() => {
     fetchOnboarding();
   }, [fetchOnboarding]);
+
+  useEffect(() => {
+    onStateChange?.({ steps, progress, loading });
+  }, [steps, progress, loading, onStateChange]);
 
   // Handle learn more action
   const handleLearnMore = useCallback(

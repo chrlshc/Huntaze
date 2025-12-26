@@ -206,7 +206,7 @@ export function BelowTheFoldLazyLoadingExample() {
 }
 
 // Export all examples
-export default {
+const lazyComponentExamples = {
   BasicLazyLoadingExample,
   LazyLoadingWithSkeletonExample,
   LazyLoadingWithCallbacksExample,
@@ -218,3 +218,5 @@ export default {
   LazyLoadingWithErrorRecoveryExample,
   BelowTheFoldLazyLoadingExample,
 };
+
+export default lazyComponentExamples;

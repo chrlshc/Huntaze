@@ -11,7 +11,7 @@ async function handler(request: NextRequest) {
   try {
     // In dev mode, skip auth check
     const DEV_MODE = true;
-    let userId = 'dev-user';
+    const userId = 'dev-user';
     
     if (!DEV_MODE) {
       // In production, check auth here

@@ -58,15 +58,8 @@ export function SafeRandomContent({
       return storedValue;
     }
 
-    let randomValue: number;
-    
-    if (seed !== undefined) {
-      // Utiliser la seed pour générer une valeur cohérente
-      randomValue = generateSeededRandom(seed);
-    } else {
-      // Générer une valeur aléatoire et la stocker
-      randomValue = min + (Math.random() * (max - min));
-    }
+    const seedValue = seed ?? randomKey;
+    const randomValue = generateSeededRandom(seedValue);
 
     // Stocker la valeur pour la cohérence
     setData(randomKey, randomValue);
@@ -142,32 +135,23 @@ export function SafeShuffledList<T>({
   const { getData, setData } = useSSRData();
   const shuffleKey = `shuffle-${seed || 'default'}-${items.length}`;
 
-  const shuffleArray = (array: T[], seedValue?: string | number): T[] => {
+  const shuffleArray = (array: T[], seedValue: string | number = shuffleKey): T[] => {
     const shuffled = [...array];
-    
-    if (seedValue !== undefined) {
-      // Mélange déterministe basé sur la seed
-      const seedStr = seedValue.toString();
-      let hash = 0;
-      
-      for (let i = 0; i < seedStr.length; i++) {
-        const char = seedStr.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-      }
-      
-      // Utiliser la seed pour le mélange
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        hash = (hash * 9301 + 49297) % 233280;
-        const j = Math.floor((hash / 233280) * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-    } else {
-      // Mélange aléatoire standard (Fisher-Yates)
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
+    // Mélange déterministe basé sur la seed
+    const seedStr = seedValue.toString();
+    let hash = 0;
+
+    for (let i = 0; i < seedStr.length; i++) {
+      const char = seedStr.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+
+    // Utiliser la seed pour le mélange
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      hash = (hash * 9301 + 49297) % 233280;
+      const j = Math.floor((hash / 233280) * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     
     return shuffled;
@@ -213,10 +197,15 @@ export function useSafeUniqueId(prefix: string = 'id'): string {
       return storedId;
     }
 
-    // Générer un ID basé sur le timestamp et un nombre aléatoire
-    const timestamp = Date.now();
-    const random = Math.floor(Math.random() * 10000);
-    const uniqueId = `${prefix}-${timestamp}-${random}`;
+    const hashString = (value: string) => {
+      let hash = 0;
+      for (let i = 0; i < value.length; i++) {
+        hash = ((hash << 5) - hash) + value.charCodeAt(i);
+        hash |= 0;
+      }
+      return Math.abs(hash);
+    };
+    const uniqueId = `${prefix}-${hashString(idKey)}`;
     
     setData(idKey, uniqueId);
     return uniqueId;

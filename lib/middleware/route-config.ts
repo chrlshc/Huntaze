@@ -75,20 +75,7 @@ export const CRITICAL_PAYMENT_ROUTES: RouteGatingConfig[] = [
  * Critical routes that require email verification
  * These routes fail closed
  */
-export const CRITICAL_EMAIL_ROUTES: RouteGatingConfig[] = [
-  {
-    path: '/api/store/publish',
-    method: 'POST',
-    requiredStep: 'email_verification',
-    message: 'Vous devez vérifier votre email avant de publier votre boutique',
-    isCritical: true,
-    action: {
-      type: 'open_modal',
-      modal: 'email_verification'
-    },
-    description: 'Publishing store requires verified email'
-  }
-];
+export const CRITICAL_EMAIL_ROUTES: RouteGatingConfig[] = [];
 
 /**
  * Non-critical routes that benefit from gating but can fail open

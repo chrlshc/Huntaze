@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { assertMockEnabled } from '@/lib/config/mock-data';
 
 interface WarroomRequest {
   mode: 'pack' | 'captions' | 'hooks' | 'repurpose' | 'triage';
@@ -16,6 +17,9 @@ interface AIResultItem {
 }
 
 export async function POST(request: NextRequest) {
+  const mockDisabled = assertMockEnabled('/api/ai/warroom');
+  if (mockDisabled) return mockDisabled;
+
   try {
     const body: WarroomRequest = await request.json();
     const { mode, platform, ids } = body;

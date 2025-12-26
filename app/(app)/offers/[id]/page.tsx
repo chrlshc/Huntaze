@@ -9,8 +9,9 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import type { Offer, UpdateOfferInput } from '@/lib/offers/types';
 import useSWR from 'swr';
-import { standardFetcher } from '@/lib/swr';
 import { DashboardErrorState, DashboardLoadingState } from '@/components/ui/DashboardLoadingState';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { offerSchema } from '@/lib/schemas/api-responses';
 
 type OfferDto = Omit<Offer, 'validFrom' | 'validUntil' | 'createdAt' | 'updatedAt'> & {
   validFrom: string;
@@ -39,7 +40,10 @@ export default function EditOfferPage() {
 
   const { data, error, isLoading, mutate } = useSWR<OfferDto>(
     offerId ? `/api/offers/${offerId}` : null,
-    standardFetcher
+    (url: string) =>
+      internalApiFetch<OfferDto>(url, {
+        schema: offerSchema,
+      })
   );
 
   const offer = data ? normalizeOffer(data) : null;
@@ -48,23 +52,14 @@ export default function EditOfferPage() {
     setIsSaving(true);
     setSaveError(null);
     try {
-      const response = await fetch(`/api/offers/${offerId}`, {
+      await internalApiFetch(`/api/offers/${offerId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: data,
       });
-      
-      if (response.ok) {
-        void mutate();
-        router.push('/offers');
-        return;
-      }
-      const message = await response.json().catch(() => null);
-      if (message && typeof message === 'object' && 'error' in message) {
-        setSaveError(String((message as any).error));
-      } else {
-        setSaveError('Failed to update offer');
-      }
+
+      void mutate();
+      router.push('/offers');
+      return;
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : 'Failed to update offer');
     } finally {

@@ -44,17 +44,21 @@ export const MessageAreaSkeleton: React.FC = () => {
       
       {/* Messages skeleton */}
       <div className="flex-1 p-4 space-y-4 overflow-hidden">
-        {[...Array(5)].map((_, index) => (
+        {[...Array(5)].map((_, index) => {
+          const width = 60 + (index * 13) % 40;
+
+          return (
           <div
             key={index}
             className={`flex ${index % 2 === 0 ? 'justify-start' : 'justify-end'} animate-pulse`}
           >
             <div className={`max-w-[70%] space-y-2 ${index % 2 === 0 ? 'items-start' : 'items-end'}`}>
-              <div className={`h-16 bg-gray-200 dark:bg-gray-700 rounded-lg ${index % 2 === 0 ? 'rounded-tl-none' : 'rounded-tr-none'}`} style={{ width: `${Math.random() * 40 + 60}%` }} />
+              <div className={`h-16 bg-gray-200 dark:bg-gray-700 rounded-lg ${index % 2 === 0 ? 'rounded-tl-none' : 'rounded-tr-none'}`} style={{ width: `${width}%` }} />
               <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded w-16" />
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
       
       {/* Input skeleton */}

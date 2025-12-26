@@ -5,7 +5,7 @@ import { SubredditRules } from './reddit-automation';
 import fs from 'fs';
 import path from 'path';
 // Optional dependency at runtime; avoid type-check error during build
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+ 
 let yaml: any; try { yaml = require('js-yaml'); } catch {}
 
 interface YAMLSubredditRules {

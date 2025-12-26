@@ -11,7 +11,7 @@
  * 4. Tone (Optional - skippable)
  */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 
 type Platform = 'onlyfans' | 'instagram' | 'tiktok' | 'reddit' | 'other';
@@ -31,13 +31,22 @@ interface Props {
   onSkip: () => void;
 }
 
+const getElapsedSeconds = (startTime: number | null) => {
+  if (startTime === null) return 0;
+  return Math.floor((Date.now() - startTime) / 1000);
+};
+
 export default function SetupWizardSimple({ onComplete, onSkip }: Props) {
   const [step, setStep] = useState(1);
-  const [startTime] = useState(Date.now());
   const [data, setData] = useState<WizardData>({
     time_to_complete: 0,
     questions_skipped: [],
   });
+  const startTimeRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
 
   const handlePlatformSelect = (platform: Platform) => {
     setData({ ...data, platform });
@@ -50,7 +59,7 @@ export default function SetupWizardSimple({ onComplete, onSkip }: Props) {
   };
 
   const handleToneSelect = (tone: Tone) => {
-    const timeToComplete = Math.floor((Date.now() - startTime) / 1000);
+    const timeToComplete = getElapsedSeconds(startTimeRef.current);
     onComplete({
       ...data,
       ai_tone: tone,
@@ -59,7 +68,7 @@ export default function SetupWizardSimple({ onComplete, onSkip }: Props) {
   };
 
   const handleSkipTone = () => {
-    const timeToComplete = Math.floor((Date.now() - startTime) / 1000);
+    const timeToComplete = getElapsedSeconds(startTimeRef.current);
     onComplete({
       ...data,
       ai_tone: 'professional', // Default

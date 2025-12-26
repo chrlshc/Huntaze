@@ -9,6 +9,12 @@
 
 import crypto from 'crypto';
 import { RedditCredentialValidator, RedditCredentials } from '@/lib/validation';
+import { externalFetch } from '@/lib/services/external/http';
+import {
+  ExternalServiceError,
+  isExternalServiceError,
+  mapHttpStatusToExternalCode,
+} from '@/lib/services/external/errors';
 
 const REDDIT_AUTH_URL = 'https://www.reddit.com/api/v1/authorize';
 const REDDIT_TOKEN_URL = 'https://www.reddit.com/api/v1/access_token';
@@ -155,6 +161,10 @@ export class RedditOAuthService {
         return await operation();
       } catch (error) {
         lastError = error instanceof Error ? error : new Error('Unknown error');
+
+        if (isExternalServiceError(error) && !error.retryable) {
+          throw lastError;
+        }
         
         // Don't retry on authentication errors or client errors
         if (lastError.message.includes('Invalid') || 
@@ -181,22 +191,40 @@ export class RedditOAuthService {
     throw lastError!;
   }
 
+  private buildExternalError(operation: string, status: number, data: any): ExternalServiceError {
+    const mapped = mapHttpStatusToExternalCode(status);
+    const code = status < 400 && mapped.code === 'UNKNOWN' ? 'BAD_REQUEST' : mapped.code;
+
+    return new ExternalServiceError({
+      service: 'reddit',
+      code,
+      retryable: mapped.retryable,
+      status,
+      message:
+        data?.error_description ||
+        data?.error ||
+        data?.message ||
+        `Reddit API error (${status})`,
+      details: data?.error ? { error: data.error } : undefined,
+    });
+  }
+
   /**
    * Fetch helper with timeout to avoid hanging OAuth flows.
    */
   private async fetchWithTimeout(
     url: string,
     options: RequestInit,
+    operation: string,
     timeoutMs: number = this.REQUEST_TIMEOUT_MS
   ): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-    try {
-      return await fetch(url, { ...options, signal: controller.signal });
-    } finally {
-      clearTimeout(timeoutId);
-    }
+    return externalFetch(url, {
+      ...options,
+      service: 'reddit',
+      operation,
+      timeoutMs,
+      retry: { maxRetries: 0, retryMethods: [] },
+    });
   }
 
   /**
@@ -253,28 +281,25 @@ export class RedditOAuthService {
       // Reddit requires Basic Auth with client_id:client_secret
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
-      const response = await this.fetchWithTimeout(REDDIT_TOKEN_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': this.userAgent,
+      const response = await this.fetchWithTimeout(
+        REDDIT_TOKEN_URL,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': this.userAgent,
+          },
+          body: params.toString(),
+          cache: 'no-store',
         },
-        body: params.toString(),
-        cache: 'no-store',
-      });
+        'oauth.exchange'
+      );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        // Handle rate limiting
-        if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        
-        throw new Error(
-          data.error_description || data.error || `Token exchange failed: ${response.status}`
-        );
+        throw this.buildExternalError('oauth.exchange', response.status, data);
       }
 
       return {
@@ -305,33 +330,35 @@ export class RedditOAuthService {
     return this.retryApiCall(async () => {
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
-      const response = await this.fetchWithTimeout(REDDIT_TOKEN_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': this.userAgent,
+      const response = await this.fetchWithTimeout(
+        REDDIT_TOKEN_URL,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': this.userAgent,
+          },
+          body: params.toString(),
+          cache: 'no-store',
         },
-        body: params.toString(),
-        cache: 'no-store',
-      });
+        'oauth.refresh'
+      );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        // Handle rate limiting
-        if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        
-        // Handle specific refresh errors
         if (data.error === 'invalid_grant') {
-          throw new Error('Refresh token has expired or been revoked. Please reconnect your Reddit account.');
+          throw new ExternalServiceError({
+            service: 'reddit',
+            code: 'UNAUTHORIZED',
+            retryable: false,
+            status: response.status,
+            message: 'Refresh token has expired or been revoked. Please reconnect your Reddit account.',
+            details: data.error ? { error: data.error } : undefined,
+          });
         }
-        
-        throw new Error(
-          data.error_description || data.error || `Token refresh failed: ${response.status}`
-        );
+        throw this.buildExternalError('oauth.refresh', response.status, data);
       }
 
       return {
@@ -353,21 +380,22 @@ export class RedditOAuthService {
    */
   async getUserInfo(accessToken: string): Promise<RedditUserInfo> {
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/api/v1/me`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'User-Agent': this.userAgent,
+      const response = await this.fetchWithTimeout(
+        `${REDDIT_API_URL}/api/v1/me`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'User-Agent': this.userAgent,
+          },
+          cache: 'no-store',
         },
-        cache: 'no-store',
-      });
+        'user.me'
+      );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        throw new Error(data.message || data.error || 'Failed to get user info');
+        throw this.buildExternalError('user.me', response.status, data);
       }
 
       return {
@@ -394,21 +422,22 @@ export class RedditOAuthService {
     public_description: string;
   }>> {
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/subreddits/mine/subscriber?limit=100`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'User-Agent': this.userAgent,
+      const response = await this.fetchWithTimeout(
+        `${REDDIT_API_URL}/subreddits/mine/subscriber?limit=100`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'User-Agent': this.userAgent,
+          },
+          cache: 'no-store',
         },
-        cache: 'no-store',
-      });
+        'subreddits.list'
+      );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        throw new Error(data.message || 'Failed to get subreddits');
+        throw this.buildExternalError('subreddits.list', response.status, data);
       }
 
       return data.data.children.map((child: any) => ({
@@ -435,20 +464,24 @@ export class RedditOAuthService {
         token_type_hint: tokenType,
       });
 
-      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/api/v1/revoke_token`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': this.userAgent,
+      const response = await this.fetchWithTimeout(
+        `${REDDIT_API_URL}/api/v1/revoke_token`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': this.userAgent,
+          },
+          body: params.toString(),
+          cache: 'no-store',
         },
-        body: params.toString(),
-        cache: 'no-store',
-      });
+        'oauth.revoke'
+      );
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Revoke failed');
+        const data = await response.json().catch(() => ({}));
+        throw this.buildExternalError('oauth.revoke', response.status, data);
       }
     } catch (error) {
       console.error('Reddit revoke error:', error);

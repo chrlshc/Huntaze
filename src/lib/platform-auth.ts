@@ -1,4 +1,6 @@
 import { PlatformConnection } from '@/src/hooks/useOnboarding';
+import { externalFetchJson } from '@/lib/services/external/http';
+import { ExternalServiceError } from '@/lib/services/external/errors';
 
 export type OAuthConfig = {
   clientId: string;
@@ -113,7 +115,9 @@ export async function exchangeCodeForToken(
   const config = PLATFORM_OAUTH_CONFIGS[platform];
   if (!config) throw new Error(`Platform ${platform} not configured`);
 
-  const tokenResponse = await fetch(config.tokenUrl, {
+  const tokenData = await externalFetchJson<Record<string, string>>(config.tokenUrl, {
+    service: platform,
+    operation: 'oauth.exchange',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -123,16 +127,21 @@ export async function exchangeCodeForToken(
       client_secret: process.env[`${platform.toUpperCase()}_CLIENT_SECRET`] || '',
       grant_type: 'authorization_code',
       code,
-      redirect_uri: config.redirectUri
-    }),
+      redirect_uri: config.redirectUri,
+    }).toString(),
     cache: 'no-store',
+    timeoutMs: 10_000,
+    retry: { maxRetries: 0, retryMethods: [] },
   });
 
-  if (!tokenResponse.ok) {
-    throw new Error(`Failed to exchange code for token: ${await tokenResponse.text()}`);
+  if (!tokenData?.access_token) {
+    throw new ExternalServiceError({
+      service: platform,
+      code: 'INVALID_RESPONSE',
+      retryable: false,
+      message: 'Token response missing access token',
+    });
   }
-
-  const tokenData = await tokenResponse.json();
   const refreshInfo = TOKEN_REFRESH_INFO[platform];
 
   return {
@@ -152,7 +161,9 @@ export async function refreshAccessToken(
   const config = PLATFORM_OAUTH_CONFIGS[platform as keyof typeof PLATFORM_OAUTH_CONFIGS];
   if (!config) throw new Error(`Platform ${platform} not configured`);
 
-  const tokenResponse = await fetch(config.tokenUrl, {
+  const tokenData = await externalFetchJson<Record<string, string>>(config.tokenUrl, {
+    service: platform,
+    operation: 'oauth.refresh',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -161,16 +172,21 @@ export async function refreshAccessToken(
       client_id: config.clientId,
       client_secret: process.env[`${platform.toUpperCase()}_CLIENT_SECRET`] || '',
       grant_type: 'refresh_token',
-      refresh_token: refreshToken
-    }),
+      refresh_token: refreshToken,
+    }).toString(),
     cache: 'no-store',
+    timeoutMs: 10_000,
+    retry: { maxRetries: 0, retryMethods: [] },
   });
 
-  if (!tokenResponse.ok) {
-    throw new Error(`Failed to refresh token: ${await tokenResponse.text()}`);
+  if (!tokenData?.access_token) {
+    throw new ExternalServiceError({
+      service: platform,
+      code: 'INVALID_RESPONSE',
+      retryable: false,
+      message: 'Token refresh response missing access token',
+    });
   }
-
-  const tokenData = await tokenResponse.json();
   const refreshInfo = TOKEN_REFRESH_INFO[platform];
 
   return {

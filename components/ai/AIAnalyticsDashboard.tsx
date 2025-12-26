@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 
 type AnalyticsResult = {
@@ -24,7 +24,7 @@ export function AIAnalyticsDashboard() {
     { value: '90d', label: 'Last 90 Days' },
   ];
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -54,11 +54,11 @@ export function AIAnalyticsDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [timeframe]);
 
   useEffect(() => {
     handleAnalyze();
-  }, [timeframe]);
+  }, [handleAnalyze]);
 
   return (
     <div className="ai-analytics-dashboard">

@@ -37,7 +37,7 @@ export interface DynamicImportOptions {
  * @example
  * const HeavyChart = createDynamicImport(() => import('./HeavyChart'));
  */
-export function createDynamicImport<P = {}>(
+export function createDynamicImport<P = Record<string, unknown>>(
   importFn: () => Promise<{ default: ComponentType<P> }>,
   options: DynamicImportOptions = {}
 ) {
@@ -53,7 +53,7 @@ export function createDynamicImport<P = {}>(
  * @example
  * const LazyChart = createLazyComponent(() => import('./Chart'));
  */
-export function createLazyComponent<P = {}>(
+export function createLazyComponent<P = Record<string, unknown>>(
   importFn: () => Promise<{ default: ComponentType<P> }>,
   options: DynamicImportOptions = {}
 ) {

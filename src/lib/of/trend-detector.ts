@@ -141,7 +141,7 @@ export class TrendDetector {
     ];
     
     // Filter by platform
-    let filtered = platform 
+    const filtered = platform 
       ? trends.filter(t => t.platform === platform)
       : trends;
     

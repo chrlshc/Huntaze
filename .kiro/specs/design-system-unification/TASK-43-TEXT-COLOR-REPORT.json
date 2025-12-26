@@ -1,21 +1,21 @@
 {
-  "timestamp": "2025-12-22T16:17:26.248Z",
+  "timestamp": "2025-12-25T07:43:22.874Z",
   "summary": {
-    "errorCount": 22,
+    "errorCount": 24,
     "warningCount": 0,
     "affectedFiles": 8
   },
   "violations": [
     {
       "file": "components/ui/VirtualizedTable.tsx",
-      "line": 141,
+      "line": 143,
       "color": "unknown",
       "context": "p",
       "severity": "error"
     },
     {
       "file": "components/ui/VirtualizedTable.tsx",
-      "line": 162,
+      "line": 164,
       "color": "unknown",
       "context": "p",
       "severity": "error"
@@ -29,14 +29,14 @@
     },
     {
       "file": "components/ppv/ContentGrid.tsx",
-      "line": 128,
+      "line": 129,
       "color": "var(--color-text-secondary",
       "context": "p",
       "severity": "error"
     },
     {
       "file": "components/ppv/ContentGrid.tsx",
-      "line": 128,
+      "line": 129,
       "color": "var(--color-text-secondary",
       "context": "p",
       "severity": "error"
@@ -120,42 +120,56 @@
     },
     {
       "file": "app/(app)/settings/page.tsx",
-      "line": 49,
+      "line": 206,
+      "color": "var(--text-secondary)",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "app/(app)/settings/page.tsx",
+      "line": 382,
+      "color": "var(--text-secondary)",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "app/(app)/settings/page.tsx",
+      "line": 413,
       "color": "var(--text-secondary)",
       "context": "p",
       "severity": "error"
     },
     {
       "file": "app/(app)/onlyfans/settings/page.tsx",
-      "line": 431,
+      "line": 509,
       "color": "unknown",
       "context": "p",
       "severity": "error"
     },
     {
       "file": "app/(app)/onlyfans/settings/page.tsx",
-      "line": 474,
+      "line": 552,
       "color": "unknown",
       "context": "p",
       "severity": "error"
     },
     {
       "file": "app/(app)/onlyfans/settings/page.tsx",
-      "line": 480,
+      "line": 558,
       "color": "unknown",
       "context": "p",
       "severity": "error"
     },
     {
       "file": "app/(app)/onlyfans/settings/page.tsx",
-      "line": 486,
+      "line": 564,
       "color": "unknown",
       "context": "p",
       "severity": "error"
     },
     {
       "file": "app/(app)/onlyfans/settings/page.tsx",
-      "line": 520,
+      "line": 598,
       "color": "unknown",
       "context": "p",
       "severity": "error"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import type { ImageProps } from 'next/image';
 
@@ -49,49 +49,45 @@ export default function OptimizedImage({
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(!enableLazyLoading);
-  const [currentSrc, setCurrentSrc] = useState<string>('');
   const imgRef = useRef<HTMLDivElement>(null);
 
   // Determine the best image source based on format support and availability
-  useEffect(() => {
-    if (!isInView) return;
+  const currentSrc = useMemo(() => {
+    if (!isInView) return '';
 
-    const selectBestSource = () => {
-      // If formats are provided, use them with fallback chain
-      if (formats) {
-        // Try preferred format first
-        if (preferredFormat === 'avif' && formats.avif) return formats.avif;
-        if (preferredFormat === 'webp' && formats.webp) return formats.webp;
-        if (preferredFormat === 'jpeg' && formats.jpeg) return formats.jpeg;
+    // If formats are provided, use them with fallback chain
+    if (formats) {
+      // Try preferred format first
+      if (preferredFormat === 'avif' && formats.avif) return formats.avif;
+      if (preferredFormat === 'webp' && formats.webp) return formats.webp;
+      if (preferredFormat === 'jpeg' && formats.jpeg) return formats.jpeg;
 
-        // Fallback chain: AVIF -> WebP -> JPEG
-        if (formats.avif) return formats.avif;
-        if (formats.webp) return formats.webp;
-        if (formats.jpeg) return formats.jpeg;
-      }
+      // Fallback chain: AVIF -> WebP -> JPEG
+      if (formats.avif) return formats.avif;
+      if (formats.webp) return formats.webp;
+      if (formats.jpeg) return formats.jpeg;
+    }
 
-      // If sizes are provided, use preferred size
-      if (sizes) {
-        if (preferredSize === 'thumbnail' && sizes.thumbnail) return sizes.thumbnail;
-        if (preferredSize === 'medium' && sizes.medium) return sizes.medium;
-        if (preferredSize === 'large' && sizes.large) return sizes.large;
+    // If sizes are provided, use preferred size
+    if (sizes) {
+      if (preferredSize === 'thumbnail' && sizes.thumbnail) return sizes.thumbnail;
+      if (preferredSize === 'medium' && sizes.medium) return sizes.medium;
+      if (preferredSize === 'large' && sizes.large) return sizes.large;
 
-        // Fallback to any available size
-        if (sizes.medium) return sizes.medium;
-        if (sizes.large) return sizes.large;
-        if (sizes.thumbnail) return sizes.thumbnail;
-      }
+      // Fallback to any available size
+      if (sizes.medium) return sizes.medium;
+      if (sizes.large) return sizes.large;
+      if (sizes.thumbnail) return sizes.thumbnail;
+    }
 
-      // Default to provided src
-      return src;
-    };
-
-    setCurrentSrc(selectBestSource());
+    // Default to provided src
+    return src;
   }, [isInView, src, formats, sizes, preferredFormat, preferredSize]);
 
   // Lazy loading with Intersection Observer
   useEffect(() => {
     if (!enableLazyLoading || !imgRef.current) return;
+    const currentElement = imgRef.current;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -108,12 +104,10 @@ export default function OptimizedImage({
       }
     );
 
-    observer.observe(imgRef.current);
+    observer.observe(currentElement);
 
     return () => {
-      if (imgRef.current) {
-        observer.unobserve(imgRef.current);
-      }
+      observer.unobserve(currentElement);
     };
   }, [enableLazyLoading]);
 

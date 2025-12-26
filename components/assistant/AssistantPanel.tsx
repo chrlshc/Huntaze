@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import ChatClient from "./ChatClient";
 import { Maximize2 } from "lucide-react";
+import { useIsClient } from "@/hooks/useIsClient";
 
 function safeBack(router: ReturnType<typeof useRouter>) {
   if (typeof window !== "undefined" && window.history.length > 1) router.back();
@@ -21,9 +22,7 @@ export default function AssistantPanel({
   widthPx?: number;
 }) {
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useIsClient();
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {

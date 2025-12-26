@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { fetchOnboardingStatus } from '@/lib/services/onboarding';
 
 interface OnboardingStatus {
   isComplete: boolean;
@@ -15,32 +16,25 @@ export function useOnboardingStatus() {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    checkOnboardingStatus();
-  }, []);
-
-  const checkOnboardingStatus = async () => {
+  const checkOnboardingStatus = useCallback(async () => {
     try {
-      const response = await fetch('/api/onboarding/status');
+      const result = await fetchOnboardingStatus();
       
-      if (response.ok) {
-        const result = await response.json();
+      if (result.success && result.data) {
+        const progressPercentage = result.data.progressPercentage ?? result.data.progress ?? 0;
+        const onboardingStatus = {
+          isComplete: progressPercentage >= 100,
+          progressPercentage,
+          currentStep: result.data.currentStep ?? 'profile',
+        };
         
-        if (result.success) {
-          const onboardingStatus = {
-            isComplete: result.data.progressPercentage >= 100,
-            progressPercentage: result.data.progressPercentage,
-            currentStep: result.data.currentStep
-          };
-          
-          setStatus(onboardingStatus);
-          
-          // Redirect to onboarding if not complete and not already there
-          if (!onboardingStatus.isComplete && 
-              !pathname?.startsWith('/onboarding') &&
-              !pathname?.startsWith('/auth')) {
-            router.push('/onboarding/setup');
-          }
+        setStatus(onboardingStatus);
+        
+        // Redirect to onboarding if not complete and not already there
+        if (!onboardingStatus.isComplete && 
+            !pathname?.startsWith('/onboarding') &&
+            !pathname?.startsWith('/auth')) {
+          router.push('/onboarding/setup');
         }
       }
     } catch (error) {
@@ -48,7 +42,11 @@ export function useOnboardingStatus() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pathname, router]);
+
+  useEffect(() => {
+    checkOnboardingStatus();
+  }, [checkOnboardingStatus]);
 
   return { status, loading, refetch: checkOnboardingStatus };
 }

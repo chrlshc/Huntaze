@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 interface PlannedDraftsRequest {
   ideaId: string;
@@ -23,6 +24,16 @@ export async function POST(request: NextRequest) {
         { error: 'ideaId is required' },
         { status: 400 }
       );
+    }
+
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json({
+        success: false,
+        ideaId,
+        createdContentIds: [],
+        status: 'not_implemented',
+        message: 'Planned drafts are not available yet.',
+      });
     }
 
     // Generate content IDs for planned drafts

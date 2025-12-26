@@ -24,6 +24,46 @@ type Props = {
   onDiscard?: () => void;
 };
 
+type ActionButtonProps = {
+  action: Action;
+  variant?: "primary" | "secondary";
+  prefersReduced: boolean;
+};
+
+function ActionButton({ action, variant = "primary", prefersReduced }: ActionButtonProps) {
+  const content = (
+    <span className="inline-flex items-center gap-2 text-sm font-medium">
+      {action.icon ? <span aria-hidden className="w-4 h-4 inline-flex">{action.icon}</span> : null}
+      {action.label}
+    </span>
+  );
+  const base =
+    variant === "primary"
+      ? "px-4 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700"
+      : "px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800";
+  if (action.href) {
+    return (
+      <motion.span whileHover={prefersReduced ? undefined : { scale: 1.02 }} whileTap={prefersReduced ? undefined : { scale: 0.98 }}>
+        <Link href={action.href} aria-label={action.ariaLabel || action.label} className={base}>
+          {content}
+        </Link>
+      </motion.span>
+    );
+  }
+  return (
+    <motion.button
+      type="button"
+      onClick={action.onClick}
+      className={base}
+      whileHover={prefersReduced ? undefined : { scale: 1.02 }}
+      whileTap={prefersReduced ? undefined : { scale: 0.98 }}
+      aria-label={action.ariaLabel || action.label}
+    >
+      {content}
+    </motion.button>
+  );
+}
+
 export default function AppTopbar({
   title,
   primaryAction,
@@ -34,40 +74,6 @@ export default function AppTopbar({
   onDiscard,
 }: Props) {
   const prefersReduced = useReducedMotion();
-
-  const ActionButton = ({ action, variant = "primary" }: { action: Action; variant?: "primary" | "secondary" }) => {
-    const content = (
-      <span className="inline-flex items-center gap-2 text-sm font-medium">
-        {action.icon ? <span aria-hidden className="w-4 h-4 inline-flex">{action.icon}</span> : null}
-        {action.label}
-      </span>
-    );
-    const base =
-      variant === "primary"
-        ? "px-4 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700"
-        : "px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800";
-    if (action.href) {
-      return (
-        <motion.span whileHover={prefersReduced ? undefined : { scale: 1.02 }} whileTap={prefersReduced ? undefined : { scale: 0.98 }}>
-          <Link href={action.href} aria-label={action.ariaLabel || action.label} className={base}>
-            {content}
-          </Link>
-        </motion.span>
-      );
-    }
-    return (
-      <motion.button
-        type="button"
-        onClick={action.onClick}
-        className={base}
-        whileHover={prefersReduced ? undefined : { scale: 1.02 }}
-        whileTap={prefersReduced ? undefined : { scale: 0.98 }}
-        aria-label={action.ariaLabel || action.label}
-      >
-        {content}
-      </motion.button>
-    );
-  };
 
   return (
     <header className="sticky top-0 z-50 sticky-header-blur">
@@ -87,13 +93,13 @@ export default function AppTopbar({
               {secondaryActions?.length ? (
                 <div className="hidden md:flex items-center gap-2 ml-2">
                   {secondaryActions.map((a, i) => (
-                    <ActionButton key={i} action={a} variant="secondary" />
+                    <ActionButton key={i} action={a} variant="secondary" prefersReduced={prefersReduced} />
                   ))}
                 </div>
               ) : null}
             </div>
             <div className="flex items-center gap-3">
-              {primaryAction ? <ActionButton action={primaryAction} /> : null}
+              {primaryAction ? <ActionButton action={primaryAction} prefersReduced={prefersReduced} /> : null}
               {rightSlot}
             </div>
           </div>

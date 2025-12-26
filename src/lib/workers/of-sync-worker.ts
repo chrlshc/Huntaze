@@ -257,13 +257,13 @@ export const ofSyncWorker = new OfSyncWorker();
 
 // Public helpers for on-demand sync (one-shot)
 export async function runOfSyncAllOnce(): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-ignore – call private for operational convenience
   return (ofSyncWorker as any).syncAll();
 }
 
 export async function runOfSyncUserOnce(userId: string): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-ignore – call private for operational convenience
   return (ofSyncWorker as any).syncUser(userId);
 }

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export type ShopifyButtonVariant = "primary" | "secondary" | "accent" | "ghost" | "plain" | "destructive";
 export type ShopifyButtonSize = "sm" | "md" | "lg";
 
-export interface ShopifyButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+type ShopifyButtonBaseProps = {
   variant?: ShopifyButtonVariant;
   size?: ShopifyButtonSize;
   loading?: boolean;
@@ -15,7 +15,19 @@ export interface ShopifyButtonProps extends React.ButtonHTMLAttributes<HTMLButto
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
   asChild?: boolean;
-}
+};
+
+export type ShopifyButtonButtonProps = ShopifyButtonBaseProps &
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    asChild?: false;
+  };
+
+export type ShopifyButtonAnchorProps = ShopifyButtonBaseProps &
+  React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+    asChild: true;
+  };
+
+export type ShopifyButtonProps = ShopifyButtonButtonProps | ShopifyButtonAnchorProps;
 
 /**
  * ShopifyButton - Shopify Polaris-inspired button component
@@ -28,7 +40,7 @@ export interface ShopifyButtonProps extends React.ButtonHTMLAttributes<HTMLButto
  * 
  * Buttons use consistent sizing, radius, and focus rings.
  */
-export const ShopifyButton = forwardRef<HTMLButtonElement, ShopifyButtonProps>(
+export const ShopifyButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ShopifyButtonProps>(
   function ShopifyButton(
     {
       className,
@@ -36,7 +48,6 @@ export const ShopifyButton = forwardRef<HTMLButtonElement, ShopifyButtonProps>(
       variant = "primary",
       size = "md",
       loading = false,
-      disabled,
       fullWidth = false,
       icon,
       iconPosition = "left",
@@ -113,28 +124,54 @@ export const ShopifyButton = forwardRef<HTMLButtonElement, ShopifyButtonProps>(
       ),
     };
 
-    const Comp = asChild ? "a" : "button";
+    const disabled = (!asChild && "disabled" in props && props.disabled) || false;
+    const isDisabled = disabled || loading;
+    const commonProps = {
+      className: cn(baseClasses, sizeClasses[size], variantClasses[variant], className),
+      "aria-busy": loading || undefined,
+      "aria-disabled": isDisabled || undefined,
+    };
+
+    if (asChild) {
+      const { onClick, disabled: _disabled, ...anchorProps } = props as React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+        disabled?: boolean;
+      };
+
+      return (
+        <a
+          ref={ref as React.ForwardedRef<HTMLAnchorElement>}
+          role="button"
+          tabIndex={isDisabled ? -1 : anchorProps.tabIndex}
+          onClick={(event) => {
+            if (isDisabled) {
+              event.preventDefault();
+              return;
+            }
+            onClick?.(event);
+          }}
+          {...anchorProps}
+          {...commonProps}
+        >
+          {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+          {!loading && icon && iconPosition === "left" && icon}
+          {children != null ? <span>{children}</span> : null}
+          {!loading && icon && iconPosition === "right" && icon}
+        </a>
+      );
+    }
 
     return (
-      <Comp
-        ref={ref}
-        className={cn(
-          baseClasses,
-          sizeClasses[size],
-          variantClasses[variant],
-          className
-        )}
-        aria-busy={loading || undefined}
-        aria-disabled={disabled || loading || undefined}
-        disabled={disabled || loading}
-        {...(asChild && { role: "button" })}
-        {...props}
+      <button
+        ref={ref as React.ForwardedRef<HTMLButtonElement>}
+        disabled={isDisabled}
+        {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+        {...commonProps}
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
         {!loading && icon && iconPosition === "left" && icon}
         {children != null ? <span>{children}</span> : null}
         {!loading && icon && iconPosition === "right" && icon}
-      </Comp>
+      </button>
     );
   }
 );

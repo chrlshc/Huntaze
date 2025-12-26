@@ -52,7 +52,6 @@ export function MarketingHeader({ className }: MarketingHeaderProps) {
             alt="Beta logo"
             width={28}
             height={28}
-            priority
           />
           <span className="text-2xl font-bold text-white">Beta</span>
         </Link>

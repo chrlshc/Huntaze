@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { checkOnboardingUnlocks, completeOnboardingStep } from '@/lib/services/onboarding';
 
 interface UseOAuthCallbackOptions {
   onSuccess?: (platform: string) => void;
@@ -8,6 +9,8 @@ interface UseOAuthCallbackOptions {
 }
 
 export function useOAuthCallback(options: UseOAuthCallbackOptions = {}) {
+  const { onSuccess, onError } = options;
+
   useEffect(() => {
     const handleOAuthCallback = async () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -18,29 +21,21 @@ export function useOAuthCallback(options: UseOAuthCallbackOptions = {}) {
       if (platform && success === 'true') {
         try {
           // Trigger feature unlock check
-          await fetch('/api/onboarding/check-unlocks', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ platform })
-          });
+          await checkOnboardingUnlocks(platform);
 
           // Update onboarding progress
-          await fetch(`/api/onboarding/step/platform_connection/complete`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ platform })
-          });
+          await completeOnboardingStep('platform_connection', { platform });
 
-          options.onSuccess?.(platform);
+          onSuccess?.(platform);
         } catch (err) {
           console.error('OAuth callback handling failed:', err);
-          options.onError?.(err as Error);
+          onError?.(err as Error);
         }
       } else if (error) {
-        options.onError?.(new Error(error));
+        onError?.(new Error(error));
       }
     };
 
     handleOAuthCallback();
-  }, []);
+  }, [onError, onSuccess]);
 }

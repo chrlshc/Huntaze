@@ -79,3 +79,10 @@ export {
   ShopifyEmptyState,
   type ShopifyEmptyStateProps,
 } from './ShopifyEmptyState';
+
+// Connection Card Components
+export {
+  ShopifyConnectionCard,
+  ConnectionIllustration,
+  type ShopifyConnectionCardProps,
+} from './ShopifyConnectionCard';

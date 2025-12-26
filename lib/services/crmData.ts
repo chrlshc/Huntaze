@@ -23,6 +23,7 @@ export type Conversation = {
   fanId: string;
   platform?: string;
   lastMessageAt?: string | null;
+  unreadCount?: number;
   createdAt: string;
   updatedAt: string;
 };

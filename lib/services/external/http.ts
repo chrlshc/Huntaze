@@ -25,6 +25,16 @@ export type ExternalRequestOptions = RequestInit & {
 
 const DEFAULT_RETRYABLE_STATUS = [408, 429, 500, 502, 503, 504];
 const DEFAULT_RETRY_METHODS = ['GET', 'HEAD', 'OPTIONS'];
+const REDACT_QUERY_KEYS = new Set([
+  'access_token',
+  'refresh_token',
+  'client_secret',
+  'token',
+  'api_key',
+  'apikey',
+  'signature',
+  'sig',
+]);
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
@@ -40,7 +50,27 @@ function computeDelayMs(attempt: number, retry: Required<RetryOptions>): number 
   return clamp(base + jitter, retry.initialDelayMs, retry.maxDelayMs);
 }
 
-function mergeSignals(signals: Array<AbortSignal | undefined>): AbortSignal {
+function redactUrl(rawUrl: string): string {
+  try {
+    const parsed = new URL(rawUrl);
+    let changed = false;
+    for (const key of parsed.searchParams.keys()) {
+      if (!REDACT_QUERY_KEYS.has(key.toLowerCase())) continue;
+      parsed.searchParams.set(key, '***');
+      changed = true;
+    }
+    if (changed) return parsed.toString();
+  } catch {
+    // Fall through to regex fallback.
+  }
+
+  return rawUrl.replace(
+    /([?&](?:access_token|refresh_token|client_secret|token|api_key|apikey|signature|sig)=)[^&#]*/gi,
+    '$1***'
+  );
+}
+
+function mergeSignals(signals: Array<AbortSignal | null | undefined>): AbortSignal {
   const controller = new AbortController();
 
   const onAbort = () => {
@@ -102,6 +132,7 @@ export async function externalFetch(
   options: ExternalRequestOptions
 ): Promise<Response> {
   const logger = createLogger(`external:${options.service}`, options.correlationId);
+  const redactedUrl = redactUrl(url);
   const method = (options.method ?? 'GET').toUpperCase();
 
   const retry: Required<RetryOptions> = {
@@ -137,7 +168,9 @@ export async function externalFetch(
           status: response.status,
           correlationId: options.correlationId,
           message: `${options.operation} failed (${response.status})`,
-          details: body ? { body: body.slice(0, 2_000) } : undefined,
+          details: body
+            ? { body: body.slice(0, 2_000), url: redactedUrl }
+            : { url: redactedUrl },
         });
 
         if (attempt < maxRetries && retryable && retry.retryMethods.includes(method)) {
@@ -148,7 +181,7 @@ export async function externalFetch(
             maxRetries,
             status: response.status,
             delayMs,
-            url,
+            url: redactedUrl,
           });
           await sleep(delayMs);
           continue;
@@ -165,7 +198,7 @@ export async function externalFetch(
           maxRetries,
           status: response.status,
           delayMs,
-          url,
+          url: redactedUrl,
         });
         await sleep(delayMs);
         continue;
@@ -185,7 +218,7 @@ export async function externalFetch(
         retryable,
         correlationId: options.correlationId,
         message: `${options.operation} failed (${code})`,
-        details: { url },
+        details: { url: redactedUrl },
         cause: error,
       });
 
@@ -195,7 +228,7 @@ export async function externalFetch(
           attempt: attempt + 1,
           maxRetries,
           delayMs,
-          url,
+          url: redactedUrl,
         });
         await sleep(delayMs);
         continue;
@@ -238,9 +271,8 @@ export async function externalFetchJson<T>(
       correlationId: options.correlationId,
       status: response.status,
       message: `${options.operation} returned invalid JSON`,
-      details: { url },
+      details: { url: redactUrl(url) },
       cause: error,
     });
   }
 }
-

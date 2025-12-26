@@ -9,6 +9,8 @@
 
 import { ContentTrendsAIRouter, TaskType, RoutingDecision } from './ai-router';
 import { getModelEndpoint, ModelEndpointConfig } from './azure-foundry-config';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 // ============================================================================
 // Types and Interfaces
@@ -375,46 +377,48 @@ Provide a comprehensive description in a single paragraph.`;
       temperature: this.config.temperature,
     };
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
-
     try {
-      const response = await fetch(endpoint, {
+      const response = await externalFetch(endpoint, {
+        service: 'azure-ai',
+        operation: 'llama-vision.chat',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify(requestBody),
-        signal: controller.signal,
+        cache: 'no-store',
+        timeoutMs: this.config.timeout,
+        retry: { maxRetries: 0, retryMethods: [] },
+        throwOnHttpError: true,
       });
 
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new LlamaVisionError(
-          `API request failed: ${response.status} ${response.statusText}`,
-          'API_ERROR',
-          { status: response.status, body: errorText }
-        );
-      }
-
-      const data = await response.json();
+      const data = await response.json().catch((error) => {
+        throw new LlamaVisionError('Llama Vision returned invalid JSON', 'PARSING_ERROR', {
+          cause: error instanceof Error ? error.message : String(error),
+        });
+      });
 
       return {
         content: data.choices?.[0]?.message?.content || '',
         tokenConsumption: data.usage?.total_tokens || 0,
       };
     } catch (error) {
-      clearTimeout(timeoutId);
-      
       if (error instanceof LlamaVisionError) {
         throw error;
       }
 
-      if ((error as Error).name === 'AbortError') {
-        throw new LlamaVisionError('Request timeout', 'TIMEOUT');
+      if (isExternalServiceError(error)) {
+        const code =
+          error.code === 'TIMEOUT'
+            ? 'TIMEOUT'
+            : error.code === 'NETWORK_ERROR'
+              ? 'REQUEST_FAILED'
+              : 'API_ERROR';
+        throw new LlamaVisionError(error.message, code, {
+          status: error.status,
+          retryable: error.retryable,
+        });
       }
 
       throw new LlamaVisionError(

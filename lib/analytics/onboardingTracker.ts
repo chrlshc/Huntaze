@@ -10,21 +10,17 @@ class OnboardingTracker {
   async trackEvent(event: OnboardingEvent): Promise<void> {
     try {
       // Send to onboarding events API
-      await fetch('/api/onboarding/event', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: event.userId,
-          eventType: event.eventType,
-          stepId: event.stepId,
-          timestamp: new Date().toISOString(),
-          metadata: {
-            ...event.metadata,
-            featureId: event.featureId,
-            userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : undefined,
-            referrer: typeof document !== 'undefined' ? document.referrer : undefined
-          }
-        })
+      await trackOnboardingEvent({
+        userId: event.userId,
+        eventType: event.eventType,
+        stepId: event.stepId,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          ...event.metadata,
+          featureId: event.featureId,
+          userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : undefined,
+          referrer: typeof document !== 'undefined' ? document.referrer : undefined,
+        },
       });
 
       // Also send to main analytics system if available
@@ -91,3 +87,4 @@ class OnboardingTracker {
 }
 
 export const onboardingTracker = new OnboardingTracker();
+import { trackOnboardingEvent } from '@/lib/services/onboarding';

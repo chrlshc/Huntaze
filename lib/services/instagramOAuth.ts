@@ -10,6 +10,12 @@
 
 import crypto from 'crypto';
 import { InstagramCredentialValidator, InstagramCredentials } from '@/lib/validation';
+import { externalFetch } from '@/lib/services/external/http';
+import {
+  ExternalServiceError,
+  isExternalServiceError,
+  mapHttpStatusToExternalCode,
+} from '@/lib/services/external/errors';
 
 const FACEBOOK_AUTH_URL = 'https://www.facebook.com/v18.0/dialog/oauth';
 const FACEBOOK_TOKEN_URL = 'https://graph.facebook.com/v18.0/oauth/access_token';
@@ -164,6 +170,10 @@ export class InstagramOAuthService {
         return await operation();
       } catch (error) {
         lastError = error instanceof Error ? error : new Error('Unknown error');
+
+        if (isExternalServiceError(error) && !error.retryable) {
+          throw lastError;
+        }
         
         // Don't retry on authentication errors or client errors
         if (lastError.message.includes('Invalid') || 
@@ -188,22 +198,47 @@ export class InstagramOAuthService {
     throw lastError!;
   }
 
+  private buildExternalError(operation: string, status: number, data: any): ExternalServiceError {
+    const mapped = mapHttpStatusToExternalCode(status);
+    const code = status < 400 && mapped.code === 'UNKNOWN' ? 'BAD_REQUEST' : mapped.code;
+
+    return new ExternalServiceError({
+      service: 'instagram',
+      code,
+      retryable: mapped.retryable,
+      status,
+      message:
+        data?.error?.message ||
+        data?.error_description ||
+        data?.error ||
+        `Instagram API error (${status})`,
+      details: data?.error
+        ? {
+            error: data.error,
+            type: data.error.type,
+            errorCode: data.error.code,
+            fbTraceId: data.error.fbtrace_id,
+          }
+        : undefined,
+    });
+  }
+
   /**
    * Fetch helper with timeout to avoid hanging OAuth flows.
    */
   private async fetchWithTimeout(
     url: string,
     options: RequestInit,
+    operation: string,
     timeoutMs: number = this.REQUEST_TIMEOUT_MS
   ): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-    try {
-      return await fetch(url, { ...options, signal: controller.signal });
-    } finally {
-      clearTimeout(timeoutId);
-    }
+    return externalFetch(url, {
+      ...options,
+      service: 'instagram',
+      operation,
+      timeoutMs,
+      retry: { maxRetries: 0, retryMethods: [] },
+    });
   }
 
   /**
@@ -253,25 +288,22 @@ export class InstagramOAuthService {
     });
 
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: {
-          'User-Agent': 'Instagram-OAuth-Client/1.0',
+      const response = await this.fetchWithTimeout(
+        `${FACEBOOK_TOKEN_URL}?${params.toString()}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/1.0',
+          },
         },
-      });
+        'oauth.exchange'
+      );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        // Handle rate limiting
-        if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        
-        throw new Error(
-          data.error?.message || data.error_description || `Token exchange failed: ${response.status}`
-        );
+        throw this.buildExternalError('oauth.exchange', response.status, data);
       }
 
       return {
@@ -298,25 +330,22 @@ export class InstagramOAuthService {
     });
 
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: {
-          'User-Agent': 'Instagram-OAuth-Client/1.0',
+      const response = await this.fetchWithTimeout(
+        `${FACEBOOK_TOKEN_URL}?${params.toString()}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/1.0',
+          },
         },
-      });
+        'oauth.longLived'
+      );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        // Handle rate limiting
-        if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        
-        throw new Error(
-          data.error?.message || `Long-lived token exchange failed: ${response.status}`
-        );
+        throw this.buildExternalError('oauth.longLived', response.status, data);
       }
 
       return {
@@ -346,30 +375,32 @@ export class InstagramOAuthService {
     });
 
     return this.retryApiCall(async () => {
-      const response = await this.fetchWithTimeout(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: {
-          'User-Agent': 'Instagram-OAuth-Client/1.0',
+      const response = await this.fetchWithTimeout(
+        `${FACEBOOK_TOKEN_URL}?${params.toString()}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/1.0',
+          },
         },
-      });
+        'oauth.refresh'
+      );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        // Handle rate limiting
-        if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        
-        // Handle specific refresh errors
         if (data.error?.code === 190) {
-          throw new Error('Token has expired and cannot be refreshed. Please reconnect your Instagram account.');
+          throw new ExternalServiceError({
+            service: 'instagram',
+            code: 'UNAUTHORIZED',
+            retryable: false,
+            status: response.status,
+            message: 'Token has expired and cannot be refreshed. Please reconnect your Instagram account.',
+            details: { error: data.error },
+          });
         }
-        
-        throw new Error(
-          data.error?.message || `Token refresh failed: ${response.status}`
-        );
+        throw this.buildExternalError('oauth.refresh', response.status, data);
       }
 
       return {
@@ -390,19 +421,20 @@ export class InstagramOAuthService {
   async getAccountInfo(accessToken: string): Promise<InstagramAccountInfo> {
     return this.retryApiCall(async () => {
       // Get user ID
-      const meResponse = await this.fetchWithTimeout(`${FACEBOOK_GRAPH_URL}/me?access_token=${accessToken}`, {
-        cache: 'no-store',
-        headers: {
-          'User-Agent': 'Instagram-OAuth-Client/1.0',
+      const meResponse = await this.fetchWithTimeout(
+        `${FACEBOOK_GRAPH_URL}/me?access_token=${accessToken}`,
+        {
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/1.0',
+          },
         },
-      });
-      const meData = await meResponse.json();
+        'user.me'
+      );
+      const meData = await meResponse.json().catch(() => ({}));
 
       if (!meResponse.ok || meData.error) {
-        if (meResponse.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        throw new Error(meData.error?.message || 'Failed to get user info');
+        throw this.buildExternalError('user.me', meResponse.status, meData);
       }
 
       // Get user's pages with Instagram Business accounts
@@ -413,15 +445,13 @@ export class InstagramOAuthService {
           headers: {
             'User-Agent': 'Instagram-OAuth-Client/1.0',
           },
-        }
+        },
+        'pages.list'
       );
-      const pagesData = await pagesResponse.json();
+      const pagesData = await pagesResponse.json().catch(() => ({}));
 
       if (!pagesResponse.ok || pagesData.error) {
-        if (pagesResponse.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        throw new Error(pagesData.error?.message || 'Failed to get pages');
+        throw this.buildExternalError('pages.list', pagesResponse.status, pagesData);
       }
 
       return {
@@ -469,16 +499,14 @@ export class InstagramOAuthService {
           headers: {
             'User-Agent': 'Instagram-OAuth-Client/1.0',
           },
-        }
+        },
+        'account.details'
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok || data.error) {
-        if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-        throw new Error(data.error?.message || 'Failed to get Instagram account details');
+        throw this.buildExternalError('account.details', response.status, data);
       }
 
       return data;
@@ -497,12 +525,13 @@ export class InstagramOAuthService {
         {
           method: 'DELETE',
           cache: 'no-store',
-        }
+        },
+        'permissions.revoke'
       );
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error?.message || 'Revoke failed');
+        const data = await response.json().catch(() => ({}));
+        throw this.buildExternalError('permissions.revoke', response.status, data);
       }
     } catch (error) {
       console.error('Instagram revoke error:', error);

@@ -9,7 +9,7 @@
  * Requirements: 5.1, 5.2, 5.4, 22.3
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CheckCircle, Target } from 'lucide-react';
 
 interface ProgressIndicatorProps {
@@ -34,23 +34,29 @@ export default function ProgressIndicator({
   showMilestones = true,
   className = '',
 }: ProgressIndicatorProps) {
-  const [previousProgress, setPreviousProgress] = useState(progress);
   const [showCelebration, setShowCelebration] = useState(false);
+  const previousProgressRef = useRef(progress);
 
   // Detect milestone achievements
   useEffect(() => {
+    const previousProgress = previousProgressRef.current;
+    previousProgressRef.current = progress;
+
     if (progress > previousProgress && showMilestones) {
       const crossedMilestone = MILESTONES.find(
         (m) => previousProgress < m.value && progress >= m.value
       );
 
       if (crossedMilestone) {
-        setShowCelebration(true);
-        setTimeout(() => setShowCelebration(false), 3000);
+        const showId = window.setTimeout(() => setShowCelebration(true), 0);
+        const hideId = window.setTimeout(() => setShowCelebration(false), 3000);
+        return () => {
+          clearTimeout(showId);
+          clearTimeout(hideId);
+        };
       }
     }
-    setPreviousProgress(progress);
-  }, [progress, previousProgress, showMilestones]);
+  }, [progress, showMilestones]);
 
   const currentMilestone = MILESTONES.find((m) => progress >= m.value);
 

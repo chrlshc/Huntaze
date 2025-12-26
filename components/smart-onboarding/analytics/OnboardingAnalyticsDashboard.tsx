@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { 
@@ -64,13 +64,7 @@ export const OnboardingAnalyticsDashboard: React.FC<OnboardingAnalyticsDashboard
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [selectedTimeRange, setSelectedTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
 
-  useEffect(() => {
-    fetchAnalyticsData();
-    const interval = setInterval(fetchAnalyticsData, refreshInterval);
-    return () => clearInterval(interval);
-  }, [refreshInterval, selectedTimeRange]);
-
-  const fetchAnalyticsData = async () => {
+  const fetchAnalyticsData = useCallback(async () => {
     try {
       const response = await fetch(`/api/smart-onboarding/analytics/dashboard?timeRange=${selectedTimeRange}`);
       if (response.ok) {
@@ -92,7 +86,13 @@ export const OnboardingAnalyticsDashboard: React.FC<OnboardingAnalyticsDashboard
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [onAlert, selectedTimeRange]);
+
+  useEffect(() => {
+    fetchAnalyticsData();
+    const interval = setInterval(fetchAnalyticsData, refreshInterval);
+    return () => clearInterval(interval);
+  }, [fetchAnalyticsData, refreshInterval]);
 
   const getMetricColor = (value: number, thresholds: { good: number; warning: number }) => {
     if (value >= thresholds.good) return 'text-green-600';

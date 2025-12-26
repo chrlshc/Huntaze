@@ -19,23 +19,6 @@ export default function CookieConsent() {
     marketing: false,
   });
 
-  useEffect(() => {
-    // Check if user has already consented
-    const consent = localStorage.getItem('cookieConsent');
-    if (!consent) {
-      // Show banner after a short delay
-      setTimeout(() => setIsVisible(true), 1000);
-    } else {
-      // Apply saved preferences
-      try {
-        const savedPrefs = JSON.parse(consent);
-        applyPreferences(savedPrefs);
-      } catch (e) {
-        console.error('Failed to parse cookie preferences');
-      }
-    }
-  }, []);
-
   const applyPreferences = (prefs: CookiePreferences) => {
     // Apply analytics preference
     if (!prefs.analytics) {
@@ -56,6 +39,23 @@ export default function CookieConsent() {
       // e.g., Google Ads, Facebook Pixel
     }
   };
+
+  useEffect(() => {
+    // Check if user has already consented
+    const consent = localStorage.getItem('cookieConsent');
+    if (!consent) {
+      // Show banner after a short delay
+      setTimeout(() => setIsVisible(true), 1000);
+    } else {
+      // Apply saved preferences
+      try {
+        const savedPrefs = JSON.parse(consent);
+        applyPreferences(savedPrefs);
+      } catch (e) {
+        console.error('Failed to parse cookie preferences');
+      }
+    }
+  }, []);
 
   const handleAcceptAll = () => {
     const allAccepted = {
@@ -262,23 +262,24 @@ export default function CookieConsent() {
 
 // Hook to check cookie consent
 export function useCookieConsent() {
-  const [hasConsent, setHasConsent] = useState<boolean | null>(null);
-  const [preferences, setPreferences] = useState<CookiePreferences | null>(null);
-
-  useEffect(() => {
-    const consent = localStorage.getItem('cookieConsent');
-    if (consent) {
-      try {
-        const prefs = JSON.parse(consent);
-        setPreferences(prefs);
-        setHasConsent(true);
-      } catch {
-        setHasConsent(false);
-      }
-    } else {
-      setHasConsent(false);
+  const getStoredConsent = () => {
+    if (typeof window === 'undefined') {
+      return { hasConsent: null, preferences: null as CookiePreferences | null };
     }
-  }, []);
+    const consent = localStorage.getItem('cookieConsent');
+    if (!consent) {
+      return { hasConsent: false, preferences: null as CookiePreferences | null };
+    }
+    try {
+      const prefs = JSON.parse(consent) as CookiePreferences;
+      return { hasConsent: true, preferences: prefs };
+    } catch {
+      return { hasConsent: false, preferences: null as CookiePreferences | null };
+    }
+  };
+
+  const [hasConsent, setHasConsent] = useState<boolean | null>(() => getStoredConsent().hasConsent);
+  const [preferences, setPreferences] = useState<CookiePreferences | null>(() => getStoredConsent().preferences);
 
   const updateConsent = (newPreferences: CookiePreferences) => {
     localStorage.setItem('cookieConsent', JSON.stringify(newPreferences));

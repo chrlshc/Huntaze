@@ -12,6 +12,7 @@
  */
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { Users, Sparkles, MessageCircle, RefreshCw } from 'lucide-react';
@@ -20,6 +21,8 @@ import { IndexTable, Column } from '@/components/ui/IndexTable';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SegmentedChips } from '@/components/ui/SegmentedChips';
 import { SearchInput } from '@/components/ui/SearchInput';
+import { ShopifyConnectionCard, ConnectionIllustration } from '@/components/ui/shopify/ShopifyConnectionCard';
+import '@/components/ui/shopify/ShopifyConnectionCard.css';
 import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 
 type FanSegment = 'all' | 'vip' | 'active' | 'at_risk' | 'churned';
@@ -170,11 +173,14 @@ export default function FansPage() {
         subtitle="Segment and manage your OnlyFans subscribers with AI insights."
         showHomeInBreadcrumbs={false}
       >
-        <EmptyState
-          variant="no-data"
+        <ShopifyConnectionCard
+          illustration={<ConnectionIllustration type="document" />}
           title="Connect OnlyFans to view your fans"
           description="Once connected, Huntaze will sync your fan list and help you segment VIPs, at-risk fans, and more."
-          action={{ label: 'Go to integrations', onClick: () => (window.location.href = '/integrations') }}
+          actionLabel="Go to integrations"
+          actionHref="/integrations"
+          secondaryLabel="Learn more about fan segmentation"
+          secondaryHref="/docs/fans"
         />
       </PageLayout>
     );
@@ -211,12 +217,14 @@ export default function FansPage() {
       width: '200px',
       render: (_, row) => (
         <Link href={`/onlyfans/fans/${row.id}`} className="flex min-w-0 items-center gap-3">
-          <img 
+          <Image 
             src={
               (row.avatar as string) ||
               `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(String(row.id))}`
             }
-            alt={row.name as string} 
+            alt={row.name as string}
+            width={40}
+            height={40}
             className="w-10 h-10 rounded-full object-cover"
           />
           <div className="min-w-0">

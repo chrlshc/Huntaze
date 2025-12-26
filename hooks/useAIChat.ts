@@ -7,6 +7,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { sendAIChat } from '@/lib/services/ai-chat';
 
 type AIChatRequest = {
   fanId: string;
@@ -40,21 +41,7 @@ export function useAIChat(): UseAIChatReturn {
       setLoading(true);
       setError(null);
 
-      const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Failed to generate response');
-      }
-
-      const data = await res.json();
-      const aiResponse = data.data as AIChatResponse;
+      const aiResponse = await sendAIChat(request);
       setResponse(aiResponse);
       return aiResponse;
     } catch (err) {

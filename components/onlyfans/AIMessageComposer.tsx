@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Loader2, Sparkles, RefreshCw, AlertCircle, Zap, Brain, TrendingUp, Copy, Check } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
@@ -45,12 +45,7 @@ export function AIMessageComposer({
   const [isGenerating, setIsGenerating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Charger les suggestions au montage et quand le contexte change
-  useEffect(() => {
-    loadSuggestions();
-  }, [fanId, creatorId, conversationContext?.lastMessage]);
-
-  const loadSuggestions = async () => {
+  const loadSuggestions = useCallback(async () => {
     setLoading(true);
     setIsGenerating(true);
     setError(null);
@@ -90,7 +85,12 @@ export function AIMessageComposer({
       setLoading(false);
       setIsGenerating(false);
     }
-  };
+  }, [conversationContext, creatorId, fanId]);
+
+  // Charger les suggestions au montage et quand le contexte change
+  useEffect(() => {
+    loadSuggestions();
+  }, [loadSuggestions]);
 
   const handleCopy = async (text: string, index: number) => {
     await navigator.clipboard.writeText(text);

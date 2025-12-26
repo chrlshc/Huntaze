@@ -1,22 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { useIsClient } from "@/hooks/useIsClient";
 
 type BIPEvent = any; // non-standard (Chromium)
 
 export default function PWAInstall({ className }: { className?: string }) {
-  const [isIOS, setIsIOS] = useState(false);
+  const isClient = useIsClient();
+  const isIOS = useMemo(() => {
+    if (!isClient) return false;
+    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+    return /iPhone|iPad|iPod/i.test(ua) ||
+      (typeof navigator !== "undefined" && (navigator as any).platform === "MacIntel" && (navigator as any).maxTouchPoints > 1);
+  }, [isClient]);
   const [canInstall, setCanInstall] = useState(false);
   const bipRef = useRef<BIPEvent | null>(null);
-
-  useEffect(() => {
-    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
-    const ios = /iPhone|iPad|iPod/i.test(ua) ||
-      (typeof navigator !== "undefined" && (navigator as any).platform === "MacIntel" && (navigator as any).maxTouchPoints > 1);
-    setIsIOS(!!ios);
-  }, []);
 
   useEffect(() => {
     const onBIP = (e: Event) => {
@@ -63,4 +63,3 @@ export default function PWAInstall({ className }: { className?: string }) {
     </div>
   );
 }
-

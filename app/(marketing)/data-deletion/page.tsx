@@ -1,84 +1,75 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Card } from '@/components/ui/card';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Data Deletion - Huntaze',
-  description: 'Request deletion of your data from Huntaze',
+  title: 'Data Deletion | Huntaze',
+  description: 'How to delete your data from Huntaze',
 };
 
 export default function DataDeletionPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-          Data Deletion Request
-        </h1>
+    <div className="min-h-screen bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Data Deletion Instructions</h1>
         
-        <Card className="p-8 mb-8">
-          <h2 className="text-2xl font-bold mb-4">How to Delete Your Data</h2>
-          
-          <p className="text-gray-700 mb-6">
-            We respect your privacy and provide you with full control over your data. 
-            You can request deletion of your data at any time.
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+          <h2 className="text-lg font-semibold text-blue-900 mb-2">How to Delete Your Data</h2>
+          <p className="text-blue-800">
+            Follow the steps below to request deletion of your data from Huntaze.
           </p>
+        </div>
 
-          <div className="space-y-6">
-            <section>
-              <h3 className="text-xl font-semibold mb-3">What data will be deleted:</h3>
-              <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                <li>Your account information (name, email)</li>
-                <li>Connected social media accounts (Instagram, TikTok)</li>
-                <li>Scheduled posts and content</li>
-                <li>Analytics and usage data</li>
-                <li>OAuth tokens and authentication data</li>
-              </ul>
-            </section>
+        <div className="space-y-6">
+          <section>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">Option 1: Self-Service (Recommended)</h3>
+            <ol className="list-decimal pl-6 text-gray-700 space-y-2">
+              <li>Log in to your Huntaze account</li>
+              <li>Go to <strong>Settings</strong> → <strong>Connected Accounts</strong></li>
+              <li>Click <strong>Disconnect</strong> next to Instagram or any connected platform</li>
+              <li>To delete your entire account, go to <strong>Settings</strong> → <strong>Account</strong> → <strong>Delete Account</strong></li>
+            </ol>
+          </section>
 
-            <section>
-              <h3 className="text-xl font-semibold mb-3">To request data deletion:</h3>
-              <ol className="list-decimal pl-6 text-gray-700 space-y-2">
-                <li>Send an email to <a href="mailto:privacy@huntaze.com" className="text-purple-600 hover:text-purple-700">privacy@huntaze.com</a></li>
-                <li>Include your account email address</li>
-                <li>Specify if you want full deletion or partial deletion</li>
-                <li>We will process your request within 30 days</li>
-              </ol>
-            </section>
-
-            <section>
-              <h3 className="text-xl font-semibold mb-3">Alternative methods:</h3>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-gray-700 mb-2">
-                  <strong>From your dashboard:</strong> Go to Settings → Privacy → Delete Account
-                </p>
-                <p className="text-gray-700">
-                  <strong>Contact support:</strong> charles@huntaze.com
-                </p>
-              </div>
-            </section>
-
-            <section>
-              <h3 className="text-xl font-semibold mb-3">Important notes:</h3>
-              <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                <li>Data deletion is permanent and cannot be undone</li>
-                <li>Some data may be retained for legal compliance (max 90 days)</li>
-                <li>Active subscriptions must be cancelled before deletion</li>
-              </ul>
-            </section>
-          </div>
-
-          <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-yellow-800 text-sm">
-              <strong>Note:</strong> This deletion request applies to data stored by Huntaze. 
-              Content already published to your social media accounts will not be affected.
+          <section>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">Option 2: Email Request</h3>
+            <p className="text-gray-700 mb-3">
+              Send an email to request data deletion:
             </p>
-          </div>
-        </Card>
+            <div className="bg-gray-100 rounded-lg p-4">
+              <p className="text-gray-800"><strong>To:</strong> <a href="mailto:support@huntaze.com" className="text-blue-600 hover:underline">support@huntaze.com</a></p>
+              <p className="text-gray-800"><strong>Subject:</strong> Data Deletion Request</p>
+              <p className="text-gray-800 mt-2"><strong>Include:</strong></p>
+              <ul className="list-disc pl-6 text-gray-700">
+                <li>Your account email address</li>
+                <li>Your Instagram username (if applicable)</li>
+              </ul>
+            </div>
+          </section>
 
-        <div className="text-center">
-          <Link href="/" className="text-purple-600 hover:text-purple-700 font-medium">
-            ← Back to Home
-          </Link>
+          <section>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">What We Delete</h3>
+            <ul className="list-disc pl-6 text-gray-700 space-y-1">
+              <li>OAuth tokens and access credentials</li>
+              <li>Profile information from connected platforms</li>
+              <li>Analytics and insights data</li>
+              <li>Content metadata and scheduling data</li>
+              <li>Account preferences and settings</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">Processing Time</h3>
+            <p className="text-gray-700">
+              We process all data deletion requests within <strong>30 days</strong>. 
+              You will receive a confirmation email once your data has been deleted.
+            </p>
+          </section>
+
+          <section className="border-t pt-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">Questions?</h3>
+            <p className="text-gray-700">
+              Contact us at <a href="mailto:support@huntaze.com" className="text-blue-600 hover:underline">support@huntaze.com</a>
+            </p>
+          </section>
         </div>
       </div>
     </div>

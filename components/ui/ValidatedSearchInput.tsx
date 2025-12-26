@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { validateSearchInput, sanitizeSearchInput } from '@/lib/validation/input-validation';
 
@@ -51,8 +51,8 @@ export function ValidatedSearchInput({
   className,
   disabled = false,
 }: ValidatedSearchInputProps) {
-  const [error, setError] = useState<string | undefined>();
   const [isTouched, setIsTouched] = useState(false);
+  const validation = useMemo(() => validateSearchInput(value), [value]);
 
   // Validate input on change
   const handleChange = useCallback(
@@ -63,11 +63,9 @@ export function ValidatedSearchInput({
       const validation = validateSearchInput(newValue);
       
       if (!validation.valid) {
-        setError(validation.error);
         // Still update value to show user what they typed
         onChange(newValue);
       } else {
-        setError(undefined);
         // Sanitize and update
         const sanitized = sanitizeSearchInput(newValue);
         onChange(sanitized);
@@ -87,7 +85,7 @@ export function ValidatedSearchInput({
       const validation = validateSearchInput(value);
       
       if (!validation.valid) {
-        setError(validation.error);
+        setIsTouched(true);
         return;
       }
       
@@ -100,17 +98,8 @@ export function ValidatedSearchInput({
     [value, onSubmit]
   );
 
-  // Clear error when value becomes valid
-  useEffect(() => {
-    if (value && isTouched) {
-      const validation = validateSearchInput(value);
-      if (validation.valid && error) {
-        setError(undefined);
-      }
-    }
-  }, [value, error, isTouched]);
-
-  const hasError = showErrors && isTouched && error;
+  const error = showErrors && isTouched && !validation.valid ? validation.error : undefined;
+  const hasError = Boolean(error);
 
   return (
     <div className={cn('validated-search-input', className)}>
@@ -156,7 +145,6 @@ export function ValidatedSearchInput({
               type="button"
               onClick={() => {
                 onChange('');
-                setError(undefined);
                 setIsTouched(false);
               }}
               className="validated-search-input__clear"

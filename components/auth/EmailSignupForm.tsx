@@ -10,7 +10,7 @@
  * - 4.1, 4.2, 4.3: Email validation with feedback
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { validateEmail, debounce } from '@/lib/validation/signup';
 import { useCsrfToken } from '@/hooks/useCsrfToken';
 import { useMobileOptimization, getMobileInputAttributes } from '@/hooks/useMobileOptimization';
@@ -54,7 +54,7 @@ export function EmailSignupForm({
   const emailInputAttrs = getMobileInputAttributes('email');
 
   // Debounced validation function
-  const validateEmailDebounced = debounce(async (value: string) => {
+  const validateEmailDebounced = useMemo(() => debounce(async (value: string) => {
     if (!value) {
       setError(null);
       setIsValid(false);
@@ -71,14 +71,14 @@ export function EmailSignupForm({
     setIsValid(result.success);
     setIsValidating(false);
     onValidationChange?.(result.success);
-  }, 500);
+  }, 500), [onValidationChange]);
 
   // Validate email on change
   useEffect(() => {
     if (touched) {
       validateEmailDebounced(email);
     }
-  }, [email, touched]);
+  }, [email, touched, validateEmailDebounced]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

@@ -7,6 +7,8 @@
  * Requirements: 15.1, 15.2, 15.3, 15.4, 15.5
  */
 
+/* eslint-disable @next/next/no-img-element -- test fixtures intentionally use raw img tags */
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

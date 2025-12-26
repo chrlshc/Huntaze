@@ -7,13 +7,14 @@
 export const dynamic = 'force-dynamic';
 
 
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { abTestVariants, type ABTestVariant } from '@/presets/ab-tests';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import ComplianceChecker from '@/components/ComplianceChecker';
 import { Button } from "@/components/ui/button";
+import { completeOnboarding as completeOnboardingRequest, saveOnboardingAbTests } from '@/lib/services/onboarding';
 
 interface ABTestCardProps {
   test: ABTestVariant;
@@ -26,7 +27,7 @@ interface ABTestCardProps {
 const ABTestCard = ({ test, testId, selected, onSelect, niche }: ABTestCardProps) => {
   const [variantA, setVariantA] = useState<string>(test.variantA);
   const [variantB, setVariantB] = useState<string>(test.variantB);
-  const preview = useMemo(() => {
+  const preview = (() => {
     switch (test.type) {
       case 'price':
         return (
@@ -77,7 +78,7 @@ const ABTestCard = ({ test, testId, selected, onSelect, niche }: ABTestCardProps
           </div>
         );
     }
-  }, [test]);
+  })();
 
   return (
     <div
@@ -136,14 +137,14 @@ export default function OptimizePage() {
   const { completeOnboarding } = useOnboarding();
 
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
-  const [niche, setNiche] = useState<string>('gfe');
-
-  useEffect(() => {
+  const [niche, setNiche] = useState<string>(() => {
+    if (typeof window === 'undefined') return 'gfe';
     try {
-      const stored = localStorage.getItem('selectedNiche');
-      if (stored) setNiche(stored);
-    } catch {}
-  }, []);
+      return localStorage.getItem('selectedNiche') || 'gfe';
+    } catch {
+      return 'gfe';
+    }
+  });
 
   const availableTests = abTestVariants[niche] || [];
 
@@ -159,7 +160,7 @@ export default function OptimizePage() {
   const finalizeAndGoDashboard = async () => {
     try {
       // Mark onboarding complete for gating
-      await fetch('/api/onboarding/complete', { method: 'POST' });
+      await completeOnboardingRequest({});
     } catch {}
     try { completeOnboarding(); } catch {}
     try { localStorage.setItem('onboarding_completed', 'true'); } catch {}
@@ -170,11 +171,7 @@ export default function OptimizePage() {
     try { track('ab_test_campaign_started', { niche, test_count: selectedTests.length, selected_tests: selectedTests }); } catch {}
 
     try {
-      await fetch('/api/onboarding/save-ab-tests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selectedTests, niche }),
-      });
+      await saveOnboardingAbTests({ selectedTests, niche });
     } catch {}
 
     await finalizeAndGoDashboard();

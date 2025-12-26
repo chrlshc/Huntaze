@@ -10,15 +10,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import '@/styles/polaris-analytics.css';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 import { 
   ArrowLeft, 
-  Sparkles,
   Users,
-  Send
 } from 'lucide-react';
 
 type CampaignChannel = 'dm' | 'email' | 'sms' | 'push';
-type CampaignGoal = 'engagement' | 'retention' | 'revenue' | 'acquisition';
+type CampaignGoal = 'engagement' | 'retention' | 'conversion';
 
 export default function NewCampaignPage() {
   const router = useRouter();
@@ -56,7 +55,9 @@ export default function NewCampaignPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.messageBody) {
+    setShowToast(false);
+
+    if (!formData.name.trim() || !formData.messageBody.trim()) {
       setToastMessage('Please fill in all required fields');
       setToastType('error');
       setShowToast(true);
@@ -65,15 +66,38 @@ export default function NewCampaignPage() {
 
     setIsCreating(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const selectedSegmentSize = selectedSegment?.size ?? 0;
+      const payload = {
+        name: formData.name.trim(),
+        channel: formData.channel,
+        goal: formData.goal,
+        audienceSegment: formData.segment,
+        audienceSize: selectedSegmentSize,
+        message: {
+          body: formData.messageBody.trim(),
+          ...(formData.channel === 'email' && formData.messageSubject.trim()
+            ? { subject: formData.messageSubject.trim() }
+            : {}),
+        },
+        status: formData.status,
+      };
+
+      const response = await internalApiFetch<{ success?: boolean; data?: { id?: string } }>(
+        '/api/marketing/campaigns',
+        { method: 'POST', body: payload }
+      );
+
+      if (!response?.success) {
+        throw new Error('Failed to create campaign');
+      }
+
       setToastMessage('Campaign created successfully!');
       setToastType('success');
       setShowToast(true);
 
       setTimeout(() => {
-        router.push('/marketing/campaigns');
+        const campaignId = response?.data?.id;
+        router.push(campaignId ? `/marketing/campaigns/${campaignId}` : '/marketing/campaigns');
       }, 1500);
     } catch {
       setToastMessage('Failed to create campaign');
@@ -231,8 +255,7 @@ export default function NewCampaignPage() {
                         >
                           <option value="engagement">Engagement</option>
                           <option value="retention">Retention</option>
-                          <option value="revenue">Revenue</option>
-                          <option value="acquisition">Acquisition</option>
+                          <option value="conversion">Conversion</option>
                         </select>
                       </div>
                     </div>

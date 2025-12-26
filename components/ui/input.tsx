@@ -12,7 +12,7 @@ import React, { forwardRef, useId } from 'react';
  * @requirements 10.2 - Focus ring with action-primary color
  */
 
-export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'prefix'> {
+export interface InputProps extends Omit<React.ComponentPropsWithoutRef<'input'>, 'prefix' | 'size'> {
   /** Label text displayed above the input */
   label?: string;
   /** Error message displayed below the input */
@@ -29,7 +29,7 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   fullWidth?: boolean;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
+export const Input = forwardRef<React.ElementRef<'input'>, InputProps>(
   (
     {
       label,

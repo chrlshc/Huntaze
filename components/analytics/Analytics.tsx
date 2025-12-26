@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 /**
  * Analytics Component
@@ -15,9 +15,9 @@ import { useEffect, useState } from 'react';
  * Validates: Requirements 6.4
  */
 export function Analytics() {
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const shouldLoad = useMemo(() => {
+    if (typeof window === 'undefined') return false;
 
-  useEffect(() => {
     // Respect Do Not Track (DNT) header - Requirement 6.4
     const dnt = navigator.doNotTrack || 
                 (window as any).doNotTrack || 
@@ -38,9 +38,7 @@ export function Analytics() {
     // DNT can be '1', 'yes', or true depending on browser
     const dntEnabled = dnt === '1' || dnt === 'yes' || dnt === true;
     
-    if (!dntEnabled && hasConsent) {
-      setShouldLoad(true);
-    }
+    return !dntEnabled && hasConsent;
   }, []);
 
   // Don't render anything if analytics should not load

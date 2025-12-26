@@ -1,5 +1,6 @@
-import { NextRequest } from 'next/server';
-import { auth } from '@/lib/auth/config';;
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth/config';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 /**
  * POST /api/revenue/forecast/scenario
@@ -10,8 +11,8 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth();
     
-    if (!session) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     // Validation
     if (!creatorId) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'creatorId is required' },
         { status: 400 }
       );
@@ -27,7 +28,14 @@ export async function POST(request: NextRequest) {
 
     // Verify creator owns this data
     if (session.user.id !== creatorId) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Forecast scenarios are not available in real mode yet' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
     }
 
     const correlationId = request.headers.get('X-Correlation-ID');
@@ -39,9 +47,6 @@ export async function POST(request: NextRequest) {
       correlationId,
       timestamp: new Date().toISOString(),
     });
-
-    // TODO: Replace with actual backend service call
-    // const result = await backendForecastService.getScenario(creatorId, { newSubscribers, priceIncrease, churnReduction });
 
     // Simple calculation for demo
     const baseRevenue = 15000;
@@ -67,13 +72,13 @@ export async function POST(request: NextRequest) {
       impact,
     });
 
-    return Response.json({
+    return NextResponse.json({
       projectedRevenue: Math.round(projectedRevenue),
       impact: Math.round(impact),
     });
   } catch (error) {
     console.error('[API] Scenario error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );

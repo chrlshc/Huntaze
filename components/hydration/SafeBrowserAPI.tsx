@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useCallback, useMemo, useState, ReactNode } from 'react';
 import { HydrationSafeWrapper } from './HydrationSafeWrapper';
+import { useIsClient } from '@/hooks/useIsClient';
 
 interface SafeBrowserAPIProps {
   children: (api: BrowserAPIContext) => ReactNode;
@@ -30,35 +31,7 @@ interface BrowserAPIContext {
  * 4. Offrant des fallbacks pendant le chargement
  */
 export function SafeBrowserAPI({ children, fallback, className }: SafeBrowserAPIProps) {
-  const [browserAPI, setBrowserAPI] = useState<BrowserAPIContext>({
-    window: null,
-    document: null,
-    navigator: null,
-    localStorage: null,
-    sessionStorage: null,
-    isClient: false,
-    screen: null,
-    location: null
-  });
-
-  useEffect(() => {
-    // Initialiser les APIs du navigateur après l'hydratation
-    try {
-      setBrowserAPI({
-        window: typeof window !== 'undefined' ? window : null,
-        document: typeof document !== 'undefined' ? document : null,
-        navigator: typeof navigator !== 'undefined' ? navigator : null,
-        localStorage: typeof localStorage !== 'undefined' ? localStorage : null,
-        sessionStorage: typeof sessionStorage !== 'undefined' ? sessionStorage : null,
-        isClient: true,
-        screen: typeof screen !== 'undefined' ? screen : null,
-        location: typeof location !== 'undefined' ? location : null
-      });
-    } catch (error) {
-      console.error('Browser API initialization error:', error);
-      // Garder les valeurs null en cas d'erreur
-    }
-  }, []);
+  const browserAPI = useSafeBrowserAPI();
 
   return (
     <HydrationSafeWrapper fallback={fallback} className={className}>
@@ -71,31 +44,47 @@ export function SafeBrowserAPI({ children, fallback, className }: SafeBrowserAPI
  * Hook pour l'accès sécurisé aux APIs du navigateur
  */
 export function useSafeBrowserAPI(): BrowserAPIContext {
-  const [browserAPI, setBrowserAPI] = useState<BrowserAPIContext>({
-    window: null,
-    document: null,
-    navigator: null,
-    localStorage: null,
-    sessionStorage: null,
-    isClient: false,
-    screen: null,
-    location: null
-  });
+  const isClient = useIsClient();
 
-  useEffect(() => {
-    setBrowserAPI({
-      window: typeof window !== 'undefined' ? window : null,
-      document: typeof document !== 'undefined' ? document : null,
-      navigator: typeof navigator !== 'undefined' ? navigator : null,
-      localStorage: typeof localStorage !== 'undefined' ? localStorage : null,
-      sessionStorage: typeof sessionStorage !== 'undefined' ? sessionStorage : null,
-      isClient: true,
-      screen: typeof screen !== 'undefined' ? screen : null,
-      location: typeof location !== 'undefined' ? location : null
-    });
-  }, []);
+  return useMemo<BrowserAPIContext>(() => {
+    if (!isClient) {
+      return {
+        window: null,
+        document: null,
+        navigator: null,
+        localStorage: null,
+        sessionStorage: null,
+        isClient: false,
+        screen: null,
+        location: null
+      };
+    }
 
-  return browserAPI;
+    try {
+      return {
+        window: typeof window !== 'undefined' ? window : null,
+        document: typeof document !== 'undefined' ? document : null,
+        navigator: typeof navigator !== 'undefined' ? navigator : null,
+        localStorage: typeof localStorage !== 'undefined' ? localStorage : null,
+        sessionStorage: typeof sessionStorage !== 'undefined' ? sessionStorage : null,
+        isClient: true,
+        screen: typeof screen !== 'undefined' ? screen : null,
+        location: typeof location !== 'undefined' ? location : null
+      };
+    } catch (error) {
+      console.error('Browser API initialization error:', error);
+      return {
+        window: null,
+        document: null,
+        navigator: null,
+        localStorage: null,
+        sessionStorage: null,
+        isClient: false,
+        screen: null,
+        location: null
+      };
+    }
+  }, [isClient]);
 }
 
 /**
@@ -166,6 +155,31 @@ interface SafeScreenInfoProps {
 
 export function SafeScreenInfo({ children, fallback }: SafeScreenInfoProps) {
   const { screen, window: win, isClient } = useSafeBrowserAPI();
+  const getScreenInfo = useCallback(() => {
+    if (!isClient || !win) {
+      return {
+        width: 0,
+        height: 0,
+        isMobile: false,
+        isTablet: false,
+        isDesktop: true,
+        orientation: 'unknown' as const
+      };
+    }
+
+    const width = win.innerWidth || screen?.width || 0;
+    const height = win.innerHeight || screen?.height || 0;
+
+    return {
+      width,
+      height,
+      isMobile: width < 768,
+      isTablet: width >= 768 && width < 1024,
+      isDesktop: width >= 1024,
+      orientation: width > height ? 'landscape' : 'portrait'
+    };
+  }, [isClient, screen, win]);
+
   const [screenInfo, setScreenInfo] = useState<{
     width: number;
     height: number;
@@ -173,33 +187,15 @@ export function SafeScreenInfo({ children, fallback }: SafeScreenInfoProps) {
     isTablet: boolean;
     isDesktop: boolean;
     orientation: 'unknown' | 'portrait' | 'landscape';
-  }>({
-    width: 0,
-    height: 0,
-    isMobile: false,
-    isTablet: false,
-    isDesktop: true,
-    orientation: 'unknown'
-  });
+  }>(() => getScreenInfo());
 
   useEffect(() => {
     if (!isClient || !win) return;
 
     const updateScreenInfo = () => {
-      const width = win.innerWidth || screen?.width || 0;
-      const height = win.innerHeight || screen?.height || 0;
-      
-      setScreenInfo({
-        width,
-        height,
-        isMobile: width < 768,
-        isTablet: width >= 768 && width < 1024,
-        isDesktop: width >= 1024,
-        orientation: width > height ? 'landscape' : 'portrait'
-      });
+      setScreenInfo(getScreenInfo());
     };
 
-    updateScreenInfo();
     win.addEventListener('resize', updateScreenInfo);
     win.addEventListener('orientationchange', updateScreenInfo);
 
@@ -207,7 +203,7 @@ export function SafeScreenInfo({ children, fallback }: SafeScreenInfoProps) {
       win.removeEventListener('resize', updateScreenInfo);
       win.removeEventListener('orientationchange', updateScreenInfo);
     };
-  }, [isClient, win, screen]);
+  }, [getScreenInfo, isClient, win, screen]);
 
   if (!isClient && fallback) {
     return <>{fallback}</>;

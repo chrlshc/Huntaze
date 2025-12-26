@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { threeJsMonitor } from '../../lib/monitoring/threeJsMonitor';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -33,7 +33,7 @@ export default function ThreeJsHealthDashboard({
   /**
    * Fetch health statistics
    */
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       // Get local stats from monitor
       const healthStatus = threeJsMonitor.getHealthStatus();
@@ -55,17 +55,24 @@ export default function ThreeJsHealthDashboard({
       console.error('Failed to fetch Three.js health stats:', error);
       setIsLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Setup auto-refresh
    */
   useEffect(() => {
-    fetchStats();
-    
-    const interval = setInterval(fetchStats, refreshInterval);
-    return () => clearInterval(interval);
-  }, [refreshInterval]);
+    const timeoutId = window.setTimeout(() => {
+      void fetchStats();
+    }, 0);
+
+    const interval = window.setInterval(() => {
+      void fetchStats();
+    }, refreshInterval);
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(interval);
+    };
+  }, [fetchStats, refreshInterval]);
 
   /**
    * Get status color

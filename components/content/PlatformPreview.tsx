@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { platformOptimizerService } from '@/lib/services/platformOptimizerService';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -19,19 +20,16 @@ interface PlatformPreviewProps {
 }
 
 export default function PlatformPreview({ platforms, content, userName = 'User', userAvatar }: PlatformPreviewProps) {
-  const [validationResults, setValidationResults] = useState<Record<string, any>>({});
-  const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>('mobile');
-  const [selectedPlatform, setSelectedPlatform] = useState<string>(platforms[0] || '');
-
-  useEffect(() => {
+  const validationResults = useMemo(() => {
     const hashtagCount = (content.text?.match(/#\w+/g) || []).length;
-    const results = platformOptimizerService.validateMultiplePlatforms(platforms, {
+    return platformOptimizerService.validateMultiplePlatforms(platforms, {
       text: content.text,
       hashtagCount,
       imageSize: content.imageWidth && content.imageHeight ? (content.imageWidth * content.imageHeight * 3) : undefined
     });
-    setValidationResults(results);
   }, [platforms, content]);
+  const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>('mobile');
+  const [selectedPlatform, setSelectedPlatform] = useState<string>(platforms[0] || '');
 
   const renderPlatformSpecificPreview = (platform: string, result: any) => {
     const displayText = result.optimizedText || content.text || '';
@@ -44,13 +42,25 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
             <div className="flex items-center gap-3 p-3 border-b">
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-0.5">
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-                  {userAvatar ? <img src={userAvatar} alt={userName} className="w-full h-full rounded-full" /> : <span className="text-xs">👤</span>}
+                  {userAvatar ? (
+                    <Image src={userAvatar} alt={userName} width={32} height={32} className="w-full h-full rounded-full" />
+                  ) : (
+                    <span className="text-xs">👤</span>
+                  )}
                 </div>
               </div>
               <span className="font-semibold text-sm">{userName}</span>
             </div>
             {/* Instagram Image/Video */}
-            {content.imageUrl && <img src={content.imageUrl} alt="Post" className="w-full aspect-square object-cover" />}
+            {content.imageUrl && (
+              <Image
+                src={content.imageUrl}
+                alt="Post"
+                width={1080}
+                height={1080}
+                className="w-full aspect-square object-cover"
+              />
+            )}
             {content.videoUrl && <video src={content.videoUrl} className="w-full aspect-square object-cover" controls />}
             {/* Instagram Actions */}
             <div className="p-3">
@@ -70,7 +80,11 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
             <div className="p-4">
               <div className="flex gap-3">
                 <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                  {userAvatar ? <img src={userAvatar} alt={userName} className="w-full h-full rounded-full" /> : <span>👤</span>}
+                  {userAvatar ? (
+                    <Image src={userAvatar} alt={userName} width={48} height={48} className="w-full h-full rounded-full" />
+                  ) : (
+                    <span>👤</span>
+                  )}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -79,7 +93,15 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
                     <span className="text-gray-500 text-sm">· now</span>
                   </div>
                   <p className="text-sm mb-3 whitespace-pre-wrap">{displayText}</p>
-                  {content.imageUrl && <img src={content.imageUrl} alt="Tweet" className="w-full rounded-2xl border" />}
+                  {content.imageUrl && (
+                    <Image
+                      src={content.imageUrl}
+                      alt="Tweet"
+                      width={content.imageWidth || 1200}
+                      height={content.imageHeight || 675}
+                      className="w-full rounded-2xl border"
+                    />
+                  )}
                   {content.videoUrl && <video src={content.videoUrl} className="w-full rounded-2xl border" controls />}
                   <div className="flex justify-between mt-3 text-gray-500 text-sm">
                     <span>💬</span>
@@ -108,7 +130,11 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
               <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                    {userAvatar ? <img src={userAvatar} alt={userName} className="w-full h-full rounded-full" /> : <span>👤</span>}
+                    {userAvatar ? (
+                      <Image src={userAvatar} alt={userName} width={40} height={40} className="w-full h-full rounded-full" />
+                    ) : (
+                      <span>👤</span>
+                    )}
                   </div>
                   <span className="text-white font-semibold">@{userName.toLowerCase().replace(/\s/g, '')}</span>
                 </div>
@@ -124,7 +150,11 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
             <div className="p-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                  {userAvatar ? <img src={userAvatar} alt={userName} className="w-full h-full rounded-full" /> : <span>👤</span>}
+                  {userAvatar ? (
+                    <Image src={userAvatar} alt={userName} width={40} height={40} className="w-full h-full rounded-full" />
+                  ) : (
+                    <span>👤</span>
+                  )}
                 </div>
                 <div>
                   <div className="font-semibold text-sm">{userName}</div>
@@ -133,7 +163,15 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
               </div>
               <p className="text-sm mb-3 whitespace-pre-wrap">{displayText}</p>
             </div>
-            {content.imageUrl && <img src={content.imageUrl} alt="Post" className="w-full" />}
+            {content.imageUrl && (
+              <Image
+                src={content.imageUrl}
+                alt="Post"
+                width={content.imageWidth || 1200}
+                height={content.imageHeight || 675}
+                className="w-full"
+              />
+            )}
             {content.videoUrl && <video src={content.videoUrl} className="w-full" controls />}
             <div className="p-2 border-t flex justify-around text-gray-600 text-sm">
               <button className="px-3 py-1 hover:bg-gray-100 rounded">👍 Like</button>
@@ -149,7 +187,11 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
             <div className="p-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
-                  {userAvatar ? <img src={userAvatar} alt={userName} className="w-full h-full rounded-full" /> : userName.charAt(0)}
+                  {userAvatar ? (
+                    <Image src={userAvatar} alt={userName} width={48} height={48} className="w-full h-full rounded-full" />
+                  ) : (
+                    userName.charAt(0)
+                  )}
                 </div>
                 <div>
                   <div className="font-semibold text-sm">{userName}</div>
@@ -159,7 +201,15 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
               </div>
               <p className="text-sm mb-3 whitespace-pre-wrap">{displayText}</p>
             </div>
-            {content.imageUrl && <img src={content.imageUrl} alt="Post" className="w-full" />}
+            {content.imageUrl && (
+              <Image
+                src={content.imageUrl}
+                alt="Post"
+                width={content.imageWidth || 1200}
+                height={content.imageHeight || 675}
+                className="w-full"
+              />
+            )}
             {content.videoUrl && <video src={content.videoUrl} className="w-full" controls />}
             <div className="p-2 border-t flex justify-around text-gray-600 text-sm">
               <button className="px-3 py-1 hover:bg-gray-100 rounded">👍 Like</button>
@@ -174,7 +224,15 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
         return (
           <Card className="bg-white rounded-lg border p-4">
             <p className="text-sm whitespace-pre-wrap">{displayText}</p>
-            {content.imageUrl && <img src={content.imageUrl} alt="Preview" className="w-full rounded mt-3" />}
+            {content.imageUrl && (
+              <Image
+                src={content.imageUrl}
+                alt="Preview"
+                width={content.imageWidth || 1200}
+                height={content.imageHeight || 675}
+                className="w-full rounded mt-3"
+              />
+            )}
             {content.videoUrl && <video src={content.videoUrl} className="w-full rounded mt-3" controls />}
           </Card>
         );

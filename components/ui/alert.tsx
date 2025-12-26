@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 
 export interface AlertProps {
@@ -88,6 +88,14 @@ export function Alert({
   const [isVisible, setIsVisible] = useState(true);
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
 
+  const handleDismiss = useCallback(() => {
+    setIsAnimatingOut(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      onDismiss?.();
+    }, 200); // Match --transition-base
+  }, [onDismiss]);
+
   useEffect(() => {
     if (autoDismiss > 0) {
       const timer = setTimeout(() => {
@@ -96,15 +104,7 @@ export function Alert({
       
       return () => clearTimeout(timer);
     }
-  }, [autoDismiss]);
-
-  const handleDismiss = () => {
-    setIsAnimatingOut(true);
-    setTimeout(() => {
-      setIsVisible(false);
-      onDismiss?.();
-    }, 200); // Match --transition-base
-  };
+  }, [autoDismiss, handleDismiss]);
 
   if (!isVisible) {
     return null;

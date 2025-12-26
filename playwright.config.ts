@@ -1,6 +1,19 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.PW_BASE_URL || process.env.BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const e2eDatabaseUrl = process.env.E2E_DATABASE_URL
+  ?? process.env.STAGING_DATABASE_URL
+  ?? process.env.DATABASE_URL;
+const webServerEnv = {
+  ...process.env,
+  DATABASE_URL: e2eDatabaseUrl ?? '',
+  API_MODE: process.env.API_MODE ?? 'real',
+  NEXT_PUBLIC_API_MODE: process.env.NEXT_PUBLIC_API_MODE ?? process.env.API_MODE ?? 'real',
+  E2E_TESTING: process.env.E2E_TESTING ?? '1',
+  E2E_TEST_USER_ID: process.env.E2E_TEST_USER_ID ?? '1',
+  E2E_TEST_EMAIL: process.env.E2E_TEST_EMAIL ?? 'e2e@huntaze.test',
+  E2E_TEST_PASSWORD: process.env.E2E_TEST_PASSWORD ?? 'password123',
+} as Record<string, string>;
 
 export default defineConfig({
   testDir: './tests',
@@ -48,9 +61,9 @@ export default defineConfig({
   // Web server configuration for local testing
   webServer: process.env.CI ? undefined : {
     command: 'npm run dev',
+    env: webServerEnv,
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
 });
-

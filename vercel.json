@@ -12,6 +12,10 @@
     {
       "path": "/api/cron/monthly-billing",
       "schedule": "0 0 1 * *"
+    },
+    {
+      "path": "/api/cron/of-messages-sync",
+      "schedule": "*/5 * * * *"
     }
   ]
 }

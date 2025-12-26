@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { 
@@ -37,13 +37,7 @@ export const RealTimeMetrics: React.FC<RealTimeMetricsProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  useEffect(() => {
-    fetchMetrics();
-    const interval = setInterval(fetchMetrics, refreshInterval);
-    return () => clearInterval(interval);
-  }, [refreshInterval]);
-
-  const fetchMetrics = async () => {
+  const fetchMetrics = useCallback(async () => {
     try {
       const response = await fetch('/api/smart-onboarding/analytics/real-time-metrics');
       if (response.ok) {
@@ -65,7 +59,13 @@ export const RealTimeMetrics: React.FC<RealTimeMetricsProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [onMetricAlert]);
+
+  useEffect(() => {
+    fetchMetrics();
+    const interval = setInterval(fetchMetrics, refreshInterval);
+    return () => clearInterval(interval);
+  }, [fetchMetrics, refreshInterval]);
 
   const getMetricStatus = (metric: MetricData) => {
     if (metric.value >= metric.threshold.good) return 'good';

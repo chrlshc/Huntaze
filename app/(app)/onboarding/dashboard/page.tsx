@@ -20,13 +20,18 @@ import {
 } from 'lucide-react';
 import FeatureCard from '@/components/onboarding/FeatureCard';
 import { Button } from "@/components/ui/button";
+import {
+  fetchLockedFeatures,
+  fetchOnboardingStatus,
+  fetchUnlockedFeatures,
+} from '@/lib/services/onboarding';
 
 interface OnboardingStatus {
   progressPercentage: number;
   completedSteps: string[];
   currentStep: string;
   estimatedTimeRemaining: number;
-  nextRecommendedStep: {
+  nextRecommendedStep?: {
     id: string;
     title: string;
     description: string;
@@ -57,11 +62,19 @@ export default function OnboardingDashboard() {
 
   const loadOnboardingStatus = async () => {
     try {
-      const response = await fetch('/api/onboarding/status');
-      const result = await response.json();
+      const result = await fetchOnboardingStatus();
       
-      if (result.success) {
-        setStatus(result.data);
+      if (result.success && result.data) {
+        const progressPercentage =
+          result.data.progressPercentage ?? result.data.progress ?? 0;
+
+        setStatus({
+          progressPercentage,
+          completedSteps: result.data.completedSteps ?? [],
+          currentStep: result.data.currentStep ?? 'welcome',
+          estimatedTimeRemaining: result.data.estimatedTimeRemaining ?? 0,
+          nextRecommendedStep: result.data.nextRecommendedStep,
+        });
       }
     } catch (error) {
       console.error('Failed to load onboarding status:', error);
@@ -73,16 +86,17 @@ export default function OnboardingDashboard() {
   const loadFeatures = async () => {
     try {
       const [unlockedRes, lockedRes] = await Promise.all([
-        fetch('/api/features/unlocked'),
-        fetch('/api/features/locked')
+        fetchUnlockedFeatures<Feature>(),
+        fetchLockedFeatures<Feature>()
       ]);
 
-      const unlocked = await unlockedRes.json();
-      const locked = await lockedRes.json();
-
       const allFeatures = [
-        ...(unlocked.success ? unlocked.data.map((f: any) => ({ ...f, isUnlocked: true })) : []),
-        ...(locked.success ? locked.data.map((f: any) => ({ ...f, isUnlocked: false })) : [])
+        ...(unlockedRes.success
+          ? unlockedRes.data?.map((f: Feature) => ({ ...f, isUnlocked: true })) ?? []
+          : []),
+        ...(lockedRes.success
+          ? lockedRes.data?.map((f: Feature) => ({ ...f, isUnlocked: false })) ?? []
+          : []),
       ];
 
       setFeatures(allFeatures);

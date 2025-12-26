@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -55,20 +55,7 @@ export const SystemAlerts: React.FC<SystemAlertsProps> = ({
   const [filter, setFilter] = useState<'all' | 'unacknowledged' | 'critical'>('unacknowledged');
   const [sortBy, setSortBy] = useState<'timestamp' | 'severity'>('timestamp');
 
-  useEffect(() => {
-    fetchAlerts();
-    
-    if (autoRefresh) {
-      const interval = setInterval(fetchAlerts, refreshInterval);
-      return () => clearInterval(interval);
-    }
-  }, [autoRefresh, refreshInterval]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [alerts, filter, sortBy]);
-
-  const fetchAlerts = async () => {
+  const fetchAlerts = useCallback(async () => {
     try {
       const response = await fetch(`/api/smart-onboarding/analytics/alerts?limit=${maxAlerts}`);
       if (response.ok) {
@@ -80,9 +67,9 @@ export const SystemAlerts: React.FC<SystemAlertsProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [maxAlerts]);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...alerts];
 
     // Apply filter
@@ -107,7 +94,20 @@ export const SystemAlerts: React.FC<SystemAlertsProps> = ({
     });
 
     setFilteredAlerts(filtered);
-  };
+  }, [alerts, filter, sortBy]);
+
+  useEffect(() => {
+    fetchAlerts();
+
+    if (autoRefresh) {
+      const interval = setInterval(fetchAlerts, refreshInterval);
+      return () => clearInterval(interval);
+    }
+  }, [autoRefresh, fetchAlerts, refreshInterval]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   const handleAcknowledge = async (alertId: string) => {
     try {

@@ -16,24 +16,22 @@ export async function GET(request: NextRequest) {
   
   const tokenUrl = 'https://open-api.tiktok.com/v2/oauth/token/';
   
-  const params = new URLSearchParams({
-    client_key: clientKey!,
-    client_secret: clientSecret!,
-    code: testCode,
-    grant_type: 'authorization_code',
-    redirect_uri: redirectUri!,
-  });
-
   return NextResponse.json({
     config: {
-      clientKey,
+      clientKeyPresent: !!clientKey,
+      clientSecretPresent: !!clientSecret,
       clientSecretLength: clientSecret?.length || 0,
       redirectUri,
       isSandbox,
       scopes,
-      tokenUrl
+      tokenUrl,
     },
-    testParams: Object.fromEntries(params),
-    authUrl: `https://www.tiktok.com/v2/auth/authorize?client_key=${clientKey}&response_type=code&scope=${scopes}&redirect_uri=${encodeURIComponent(redirectUri!)}&state=test123`
+    testParams: {
+      client_key: clientKey,
+      code: testCode,
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri,
+    },
+    authUrl: `https://www.tiktok.com/v2/auth/authorize?client_key=${clientKey}&response_type=code&scope=${scopes}&redirect_uri=${encodeURIComponent(redirectUri!)}&state=test123`,
   });
 }

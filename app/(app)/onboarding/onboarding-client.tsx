@@ -1,15 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ShopifyBackdrop } from '@/components/onboarding/huntaze-onboarding/ShopifyBackdrop';
 import SimpleOnboarding from '@/components/onboarding/huntaze-onboarding/SimpleOnboarding';
+import { completeOnboarding } from '@/lib/services/onboarding';
 
 function OnboardingContent() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [isReady, setIsReady] = useState(false);
+  const isReady = status === 'authenticated' && session?.user?.onboardingCompleted !== true;
 
   useEffect(() => {
     // Redirect to auth if not authenticated (Requirement 3.3)
@@ -24,24 +25,12 @@ function OnboardingContent() {
       return;
     }
 
-    // Ready to show onboarding (Requirement 3.1)
-    if (status === 'authenticated') {
-      setIsReady(true);
-    }
   }, [status, session, router]);
 
   const handleComplete = async (answers: Record<string, string[]>) => {
     try {
       // Call API to mark onboarding as complete and save answers (Requirements 4.1, 4.2)
-      const response = await fetch('/api/onboarding/complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to complete onboarding');
-      }
+      await completeOnboarding({ answers });
 
       // Redirect to dashboard after successful completion (Requirements 4.3, 4.4)
       router.push('/dashboard');
@@ -54,15 +43,7 @@ function OnboardingContent() {
   const handleSkip = async () => {
     try {
       // Call API to mark onboarding as complete with skipped flag (Requirements 4.1, 4.3)
-      const response = await fetch('/api/onboarding/complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ skipped: true }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to skip onboarding');
-      }
+      await completeOnboarding({ skipped: true });
 
       // Redirect to dashboard after successful completion (Requirements 4.3, 4.4)
       router.push('/dashboard');

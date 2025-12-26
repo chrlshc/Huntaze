@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useInView } from 'react-intersection-observer';
 import { motion, LazyMotion, domAnimation, m } from "framer-motion";
 
@@ -21,18 +20,11 @@ export function LazyLoadAnimation({
   duration = 0.5,
   once = true,
 }: LazyLoadAnimationProps) {
-  const [hasAnimated, setHasAnimated] = useState(false);
   const { ref, inView } = useInView({
     threshold: 0.1,
     rootMargin: "50px",
     triggerOnce: once,
   });
-
-  useEffect(() => {
-    if (inView && !hasAnimated) {
-      setHasAnimated(true);
-    }
-  }, [inView, hasAnimated]);
 
   const variants = {
     fade: {

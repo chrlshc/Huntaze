@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ComponentType, lazy, Suspense, useState, useEffect } from 'react';
+import React, { ComponentType, lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 
 /**
@@ -94,9 +94,9 @@ function createLazyComponentWithRetry(
 
   const loadWithRetry = async (): Promise<{ default: ComponentType<any> }> => {
     try {
-      const module = await loader();
+      const loadedModule = await loader();
       retryCount = 0; // Reset on success
-      return module;
+      return loadedModule;
     } catch (error) {
       if (retryCount < maxRetries) {
         retryCount++;
@@ -149,16 +149,17 @@ export const LazyComponent: React.FC<LazyComponentProps> = ({
   const [retryCount, setRetryCount] = useState(0);
   const [key, setKey] = useState(0);
 
-  const handleError = (err: Error) => {
+  const handleError = useCallback((err: Error) => {
     setError(err);
     onError?.(err);
-  };
+  }, [onError]);
 
   // Create lazy component once with retry logic
-  const LazyLoadedComponent = React.useMemo(
-    () => createLazyComponentWithRetry(loader, maxRetries, retryDelay, handleError),
-    [loader, maxRetries, retryDelay, key]
-  );
+  const LazyLoadedComponent = React.useMemo(() => {
+    const component = createLazyComponentWithRetry(loader, maxRetries, retryDelay, handleError);
+    component.displayName = `LazyLoadedComponent(${key})`;
+    return component;
+  }, [loader, maxRetries, retryDelay, handleError, key]);
 
   const handleRetry = () => {
     setError(null);
@@ -257,13 +258,16 @@ export function withLazyLoading<P extends object>(
   loader: () => Promise<{ default: ComponentType<P> }>,
   config: Omit<LazyComponentConfig, 'loader'> = {}
 ): React.FC<P> {
-  return (props: P) => (
+  const WrappedComponent = (props: P) => (
     <LazyComponent
       loader={loader}
       componentProps={props}
       {...config}
     />
   );
+
+  WrappedComponent.displayName = `withLazyLoading(${loader.name || 'Component'})`;
+  return WrappedComponent;
 }
 
 export default LazyComponent;

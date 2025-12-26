@@ -1,5 +1,6 @@
-import { NextRequest } from 'next/server';
-import { auth } from '@/lib/auth/config';;
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth/config';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 import type { AutomationSettings } from '@/lib/services/revenue/types';
 
 /**
@@ -12,14 +13,14 @@ export async function GET(request: NextRequest) {
     const session = await auth();
     
     if (!session?.user?.id) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const creatorId = searchParams.get('creatorId');
 
     if (!creatorId) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'creatorId is required' },
         { status: 400 }
       );
@@ -27,13 +28,17 @@ export async function GET(request: NextRequest) {
 
     // Verify creator owns this data
     if (session.user.id !== creatorId) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Upsell automation settings are not available in real mode yet' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
     }
 
     console.log('[API] Get automation settings:', { creatorId });
-
-    // TODO: Replace with actual backend service call
-    // const settings = await backendUpsellService.getAutomationSettings(creatorId);
 
     const settings: AutomationSettings = {
       enabled: false,
@@ -43,10 +48,10 @@ export async function GET(request: NextRequest) {
       customRules: [],
     };
 
-    return Response.json(settings);
+    return NextResponse.json(settings);
   } catch (error) {
     console.error('[API] Get automation settings error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
@@ -63,7 +68,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     
     if (!session?.user?.id) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -71,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     // Validation
     if (!creatorId) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'creatorId is required' },
         { status: 400 }
       );
@@ -79,7 +84,14 @@ export async function POST(request: NextRequest) {
 
     // Verify creator owns this data
     if (session.user.id !== creatorId) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!ENABLE_MOCK_DATA) {
+      return NextResponse.json(
+        { error: { code: 'NOT_IMPLEMENTED', message: 'Upsell automation updates are not available in real mode yet' } },
+        { status: 501, headers: { 'Cache-Control': 'no-store' } }
+      );
     }
 
     console.log('[API] Update automation settings:', {
@@ -89,13 +101,10 @@ export async function POST(request: NextRequest) {
       maxDailyUpsells,
     });
 
-    // TODO: Replace with actual backend service call
-    // await backendUpsellService.updateAutomationSettings(creatorId, { enabled, autoSendThreshold, maxDailyUpsells, excludedFans, customRules });
-
-    return Response.json({ success: true });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[API] Update automation settings error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );

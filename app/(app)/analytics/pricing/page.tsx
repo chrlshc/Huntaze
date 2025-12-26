@@ -33,31 +33,33 @@ export default function PricingAnalyticsPage() {
   const pricingKey = user?.id ? `/api/revenue/pricing?creatorId=${encodeURIComponent(user.id)}` : null;
   const { data, error, isLoading, mutate } = useSWR<PricingRecommendation>(
     pricingKey,
-    (url) => internalApiFetch<PricingRecommendation>(url),
+    (url: string) => internalApiFetch<PricingRecommendation>(url),
   );
 
-  const pricingTiers = useMemo(() => {
-    if (!data) return [];
-    const subscribers = data.metadata?.dataPoints ?? 0;
-    const currentRevenue = data.subscription.current * subscribers;
-    const recommendedRevenue = data.subscription.recommended * subscribers;
+  const subscription = data?.subscription;
+  const subscribers = data?.metadata?.dataPoints ?? 0;
+
+  const pricingTiers = (() => {
+    if (!subscription) return [];
+    const currentRevenue = subscription.current * subscribers;
+    const recommendedRevenue = subscription.recommended * subscribers;
     return [
       {
         name: 'Current',
-        price: data.subscription.current,
+        price: subscription.current,
         subscribers,
         revenue: currentRevenue,
         trend: 0,
       },
       {
         name: 'Recommended',
-        price: data.subscription.recommended,
+        price: subscription.recommended,
         subscribers,
         revenue: recommendedRevenue,
-        trend: data.subscription.revenueImpact,
+        trend: subscription.revenueImpact,
       },
     ].filter((tier) => tier.price > 0);
-  }, [data]);
+  })();
 
   const ppvPricing = useMemo(() => {
     if (!data?.ppv?.length) return [];

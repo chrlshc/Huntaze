@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import useSWR from 'swr';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -13,25 +14,63 @@ import {
   BarChart3,
   Target
 } from 'lucide-react';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 import type { PricingSuggestion, SalesData } from '@/lib/offers/types';
 
 interface AIPricingOptimizerProps {
   onApply: (suggestion: PricingSuggestion) => void;
 }
 
-// Mock sales data
-const mockSalesData: SalesData[] = [
-  { contentId: 'c1', price: 25, salesCount: 150, revenue: 3750, period: 'last_30_days' },
-  { contentId: 'c2', price: 15, salesCount: 280, revenue: 4200, period: 'last_30_days' },
-  { contentId: 'c3', price: 50, salesCount: 45, revenue: 2250, period: 'last_30_days' },
-  { contentId: 'c4', price: 35, salesCount: 90, revenue: 3150, period: 'last_30_days' },
-];
+type ContentApiResponse = {
+  data?: {
+    items?: Array<{
+      id: string;
+      title: string;
+      type: string;
+      metadata?: Record<string, unknown>;
+    }>;
+  };
+};
 
 export function AIPricingOptimizer({ onApply }: AIPricingOptimizerProps) {
   const [selectedContent, setSelectedContent] = useState<string[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [suggestions, setSuggestions] = useState<PricingSuggestion[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const { data: contentData, error: contentError, isLoading: contentLoading } = useSWR<ContentApiResponse>(
+    '/api/content?limit=50&offset=0',
+    (url) => internalApiFetch<ContentApiResponse>(url)
+  );
+
+  const salesData = useMemo<SalesData[]>(() => {
+    const items = contentData?.data?.items ?? [];
+    return items.map((item) => {
+      const metadata = item.metadata ?? {};
+      const priceCents =
+        typeof metadata.priceCents === 'number' && Number.isFinite(metadata.priceCents)
+          ? metadata.priceCents
+          : 0;
+      const price =
+        typeof metadata.price === 'number' && Number.isFinite(metadata.price)
+          ? metadata.price
+          : priceCents > 0
+            ? priceCents / 100
+            : 0;
+      const salesCount =
+        typeof metadata.salesCount === 'number' && Number.isFinite(metadata.salesCount)
+          ? metadata.salesCount
+          : 0;
+
+      return {
+        contentId: item.id,
+        price,
+        salesCount,
+        revenue: price * salesCount,
+        period: 'last_30_days',
+      };
+    });
+  }, [contentData]);
 
   const handleAnalyze = async () => {
     if (selectedContent.length === 0) {
@@ -43,48 +82,32 @@ export function AIPricingOptimizer({ onApply }: AIPricingOptimizerProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/ai/offers/pricing', {
+      const selectedItems = salesData.filter((s) => selectedContent.includes(s.contentId));
+      const primary = selectedItems[0];
+
+      if (!primary) {
+        setError('Selected content is not available');
+        return;
+      }
+
+      const data = await internalApiFetch<{
+        suggestions?: PricingSuggestion[];
+      }>('/api/ai/offers/pricing', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          salesData: mockSalesData.filter(s => selectedContent.includes(s.contentId)),
-          targetMargin: 0.3,
-        }),
+        body: {
+          contentId: primary.contentId,
+          currentPrice: primary.price || undefined,
+          historicalSales: selectedItems,
+        },
       });
 
-      if (!response.ok) throw new Error('Failed to get pricing suggestions');
-
-      const data = await response.json();
-      setSuggestions(data.suggestions || [
-        {
-          recommendedPrice: 22,
-          expectedImpact: '+15% sales volume, +8% revenue',
-          confidence: 0.85,
-          reasoning: 'Based on price elasticity analysis, a slight reduction would increase conversion rates significantly.',
-        },
-        {
-          recommendedPrice: 28,
-          expectedImpact: '+5% revenue, stable volume',
-          confidence: 0.72,
-          reasoning: 'Premium positioning with value-add messaging could support higher pricing.',
-        },
-      ]);
+      setSuggestions(Array.isArray(data?.suggestions) ? data.suggestions : []);
+      if (!data?.suggestions?.length) {
+        setError('No pricing suggestions returned');
+      }
     } catch (err) {
-      // Use mock data on error for demo
-      setSuggestions([
-        {
-          recommendedPrice: 22,
-          expectedImpact: '+15% sales volume, +8% revenue',
-          confidence: 0.85,
-          reasoning: 'Based on price elasticity analysis, a slight reduction would increase conversion rates significantly.',
-        },
-        {
-          recommendedPrice: 28,
-          expectedImpact: '+5% revenue, stable volume',
-          confidence: 0.72,
-          reasoning: 'Premium positioning with value-add messaging could support higher pricing.',
-        },
-      ]);
+      setSuggestions([]);
+      setError(err instanceof Error ? err.message : 'Failed to get pricing suggestions');
     } finally {
       setIsAnalyzing(false);
     }
@@ -130,7 +153,16 @@ export function AIPricingOptimizer({ onApply }: AIPricingOptimizerProps) {
         </h3>
         
         <div className="space-y-3">
-          {mockSalesData.map((item) => (
+          {contentLoading && (
+            <div className="text-sm text-muted-foreground">Loading content...</div>
+          )}
+          {!contentLoading && contentError && (
+            <div className="text-sm text-red-500">Failed to load content</div>
+          )}
+          {!contentLoading && !contentError && salesData.length === 0 && (
+            <div className="text-sm text-muted-foreground">No content available yet.</div>
+          )}
+          {salesData.map((item) => (
             <div
               key={item.contentId}
               onClick={() => toggleContent(item.contentId)}
@@ -176,7 +208,7 @@ export function AIPricingOptimizer({ onApply }: AIPricingOptimizerProps) {
 
         <Button 
           onClick={handleAnalyze} 
-          disabled={isAnalyzing}
+          disabled={isAnalyzing || contentLoading || salesData.length === 0}
           className="w-full mt-4"
         >
           {isAnalyzing ? (

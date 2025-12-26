@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic';
  * Requirements: 1.3, 1.4, 6.2, 6.3, 12.1
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
 import { 
@@ -24,12 +24,14 @@ import {
   CompletionNudge, 
   GuardRailModal 
 } from '@/components/onboarding/huntaze-onboarding';
-import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { useAuthSession } from '@/hooks/useAuthSession';
 
 export default function ShopifyStyleOnboardingPage() {
+  const { user, isAuthenticated, isLoading: sessionLoading } = useAuthSession();
   const [showGuardRail, setShowGuardRail] = useState(false);
-  const [guardRailData, setGuardRailData] = useState({
+  const [guardRailData] = useState({
     missingStep: 'payments',
     message: 'You must configure payments before publishing your store.',
     action: {
@@ -38,19 +40,18 @@ export default function ShopifyStyleOnboardingPage() {
     },
   });
 
-  // Mock user data - replace with real auth
-  const mockUser = {
-    id: 'demo-user-123',
-    role: 'owner' as const,
-    market: 'FR',
-  };
-
-  // Mock onboarding state - this would come from API
-  const [mockProgress, setMockProgress] = useState(35);
-  const [mockRemainingSteps, setMockRemainingSteps] = useState(4);
+  const [progress, setProgress] = useState(0);
+  const [remainingSteps, setRemainingSteps] = useState(0);
   const [snoozeCount, setSnoozeCount] = useState(0);
 
-  if (!ENABLE_MOCK_DATA) {
+  const userRole = useMemo(() => {
+    const role = (user as any)?.role;
+    if (role === 'admin') return 'admin' as const;
+    if (role === 'staff') return 'staff' as const;
+    return 'owner' as const;
+  }, [user]);
+
+  if (sessionLoading) {
     return (
       <div className="min-h-screen bg-background-primary">
         <div className="border-b border-border-default bg-surface-raised">
@@ -64,9 +65,31 @@ export default function ShopifyStyleOnboardingPage() {
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           <EmptyState
             variant="no-data"
-            title="Onboarding demo is disabled"
-            description="This demo screen is not available in production."
-            action={{ label: 'Go to onboarding', onClick: () => (window.location.href = '/onboarding') }}
+            title="Loading onboarding"
+            description="Fetching your setup progress."
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || !user?.id) {
+    return (
+      <div className="min-h-screen bg-background-primary">
+        <div className="border-b border-border-default bg-surface-raised">
+          <div className="container mx-auto px-4 py-4">
+            <h1 className="text-2xl font-bold text-content-primary">Huntaze Setup</h1>
+            <p className="text-sm text-content-secondary mt-1">
+              Flexible setup guide to get started quickly
+            </p>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          <EmptyState
+            variant="no-data"
+            title="Sign in to continue"
+            description="You need to be authenticated to access your onboarding."
+            action={{ label: 'Go to login', onClick: () => (window.location.href = '/auth/login') }}
           />
         </div>
       </div>
@@ -74,10 +97,23 @@ export default function ShopifyStyleOnboardingPage() {
   }
 
   const handleSnooze = async (days: number) => {
-    console.log(`[Demo] Snoozing for ${days} days`);
-    setSnoozeCount(prev => prev + 1);
-    // In production, this would call the API
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      const data = await internalApiFetch<{ snoozeCount?: number }>(
+        '/api/onboarding/snooze',
+        {
+          method: 'POST',
+          body: { days },
+        },
+      );
+      if (typeof data?.snoozeCount === 'number') {
+        setSnoozeCount(data.snoozeCount);
+      } else {
+        setSnoozeCount(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error('[Onboarding] Snooze failed:', error);
+      alert('Unable to snooze right now. Please try again.');
+    }
   };
 
   const handleDismiss = () => {
@@ -117,8 +153,8 @@ export default function ShopifyStyleOnboardingPage() {
         {/* Completion Nudge */}
         <div className="mb-6">
           <CompletionNudge
-            remainingSteps={mockRemainingSteps}
-            progress={mockProgress}
+            remainingSteps={remainingSteps}
+            progress={progress}
             onSnooze={handleSnooze}
             onDismiss={handleDismiss}
             snoozeCount={snoozeCount}
@@ -130,11 +166,14 @@ export default function ShopifyStyleOnboardingPage() {
           {/* Main Content - Setup Guide */}
           <div className="lg:col-span-2">
             <SetupGuideContainer
-              userId={mockUser.id}
-              userRole={mockUser.role}
-              market={mockUser.market}
+              userId={user.id}
+              userRole={userRole}
               onLearnMore={handleLearnMore}
               onError={handleError}
+              onStateChange={({ steps, progress }) => {
+                setProgress(progress);
+                setRemainingSteps(steps.filter((step) => step.status === 'todo').length);
+              }}
             />
           </div>
 
@@ -148,11 +187,11 @@ export default function ShopifyStyleOnboardingPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-content-secondary">Progress:</span>
-                  <span className="font-medium text-content-primary">{mockProgress}%</span>
+                  <span className="font-medium text-content-primary">{progress}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-content-secondary">Steps remaining:</span>
-                  <span className="font-medium text-content-primary">{mockRemainingSteps}</span>
+                  <span className="font-medium text-content-primary">{remainingSteps}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-content-secondary">Snoozes used:</span>
@@ -160,11 +199,11 @@ export default function ShopifyStyleOnboardingPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-content-secondary">Role:</span>
-                  <span className="font-medium text-content-primary capitalize">{mockUser.role}</span>
+                  <span className="font-medium text-content-primary capitalize">{userRole}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-content-secondary">Market:</span>
-                  <span className="font-medium text-content-primary">{mockUser.market}</span>
+                  <span className="font-medium text-content-primary">—</span>
                 </div>
               </div>
             </Card>

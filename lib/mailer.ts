@@ -21,7 +21,7 @@ export async function sendMail(opts: MailOptions): Promise<{ ok: true } | { ok: 
   try {
     if (hasSmtp) {
       // Lazy-load nodemailer to avoid hard dependency if not used
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+       
       const nodemailer = require('nodemailer');
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,

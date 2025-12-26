@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 
 interface EditableFieldProps {
@@ -14,10 +14,6 @@ interface EditableFieldProps {
 export default function EditableField({ label, value, onSave, placeholder, multiline = false }: EditableFieldProps) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
-
-  useEffect(() => {
-    if (!editing) setDraft(value);
-  }, [value, editing]);
 
   const handleSave = () => {
     const next = (draft ?? '').trim();
@@ -69,4 +65,3 @@ export default function EditableField({ label, value, onSave, placeholder, multi
     </div>
   );
 }
-

@@ -1,410 +1,300 @@
-# 🚀 Scripts de Déploiement Azure Workers
+# 🔧 Scripts de Déploiement
 
-Ce dossier contient les scripts pour déployer et tester l'infrastructure Azure Functions + Service Bus.
+**Date**: 23 décembre 2025  
+**Objectif**: Automatiser la récupération des clés et le déploiement
 
 ---
 
-## 📁 Scripts Disponibles
+## 📋 Scripts Disponibles
 
-### 1. deploy-azure-workers.sh
+### 1️⃣ get-all-keys.sh (RECOMMANDÉ) ⚡
 
-**Description**: Déploiement automatique complet de l'infrastructure Azure Workers
+**Récupère TOUTES les clés automatiquement**
+
+```bash
+./deployment-beta-50users/scripts/get-all-keys.sh
+```
 
 **Ce qu'il fait**:
-- ✅ Crée Resource Group
-- ✅ Crée Storage Account
-- ✅ Crée Premium Plan (EP1)
-- ✅ Crée Function App
-- ✅ Crée Service Bus Namespace (Standard)
-- ✅ Crée Topics (huntaze-jobs, huntaze-events)
-- ✅ Crée Subscriptions avec retry policies
-- ✅ Crée SQL Filters pour routing
-- ✅ Crée Authorization Rules (send-only, listen+send)
-- ✅ Configure Function App Settings
-- ✅ Déploie les Functions (si code existe)
+- ✅ Récupère les clés Azure AI
+- ✅ Récupère les clés Azure Speech
+- ✅ Récupère les clés AWS
+- ✅ Fusionne toutes les clés
+- ✅ Crée un fichier prêt pour Vercel
+- ✅ Teste les connexions
 
-**Prérequis**:
-- Azure CLI installé (`az --version`)
-- Connecté à Azure (`az login`)
-- Variables d'environnement (optionnel):
-  - `AZURE_DEEPSEEK_V3_ENDPOINT`
-  - `AZURE_DEEPSEEK_R1_ENDPOINT`
-  - `AZURE_PHI4_MULTIMODAL_ENDPOINT`
-  - `AZURE_SPEECH_KEY`
-  - `DATABASE_URL`
-  - `REDIS_URL`
+**Fichiers créés**:
+- `azure-keys.env` - Clés Azure
+- `aws-keys.env` - Clés AWS
+- `all-keys.env` - Toutes les clés fusionnées
+- `VERCEL-READY.txt` - Prêt pour Vercel
 
-**Usage**:
-```bash
-cd deployment-beta-50users/scripts
-./deploy-azure-workers.sh
-```
-
-**Durée**: ~10-15 minutes
-
-**Coût**: ~$156.88/mois (Premium EP1 + Service Bus Standard)
-
-**Output**:
-- Resource Group name
-- Function App name
-- Service Bus namespace
-- Connection strings (Functions + Vercel)
+**Temps**: 5-10 minutes
 
 ---
 
-### 2. test-workers.sh
+### 2️⃣ get-azure-keys.sh
 
-**Description**: Tests d'intégration pour vérifier le déploiement
+**Récupère uniquement les clés Azure**
+
+```bash
+./deployment-beta-50users/scripts/get-azure-keys.sh
+```
 
 **Ce qu'il fait**:
-- ✅ Teste video analysis job
-- ✅ Teste chat suggestions job
-- ✅ Vérifie job status
-- ✅ Vérifie Service Bus metrics
-- ✅ Vérifie Function App health
+- Se connecte à Azure
+- Trouve le resource group automatiquement
+- Récupère la clé Azure AI
+- Récupère la clé Azure Speech
+- Détecte les endpoints des modèles
+- Teste les connexions
 
-**Prérequis**:
-- Déploiement effectué (`deploy-azure-workers.sh`)
-- Vercel déployé avec API routes
-- Variables d'environnement:
-  - `VERCEL_URL` (URL de votre app Vercel)
-  - `AZURE_SB_NAMESPACE` (nom du Service Bus)
-  - `AZURE_FUNCAPP` (nom de la Function App)
-  - `TEST_CREATOR_ID` (optionnel, défaut: 123)
+**Fichiers créés**:
+- `azure-keys.env`
 
-**Usage**:
-```bash
-cd deployment-beta-50users/scripts
-
-# Configurer les variables
-export VERCEL_URL="https://your-app.vercel.app"
-export AZURE_SB_NAMESPACE="huntaze-sb-xxx"
-export AZURE_FUNCAPP="huntaze-workers-xxx"
-
-# Exécuter les tests
-./test-workers.sh
-```
-
-**Durée**: ~30 secondes
-
-**Output**:
-- Job IDs créés
-- Job status
-- Service Bus metrics (active messages, DLQ)
-- Function App health
+**Temps**: 2-3 minutes
 
 ---
 
-## 🔧 Configuration
+### 3️⃣ get-aws-keys.sh
 
-### Variables d'Environnement
+**Récupère uniquement les clés AWS**
 
-**Pour deploy-azure-workers.sh**:
 ```bash
-# Azure AI Endpoints (optionnel, peut être configuré après)
-export AZURE_DEEPSEEK_V3_ENDPOINT="https://..."
-export AZURE_DEEPSEEK_R1_ENDPOINT="https://..."
-export AZURE_PHI4_MULTIMODAL_ENDPOINT="https://..."
-export AZURE_SPEECH_KEY="..."
-
-# Database et Cache (optionnel, peut être configuré après)
-export DATABASE_URL="postgresql://..."
-export REDIS_URL="redis://..."
+./deployment-beta-50users/scripts/get-aws-keys.sh
 ```
 
-**Pour test-workers.sh**:
-```bash
-# Vercel URL (requis)
-export VERCEL_URL="https://your-app.vercel.app"
+**Ce qu'il fait**:
+- Se connecte à AWS
+- Vérifie les access keys existantes
+- Crée une nouvelle access key (si nécessaire)
+- Récupère la configuration infrastructure
+- Teste les connexions
 
-# Azure Resources (optionnel, pour metrics)
-export AZURE_SB_NAMESPACE="huntaze-sb-xxx"
-export AZURE_FUNCAPP="huntaze-workers-xxx"
-export AZURE_RG="huntaze-beta-rg"
+**Fichiers créés**:
+- `aws-keys.env`
 
-# Test Creator ID (optionnel)
-export TEST_CREATOR_ID="123"
-```
+**Temps**: 2-3 minutes
 
 ---
 
-## 📋 Workflow Complet
+### 4️⃣ deploy-aws-infrastructure.sh
 
-### Étape 1: Déploiement Infrastructure
+**Déploie l'infrastructure AWS** (déjà exécuté)
 
 ```bash
-# 1. Se connecter à Azure
+./deployment-beta-50users/scripts/deploy-aws-infrastructure.sh
+```
+
+**Ce qu'il fait**:
+- Crée le VPC et subnets
+- Déploie PostgreSQL RDS
+- Déploie Redis Serverless
+- Crée le bucket S3
+- Configure les Security Groups
+
+**Statut**: ✅ Déjà exécuté
+
+---
+
+### 5️⃣ finalize-aws-setup.sh
+
+**Finalise la configuration AWS** (déjà exécuté)
+
+```bash
+./deployment-beta-50users/scripts/finalize-aws-setup.sh
+```
+
+**Ce qu'il fait**:
+- Génère un mot de passe RDS sécurisé
+- Stocke les secrets dans AWS Secrets Manager
+- Crée les URLs de connexion
+- Sauvegarde la configuration
+
+**Statut**: ✅ Déjà exécuté
+
+---
+
+## 🔧 Prérequis
+
+### Azure CLI
+
+```bash
+# Vérifier
+az --version
+
+# Installer (macOS)
+brew install azure-cli
+
+# Installer (Linux)
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# Se connecter
 az login
-
-# 2. Configurer les variables (optionnel)
-export AZURE_DEEPSEEK_V3_ENDPOINT="https://..."
-export DATABASE_URL="postgresql://..."
-
-# 3. Déployer
-cd deployment-beta-50users/scripts
-./deploy-azure-workers.sh
-
-# 4. Noter les outputs
-# - Resource Group: huntaze-beta-rg
-# - Function App: huntaze-workers-xxx
-# - Service Bus: huntaze-sb-xxx
-# - Connection Strings: SERVICEBUS_CONNECTION_SEND, SERVICEBUS_CONNECTION
 ```
 
-### Étape 2: Création Projet Functions
+---
+
+### AWS CLI
 
 ```bash
-# 1. Installer Azure Functions Core Tools
-npm install -g azure-functions-core-tools@4
+# Vérifier
+aws --version
 
-# 2. Créer le projet
-mkdir huntaze-workers
-cd huntaze-workers
-func init --typescript
+# Installer (macOS)
+brew install awscli
 
-# 3. Installer dépendances
-npm install @azure/functions @azure/service-bus @prisma/client applicationinsights
+# Installer (Linux)
+pip install awscli
 
-# 4. Copier le code des workers
-# Voir: ../AZURE-WORKERS-GUIDE.md
-
-# 5. Configurer local.settings.json
-cat > local.settings.json <<EOF
-{
-  "IsEncrypted": false,
-  "Values": {
-    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "FUNCTIONS_WORKER_RUNTIME": "node",
-    "SERVICEBUS_CONNECTION": "Endpoint=sb://...",
-    "TOPIC_JOBS": "huntaze-jobs",
-    "TOPIC_EVENTS": "huntaze-events"
-  }
-}
-EOF
+# Se connecter
+aws configure
 ```
 
-### Étape 3: Déploiement Functions
+---
+
+## 🚀 Workflow Recommandé
+
+### Déploiement Complet
 
 ```bash
-# 1. Build
-npm run build
+# 1. Récupérer toutes les clés
+./deployment-beta-50users/scripts/get-all-keys.sh
 
-# 2. Deploy
-func azure functionapp publish huntaze-workers-xxx
+# 2. Vérifier les clés
+cat deployment-beta-50users/all-keys.env
 
-# 3. Vérifier
-func azure functionapp list-functions huntaze-workers-xxx
-```
+# 3. Copier dans Vercel
+cat deployment-beta-50users/VERCEL-READY.txt
+# → Colle dans Vercel
 
-### Étape 4: Configuration Vercel
+# 4. Initialiser la base de données
+export DATABASE_URL=$(grep DATABASE_URL deployment-beta-50users/all-keys.env | cut -d'=' -f2-)
+npx prisma db push
 
-```bash
-# 1. Ajouter variables d'environnement dans Vercel
-# SERVICEBUS_CONNECTION_SEND=Endpoint=sb://...
-# TOPIC_JOBS=huntaze-jobs
-# TOPIC_EVENTS=huntaze-events
-
-# 2. Créer API routes
-# app/api/jobs/video-analysis/route.ts
-# app/api/jobs/chat-suggestions/route.ts
-
-# 3. Déployer Vercel
+# 5. Déployer
 vercel --prod
 ```
 
-### Étape 5: Testing
+**Temps total**: 15-20 minutes
 
-```bash
-# 1. Configurer variables
-export VERCEL_URL="https://your-app.vercel.app"
-export AZURE_SB_NAMESPACE="huntaze-sb-xxx"
-export AZURE_FUNCAPP="huntaze-workers-xxx"
+---
 
-# 2. Exécuter tests
-cd deployment-beta-50users/scripts
-./test-workers.sh
+## 📁 Fichiers Créés
 
-# 3. Vérifier logs
-az monitor app-insights component show --app huntaze-workers-xxx
+Après exécution des scripts:
+
+```
+deployment-beta-50users/
+├── azure-keys.env           # Clés Azure uniquement
+├── aws-keys.env             # Clés AWS uniquement
+├── all-keys.env             # TOUTES les clés fusionnées
+├── VERCEL-READY.txt         # Prêt à copier dans Vercel
+├── COPY-PASTE-VERCEL.txt    # Mis à jour avec les vraies clés
+└── aws-infrastructure-config.env  # Configuration AWS (déjà créé)
 ```
 
 ---
 
-## 🐛 Troubleshooting
+## 🔐 Sécurité
 
-### Erreur: "Azure CLI not installed"
+### Fichiers Protégés
 
-**Solution**:
-```bash
-# macOS
-brew install azure-cli
-
-# Windows
-winget install Microsoft.AzureCLI
-
-# Linux
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+Les scripts ajoutent automatiquement au `.gitignore`:
+```
+azure-keys.env
+aws-keys.env
+all-keys.env
+VERCEL-READY.txt
 ```
 
-### Erreur: "Not logged in to Azure"
+### Bonnes Pratiques
 
-**Solution**:
+- ❌ **NE COMMITE PAS** les fichiers `*-keys.env` dans Git
+- ❌ **NE PARTAGE PAS** les clés publiquement
+- ✅ **SAUVEGARDE** `all-keys.env` en lieu sûr
+- ✅ **ROTATE** les clés régulièrement
+- ✅ **UTILISE** des secrets managers en production
+
+---
+
+## 🆘 Dépannage
+
+### Script non exécutable
+
 ```bash
+# Rendre le script exécutable
+chmod +x deployment-beta-50users/scripts/get-all-keys.sh
+```
+
+---
+
+### Azure CLI non trouvé
+
+```bash
+# Installer Azure CLI
+brew install azure-cli  # macOS
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash  # Linux
+```
+
+---
+
+### AWS CLI non trouvé
+
+```bash
+# Installer AWS CLI
+brew install awscli  # macOS
+pip install awscli  # Linux
+```
+
+---
+
+### Non connecté à Azure
+
+```bash
+# Se connecter
 az login
-```
 
-### Erreur: "Function deployment failed"
-
-**Solution**:
-```bash
-# Vérifier que le projet est bien build
-cd huntaze-workers
-npm run build
-
-# Vérifier que le Function App existe
-az functionapp show --name huntaze-workers-xxx --resource-group huntaze-beta-rg
-
-# Redéployer
-func azure functionapp publish huntaze-workers-xxx --force
-```
-
-### Erreur: "Service Bus connection failed"
-
-**Solution**:
-```bash
-# Vérifier la connection string
-az servicebus namespace authorization-rule keys list \
-  --resource-group huntaze-beta-rg \
-  --namespace-name huntaze-sb-xxx \
-  --name RootManageSharedAccessKey
-
-# Vérifier que le namespace existe
-az servicebus namespace show \
-  --resource-group huntaze-beta-rg \
-  --name huntaze-sb-xxx
-```
-
-### Erreur: "DLQ messages detected"
-
-**Solution**:
-```bash
-# Lire les messages DLQ
-az servicebus topic subscription show \
-  --resource-group huntaze-beta-rg \
-  --namespace-name huntaze-sb-xxx \
-  --topic-name huntaze-jobs \
-  --subscription-name video-analysis
-
-# Analyser les erreurs dans Application Insights
-az monitor app-insights component show --app huntaze-workers-xxx
+# Vérifier
+az account show
 ```
 
 ---
 
-## 📊 Monitoring
+### Non connecté à AWS
 
-### Application Insights
-
-**Voir les logs**:
 ```bash
-az monitor app-insights component show --app huntaze-workers-xxx
-```
+# Configurer
+aws configure
 
-**Voir les métriques**:
-```bash
-az monitor metrics list \
-  --resource /subscriptions/.../resourceGroups/huntaze-beta-rg/providers/Microsoft.Web/sites/huntaze-workers-xxx \
-  --metric FunctionExecutionCount
-```
-
-### Service Bus
-
-**Voir les métriques**:
-```bash
-# Active messages
-az servicebus topic subscription show \
-  --resource-group huntaze-beta-rg \
-  --namespace-name huntaze-sb-xxx \
-  --topic-name huntaze-jobs \
-  --subscription-name video-analysis \
-  --query "countDetails.activeMessageCount"
-
-# Dead-letter messages
-az servicebus topic subscription show \
-  --resource-group huntaze-beta-rg \
-  --namespace-name huntaze-sb-xxx \
-  --topic-name huntaze-jobs \
-  --subscription-name video-analysis \
-  --query "countDetails.deadLetterMessageCount"
+# Vérifier
+aws sts get-caller-identity
 ```
 
 ---
 
-## 💰 Coûts
+## 📚 Documentation
 
-### Infrastructure Déployée
-
-**Premium EP1**: $146.88/mois
-- 1 vCPU + 3.5 GB RAM
-- 400,000 GB-s execution inclus
-- Auto-scaling
-
-**Service Bus Standard**: $10/mois
-- 13M operations incluses
-- Topics + Subscriptions
-- DLQ natifs
-
-**Total**: $156.88/mois
-
-### Optimisations
-
-**Option 1: Consumption Plan** ($5-10/mois)
-- ⚠️ Cold starts
-- ⚠️ Pas de VNET
-- ✅ OK pour beta
-
-**Option 2: Premium EP1** ($156.88/mois) ⭐ RECOMMANDÉ
-- ✅ Production-ready
-- ✅ SLA 99.95%
-- ✅ Pas de cold starts
+- **CLI-GUIDE.md** - Guide complet CLI
+- **QUICK-START-CLI.md** - Démarrage rapide
+- **NEXT-STEP.md** - Guide manuel détaillé
 
 ---
 
-## 📚 Ressources
+## 🎯 Résumé
 
-### Documentation
-- [AZURE-WORKERS-GUIDE.md](../AZURE-WORKERS-GUIDE.md) - Guide complet
-- [AZURE-WORKERS-RESUME.md](../AZURE-WORKERS-RESUME.md) - Résumé décision
-- [README.md](../README.md) - Budget et architecture
-
-### Scripts
-- [deploy-azure-workers.sh](deploy-azure-workers.sh) - Déploiement
-- [test-workers.sh](test-workers.sh) - Tests
-
-### Microsoft Docs
-- [Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/)
-- [Azure Service Bus](https://learn.microsoft.com/en-us/azure/service-bus-messaging/)
-- [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
+| Script | Fonction | Temps | Statut |
+|--------|----------|-------|--------|
+| `get-all-keys.sh` | Récupère TOUT | 5-10 min | ⚡ RECOMMANDÉ |
+| `get-azure-keys.sh` | Clés Azure | 2-3 min | ✅ Disponible |
+| `get-aws-keys.sh` | Clés AWS | 2-3 min | ✅ Disponible |
+| `deploy-aws-infrastructure.sh` | Infrastructure AWS | - | ✅ Déjà exécuté |
+| `finalize-aws-setup.sh` | Finalisation AWS | - | ✅ Déjà exécuté |
 
 ---
 
-## ✅ Checklist
+**Prêt? Exécute `get-all-keys.sh` et go! 🚀**
 
-- [ ] Azure CLI installé
-- [ ] Connecté à Azure (`az login`)
-- [ ] Variables d'environnement configurées
-- [ ] Exécuté `deploy-azure-workers.sh`
-- [ ] Créé projet huntaze-workers
-- [ ] Copié le code des workers
-- [ ] Déployé les functions
-- [ ] Configuré Vercel
-- [ ] Exécuté `test-workers.sh`
-- [ ] Vérifié monitoring
-- [ ] Configuré alertes
-
----
-
-**Dernière mise à jour**: 2025-12-22  
-**Version**: 2.0  
-**Statut**: ✅ Prêt pour déploiement
-
+```bash
+./deployment-beta-50users/scripts/get-all-keys.sh
+```

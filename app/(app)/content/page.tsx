@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { ButlerTip } from '@/components/ui/ButlerTip';
+import Image from 'next/image';
 import {
   Card,
   Text,
@@ -485,12 +486,12 @@ export default function ContentPage() {
                               alignItems: 'flex-start',
                             }}
                           >
-                            <img
+                            <Image
                               src="/butler.svg"
                               alt="Majordome"
+                              width={32}
+                              height={32}
                               style={{
-                                width: 32,
-                                height: 32,
                                 borderRadius: 6,
                                 flexShrink: 0,
                               }}
@@ -762,12 +763,12 @@ export default function ContentPage() {
                             alignItems: 'flex-start',
                           }}
                         >
-                          <img
+                          <Image
                             src="/butler.svg"
                             alt="Majordome"
+                            width={32}
+                            height={32}
                             style={{
-                              width: 32,
-                              height: 32,
                               borderRadius: 4,
                               flexShrink: 0,
                             }}

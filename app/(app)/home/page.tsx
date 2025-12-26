@@ -10,13 +10,14 @@ export const dynamic = 'force-dynamic';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import useSWR from 'swr';
+import type { z } from 'zod';
 import './home.css';
 import { ButlerTip } from '@/components/ui/ButlerTip';
 import { DashboardErrorState, DashboardLoadingState } from '@/components/ui/DashboardLoadingState';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useDashboard, type ActivityItem as DashboardActivity, type DashboardData } from '@/hooks/useDashboard';
 import { internalApiFetch } from '@/lib/api/client/internal-api-client';
-import type { AutomationFlow } from '@/lib/automations/types';
+import { automationsListResponseSchema, automationFlowSchema } from '@/lib/schemas/api-responses';
 
 // Force cache bust - v2 subtle professional style
 import {
@@ -39,6 +40,9 @@ import {
   Twitter,
   ChevronRight,
 } from 'lucide-react';
+
+type AutomationsResponse = z.infer<typeof automationsListResponseSchema>;
+type AutomationFlowDto = z.infer<typeof automationFlowSchema>;
 
 // Action Card - Compact version with urgency levels
 const ActionCard = ({ 
@@ -237,9 +241,12 @@ export default function HomePage() {
   const {
     data: automationsResponse,
     mutate: mutateAutomations,
-  } = useSWR<{ success: boolean; data?: AutomationFlow[] }>(
+  } = useSWR<AutomationsResponse>(
     '/api/automations',
-    (url) => internalApiFetch<{ success: boolean; data?: AutomationFlow[] }>(url),
+    (url: string) =>
+      internalApiFetch<AutomationsResponse>(url, {
+        schema: automationsListResponseSchema,
+      }),
   );
 
   const {
@@ -247,7 +254,7 @@ export default function HomePage() {
     mutate: mutateWarRoom,
   } = useSWR<{ queue?: Array<{ id: string; status: string }> }>(
     '/api/marketing-war-room/state',
-    (url) => internalApiFetch<{ queue?: Array<{ id: string; status: string }> }>(url),
+    (url: string) => internalApiFetch<{ queue?: Array<{ id: string; status: string }> }>(url),
   );
 
   const scheduledPosts = warRoomState?.queue?.filter((item) => item.status === 'scheduled').length ?? 0;
@@ -285,24 +292,30 @@ export default function HomePage() {
     return suggestions.slice(0, 2);
   }, [dashboardData?.summary?.activeFans?.value, priorities.scheduledPosts, priorities.unreadMessages]);
 
-  const automations = useMemo(() => {
-    const flows = automationsResponse?.data ?? [];
+  const automations = useMemo(
+    (): Array<{ name: string; status: 'active' | 'paused'; executions: number; href: string }> => {
+    const flows: AutomationFlowDto[] = automationsResponse?.data ?? [];
     return flows.slice(0, 3).map((flow) => ({
       name: flow.name,
       status: flow.status === 'active' ? 'active' : 'paused',
       executions: flow.steps?.length ?? 0,
       href: `/automations/${flow.id}`,
     }));
-  }, [automationsResponse]);
+    },
+    [automationsResponse],
+  );
 
-  const integrations = useMemo(() => {
+  const integrations = useMemo(
+    (): Array<{ name: string; icon: typeof Instagram; status: 'connected' | 'disconnected'; href: string }> => {
     const connected = dashboardData?.connectedIntegrations;
     return [
       { name: 'OnlyFans', icon: Heart, status: connected?.onlyfans ? 'connected' : 'disconnected', href: '/integrations' },
       { name: 'Instagram', icon: Instagram, status: connected?.instagram ? 'connected' : 'disconnected', href: '/integrations' },
       { name: 'Twitter/X', icon: Twitter, status: 'disconnected', href: '/integrations' },
     ];
-  }, [dashboardData?.connectedIntegrations]);
+    },
+    [dashboardData?.connectedIntegrations],
+  );
 
   const recentActivity = useMemo(() => {
     const entries = dashboardData?.recentActivity ?? [];

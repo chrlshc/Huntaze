@@ -12,7 +12,6 @@ import '@/styles/marketing-mobile.css';
 import { ButlerTip } from '@/components/ui/ButlerTip';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { internalApiFetch } from '@/lib/api/client/internal-api-client';
-import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 import { 
   Megaphone, 
   RefreshCw, 
@@ -96,6 +95,43 @@ interface AccountHealth {
 
 type Platform = 'all' | 'tt' | 'ig' | 'rd';
 
+const automationIconMap: Record<string, React.ReactNode> = {
+  auto_retry: <RotateCcw size={16} />,
+  smart_schedule: <Clock size={16} />,
+  cross_post: <Share2 size={16} />,
+  instagram_welcome_dm: <Send size={16} />,
+  tiktok_warmup: <TrendingUp size={16} />,
+  auto_reposter: <Share2 size={16} />,
+};
+
+const healthIconMap: Record<string, string> = {
+  tokens: '🔑',
+  rate: '⚡',
+  errors: '🚨',
+  cadence: '⏱️',
+};
+
+const mapAutomations = (input?: Record<string, WarRoomAutomation>) => {
+  if (!input) return [];
+  return Object.entries(input).map(([id, automation]) => ({
+    id,
+    label: automation.label,
+    description: automation.description,
+    enabled: automation.enabled,
+    icon: automationIconMap[id] ?? <Zap size={16} />,
+  }));
+};
+
+const mapHealthChecks = (input?: WarRoomHealth) => {
+  if (!input?.checks?.length) return [];
+  return input.checks.map((check) => ({
+    platform: check.label,
+    status: check.ok ? 'ok' : input.status === 'risk' ? 'error' : 'warning',
+    message: check.detail,
+    icon: healthIconMap[check.key] ?? '🔌',
+  }));
+};
+
 // Polaris Card Component
 const PCard = ({ children, title, noPadding, headerAction }: { 
   children: React.ReactNode; 
@@ -121,6 +157,7 @@ export default function MarketingPage() {
   const [platform, setPlatform] = useState<Platform>('all');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [automationBusyId, setAutomationBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [automations, setAutomations] = useState<Automation[]>([]);
   const [health, setHealth] = useState<AccountHealth[]>([]);
@@ -144,43 +181,6 @@ export default function MarketingPage() {
     }
     return c;
   }, [queue]);
-
-  const automationIconMap: Record<string, React.ReactNode> = {
-    auto_retry: <RotateCcw size={16} />,
-    smart_schedule: <Clock size={16} />,
-    cross_post: <Share2 size={16} />,
-    instagram_welcome_dm: <Send size={16} />,
-    tiktok_warmup: <TrendingUp size={16} />,
-    auto_reposter: <Share2 size={16} />,
-  };
-
-  const mapAutomations = (input?: Record<string, WarRoomAutomation>) => {
-    if (!input) return [];
-    return Object.entries(input).map(([id, automation]) => ({
-      id,
-      label: automation.label,
-      description: automation.description,
-      enabled: automation.enabled,
-      icon: automationIconMap[id] ?? <Zap size={16} />,
-    }));
-  };
-
-  const healthIconMap: Record<string, string> = {
-    tokens: '🔑',
-    rate: '⚡',
-    errors: '🚨',
-    cadence: '⏱️',
-  };
-
-  const mapHealthChecks = (input?: WarRoomHealth) => {
-    if (!input?.checks?.length) return [];
-    return input.checks.map((check) => ({
-      platform: check.label,
-      status: check.ok ? 'ok' : input.status === 'risk' ? 'error' : 'warning',
-      message: check.detail,
-      icon: healthIconMap[check.key] ?? '🔌',
-    }));
-  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -221,9 +221,36 @@ export default function MarketingPage() {
     [selectedIds, platform, fetchData],
   );
 
-  const toggleAutomation = useCallback((id: string) => {
-    setAutomations(prev => prev.map(a => a.id === id ? { ...a, enabled: !a.enabled } : a));
-  }, []);
+  const toggleAutomation = useCallback(async (id: string) => {
+    const current = automations.find((item) => item.id === id);
+    if (!current) return;
+
+    const nextEnabled = !current.enabled;
+    setAutomationBusyId(id);
+    setError(null);
+
+    try {
+      const response = await internalApiFetch<{ automations?: Record<string, WarRoomAutomation> }>(
+        `/api/marketing-war-room/automations/${id}`,
+        {
+          method: 'POST',
+          body: { enabled: nextEnabled },
+        }
+      );
+
+      if (response?.automations) {
+        setAutomations(mapAutomations(response.automations));
+      } else {
+        setAutomations((prev) =>
+          prev.map((item) => (item.id === id ? { ...item, enabled: nextEnabled } : item))
+        );
+      }
+    } catch {
+      setError('Failed to update automation');
+    } finally {
+      setAutomationBusyId(null);
+    }
+  }, [automations]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => {
@@ -334,19 +361,19 @@ export default function MarketingPage() {
               </div>
               <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
                 <div>
-                  <div style={{ fontSize: 24, fontWeight: 700 }}>{ENABLE_MOCK_DATA ? 12 : stats.scheduled}</div>
+                  <div style={{ fontSize: 24, fontWeight: 700 }}>{stats.scheduled}</div>
                   <div style={{ fontSize: 12, opacity: 0.8 }}>Posts scheduled</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 24, fontWeight: 700 }}>{ENABLE_MOCK_DATA ? 8 : stats.posted}</div>
+                  <div style={{ fontSize: 24, fontWeight: 700 }}>{stats.posted}</div>
                   <div style={{ fontSize: 12, opacity: 0.8 }}>Posts published</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 24, fontWeight: 700 }}>{ENABLE_MOCK_DATA ? '2.4K' : '—'}</div>
+                  <div style={{ fontSize: 24, fontWeight: 700 }}>—</div>
                   <div style={{ fontSize: 12, opacity: 0.8 }}>Total reach</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 24, fontWeight: 700 }}>{ENABLE_MOCK_DATA ? '+18%' : '—'}</div>
+                  <div style={{ fontSize: 24, fontWeight: 700 }}>—</div>
                   <div style={{ fontSize: 12, opacity: 0.8 }}>Engagement</div>
                 </div>
               </div>
@@ -528,12 +555,14 @@ export default function MarketingPage() {
                     role="switch"
                     aria-checked={auto.enabled}
                     onClick={() => toggleAutomation(auto.id)}
+                    disabled={automationBusyId === auto.id}
                     style={{ 
                       position: 'relative',
                       width: 40, height: 22, minHeight: 22,
                       padding: 0, borderRadius: 11, border: 'none',
                       background: auto.enabled ? '#303030' : '#E5E7EB',
-                      cursor: 'pointer', flexShrink: 0,
+                      cursor: automationBusyId === auto.id ? 'not-allowed' : 'pointer',
+                      flexShrink: 0,
                       transition: 'background 0.2s ease'
                     }}
                   >

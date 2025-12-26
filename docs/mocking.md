@@ -27,6 +27,18 @@ Pour un build démo:
 
 Supprimer `API_MODE` ou le remettre à `real`, puis relancer le serveur Next.js.
 
+## Nettoyer un Service Worker MSW déjà enregistré
+
+- En mode `API_MODE=real`, l'app tente de désenregistrer `mockServiceWorker.js` au chargement.
+- Si besoin, côté navigateur: DevTools → Application → Service Workers → Unregister `mockServiceWorker.js`, puis refresh.
+
+## Smoke backend réel (sans MSW)
+
+- Exécuter un smoke sans interceptions: `npm run test:smoke:real`
+- Requis: `E2E_TEST_USER_ID=<id numérique>` pour aligner les tests E2E sur un utilisateur existant en base (les tests skip sinon).
+- Optionnel: `E2E_DESTRUCTIVE=1` pour activer les actions destructives (toggle/re-engage/send message/settings/activation automation/schedule+publish).
+- Optionnel: `E2E_NAME_PREFIX=E2E_SMOKE_<run>` ou `E2E_RUN_ID=<run>` pour préfixer les objets créés.
+
 ## Comment ça marche (MSW)
 
 - Browser: `app/providers.tsx` démarre le worker MSW **uniquement** si `API_MODE=mock`.

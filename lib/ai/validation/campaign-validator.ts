@@ -7,6 +7,8 @@
  */
 
 import type { CampaignValidationResult } from './types';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 const CAMPAIGN_TIMEOUT_MS = 15000;
 
@@ -51,19 +53,17 @@ export class CampaignValidator {
     const startTime = Date.now();
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), CAMPAIGN_TIMEOUT_MS);
-
-      const response = await fetch(this.apiUrl, {
+      const response = await externalFetch(this.apiUrl, {
+        service: 'ai-campaigns',
+        operation: 'validate',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(request),
-        signal: controller.signal,
+        timeoutMs: CAMPAIGN_TIMEOUT_MS,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
-
-      clearTimeout(timeoutId);
 
       const responseTimeMs = Date.now() - startTime;
 
@@ -80,7 +80,11 @@ export class CampaignValidator {
         };
       }
 
-      const data: CampaignAPIResponse = await response.json();
+      const data: CampaignAPIResponse = await response.json().catch(() => ({
+        success: false,
+        campaign: { subject: '', body: '', variations: [] },
+        correlationId: '',
+      } as CampaignAPIResponse));
 
       // Validate response structure
       const hasSubjectLine = this.validateSubjectLine(data);
@@ -100,7 +104,7 @@ export class CampaignValidator {
     } catch (error) {
       const responseTimeMs = Date.now() - startTime;
 
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error) && error.code === 'TIMEOUT') {
         return {
           success: false,
           responseTimeMs,

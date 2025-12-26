@@ -125,7 +125,7 @@ export function HydrationRecoverySystem({
   }, [preserveState]);
 
   // Fonction principale de retry
-  const attemptRecovery = useCallback(async (error: Error) => {
+  const attemptRecovery = useCallback(async function attemptRecoveryInternal(error: Error) {
     const currentAttempt = recoveryState.retryCount + 1;
     
     // Vérifier si on a atteint le maximum de tentatives
@@ -195,7 +195,7 @@ export function HydrationRecoverySystem({
         
       } catch (retryError) {
         // Si la tentative échoue, essayer à nouveau
-        attemptRecovery(retryError as Error);
+        attemptRecoveryInternal(retryError as Error);
       }
     }, delay);
     
@@ -208,8 +208,7 @@ export function HydrationRecoverySystem({
     calculateRetryDelay,
     preserveUserState,
     restoreUserState,
-    fallbackDelay,
-    id
+    fallbackDelay
   ]);
 
   // Fonction pour recovery manuel
@@ -232,7 +231,7 @@ export function HydrationRecoverySystem({
     setTimeout(() => setIsHydrated(true), 100);
     
     // hydrationDebugger.logManualRecovery(id);
-  }, [enableManualRecovery, id]);
+  }, [enableManualRecovery]);
 
   // Gestion des erreurs d'hydratation
   const handleHydrationError = useCallback((error: Error) => {

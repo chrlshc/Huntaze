@@ -15,7 +15,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import BetaLandingPage from '@/app/beta/page';
+import BetaLandingPage from '@/app/(marketing)/beta/page';
 
 describe('Beta Landing Page', () => {
   it('should render hero section with beta badge', () => {

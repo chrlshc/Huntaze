@@ -5,6 +5,8 @@ import {
   HelpLevel
 } from '../interfaces/services';
 import { logger } from '../../utils/logger';
+import { externalFetchJson } from '@/lib/services/external/http';
+import { ExternalServiceError, isExternalServiceError } from '@/lib/services/external/errors';
 
 /**
  * Configuration for Azure OpenAI API
@@ -620,15 +622,14 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
     const url = `${this.config.endpoint}/openai/deployments/${this.config.deploymentName}/chat/completions?api-version=${this.config.apiVersion}`;
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
-
-      const response = await fetch(url, {
+      const data = await externalFetchJson<AzureOpenAIResponse>(url, {
+        service: 'azure-openai',
+        operation: 'chat.completions',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'api-key': this.config.apiKey,
-          'User-Agent': 'Huntaze-SmartOnboarding/1.0'
+          'User-Agent': 'Huntaze-SmartOnboarding/1.0',
         },
         body: JSON.stringify({
           messages: [
@@ -647,29 +648,19 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
           frequency_penalty: 0.0,
           presence_penalty: 0.0
         }),
-        signal: controller.signal
+        timeoutMs: 30_000,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
 
-      clearTimeout(timeoutId);
-
       const duration = Date.now() - startTime;
-
-      if (!response.ok) {
-        const errorBody = await response.text().catch(() => 'Unable to read error body');
-        logger.error('Azure OpenAI API error', {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorBody,
-          durationMs: duration
-        });
-        
-        throw new Error(`Azure OpenAI API error: ${response.status} ${response.statusText}`);
-      }
-
-      const data: AzureOpenAIResponse = await response.json();
       
       if (!data.choices || data.choices.length === 0) {
-        throw new Error('No response from Azure OpenAI');
+        throw new ExternalServiceError({
+          service: 'azure-openai',
+          code: 'INVALID_RESPONSE',
+          retryable: false,
+          message: 'No response from Azure OpenAI',
+        });
       }
 
       logger.info('Azure OpenAI API call successful', {
@@ -686,7 +677,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
     } catch (error) {
       const duration = Date.now() - startTime;
       
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error) && error.code === 'TIMEOUT') {
         logger.error('Azure OpenAI API call timed out', { durationMs: duration });
         throw new Error('Azure OpenAI API call timed out after 30 seconds');
       }

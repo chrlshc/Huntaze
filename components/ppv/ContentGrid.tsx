@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 /**
  * ContentGrid Component
@@ -209,14 +210,14 @@ function ContentCard({ item, aspectRatio, onSend, onEdit, onDuplicate, onViewSta
           backgroundColor: 'var(--color-surface-subdued, #FAFBFB)',
         }}
       >
-        <img
+        <Image
           src={item.thumbnail}
           alt={item.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
           className="content-thumbnail"
           data-testid="content-thumbnail"
           style={{
-            width: '100%',
-            height: '100%',
             objectFit: 'cover',
             transition: 'transform 200ms cubic-bezier(0.4, 0, 0.2, 1)',
             transform: isHovered ? 'scale(1.01)' : 'scale(1)',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { getTimeTip, type PageName } from '@/lib/tips/butler-tips';
 
 interface ButlerTipProps {
@@ -30,12 +31,12 @@ export function ButlerTip({ page, className = '' }: ButlerTipProps) {
         alignItems: 'flex-start',
       }}
     >
-      <img 
-        src="/butler.svg" 
-        alt="Majordome" 
+      <Image
+        src="/butler.svg"
+        alt="Majordome"
+        width={24}
+        height={24}
         style={{
-          width: 24,
-          height: 24,
           borderRadius: 4,
           flexShrink: 0,
         }}

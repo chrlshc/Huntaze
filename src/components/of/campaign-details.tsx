@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ArrowLeft, Users, BarChart3, AlertCircle, Clock, Play, Pause, X } from 'lucide-react';
 import type { OfMassMessageCampaign, CampaignMetrics } from '@/lib/types/onlyfans';
 import { formatDistanceToNow, format } from 'date-fns';
@@ -17,11 +17,7 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
   const [metrics, setMetrics] = useState<CampaignMetrics | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchCampaignDetails();
-  }, [campaignId]);
-
-  const fetchCampaignDetails = async () => {
+  const fetchCampaignDetails = useCallback(async () => {
     try {
       const response = await fetch(`/api/of/campaigns/${campaignId}`);
       const data = await response.json();
@@ -32,7 +28,11 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
     } finally {
       setLoading(false);
     }
-  };
+  }, [campaignId]);
+
+  useEffect(() => {
+    fetchCampaignDetails();
+  }, [fetchCampaignDetails]);
 
   const handleAction = async (action: string) => {
     try {

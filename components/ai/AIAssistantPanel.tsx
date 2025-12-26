@@ -11,6 +11,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import './ai-assistant-panel.css';
+import { sendAIChat } from '@/lib/services/ai-chat';
 
 // Types
 export interface ChatMessage {
@@ -79,23 +80,15 @@ export function AIAssistantPanel({
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: userMessage.content,
-          context: context
-        })
+      const data = await sendAIChat({
+        message: userMessage.content,
+        context: context,
       });
-
-      if (!response.ok) throw new Error('Failed to get AI response');
-
-      const data = await response.json();
       
       const assistantMessage: ChatMessage = {
         id: `msg-${Date.now()}-assistant`,
         role: 'assistant',
-        content: data.data?.response || data.response || 'I apologize, I could not process your request.',
+        content: data.response || 'I apologize, I could not process your request.',
         timestamp: new Date()
       };
 

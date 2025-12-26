@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, ReactNode } from 'react';
+import { useIsClient } from '@/hooks/useIsClient';
 
 interface DebugWrapperProps {
   children: ReactNode;
@@ -7,12 +8,10 @@ interface DebugWrapperProps {
 }
 
 export function DebugWrapper({ children, fallback }: DebugWrapperProps) {
-  const [isClient, setIsClient] = useState(false);
+  const isClient = useIsClient();
   const [debugInfo, setDebugInfo] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    setIsClient(true);
-    
     // Capture hydration errors
     const handleError = (event: ErrorEvent) => {
       if (event.message?.includes('Hydration') || event.message?.includes('Text content')) {

@@ -16,14 +16,48 @@ const json = (data: any, init?: ResponseInit) => HttpResponse.json(data as any, 
 // -----------------------------------------------------------------------------
 
 let offersStore: MockOffer[] = [...mockOffers];
-let templatesStore = [...mockContentTemplates];
-let automationsStore: MockAutomationFlow[] = [...mockAutomations];
+const templatesStore = [...mockContentTemplates];
+const automationsStore: MockAutomationFlow[] = [...mockAutomations];
 
 // -----------------------------------------------------------------------------
 // Handlers
 // -----------------------------------------------------------------------------
 
 export const internalHandlers = [
+  // Auth + CSRF
+  http.get('*/api/csrf/token', () => {
+    return json({
+      success: true,
+      data: {
+        token: `mock-${Date.now()}`,
+        expiresIn: 3600000,
+      },
+      meta: { timestamp: new Date().toISOString(), requestId: 'mock' },
+    });
+  }),
+
+  http.post('*/api/auth/register', async ({ request }) => {
+    const body = await request.json().catch(() => ({}));
+    const email = typeof body?.email === 'string' ? body.email : 'mock@example.com';
+    const name = typeof body?.name === 'string' ? body.name : null;
+
+    return json(
+      {
+        success: true,
+        data: {
+          user: {
+            id: `mock-user-${Date.now()}`,
+            email,
+            name,
+          },
+        },
+        message: 'Account created successfully',
+        duration: 5,
+      },
+      { status: 201 }
+    );
+  }),
+
   // Content
   http.get('*/api/content', ({ request }) => {
     const url = new URL(request.url);

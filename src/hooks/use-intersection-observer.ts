@@ -15,6 +15,7 @@ export function useInView(options: UseIntersectionObserverOptions = {}) {
 
   useEffect(() => {
     if (!ref.current || (triggerOnce && hasTriggered)) return;
+    const currentElement = ref.current;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -31,12 +32,10 @@ export function useInView(options: UseIntersectionObserverOptions = {}) {
       { threshold, root, rootMargin }
     );
 
-    observer.observe(ref.current);
+    observer.observe(currentElement);
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
-      }
+      observer.unobserve(currentElement);
     };
   }, [threshold, root, rootMargin, triggerOnce, hasTriggered]);
 

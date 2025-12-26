@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { Pool } from 'pg';
+import { auth } from '@/lib/auth/config';
 
 const BUCKET = process.env.S3_BUCKET || 'huntaze-videos-production';
 const SQS_QUEUE_URL = process.env.SQS_QUEUE_URL;
@@ -31,6 +32,12 @@ function generateJobId(): string {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = session.user.id;
     const formData = await request.formData();
     
     const file = formData.get('file') as File | null;
@@ -118,7 +125,7 @@ export async function POST(request: NextRequest) {
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), NOW())`,
         [
           jobId,
-          'user_123', // TODO: Get from auth
+          userId,
           finalS3Key,
           tiktokUrl?.trim() || null,
           idea?.trim() || null,
@@ -139,7 +146,7 @@ export async function POST(request: NextRequest) {
         jobId,
         s3Key: finalS3Key,
         tiktokUrl: tiktokUrl?.trim() || null,
-        userId: 'user_123', // TODO: Get from auth
+        userId,
         idea: idea?.trim() || null,
         targets,
         variants,

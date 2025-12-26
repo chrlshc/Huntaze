@@ -231,7 +231,7 @@ export class PsychologicalSalesEngine {
   
   private selectBestExample(tactic: SalesTactic, context: any): string {
     // Filter examples suitable for context
-    let suitable = tactic.examples;
+    const suitable = tactic.examples;
     
     // Customize based on fan type
     if (context.fanType === 'new' && tactic.id === 'social_proof') {

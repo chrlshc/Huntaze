@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
 
@@ -15,20 +15,15 @@ interface TagInputProps {
 export default function TagInput({ value, onChange, suggestions = [], maxTags = 20, placeholder = 'Add tags...' }: TagInputProps) {
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (inputValue.trim()) {
-      const filtered = suggestions.filter(
-        s => s.toLowerCase().includes(inputValue.toLowerCase()) && !value.includes(s)
-      );
-      setFilteredSuggestions(filtered);
-      setShowSuggestions(filtered.length > 0);
-    } else {
-      setShowSuggestions(false);
-    }
+  const filteredSuggestions = useMemo(() => {
+    if (!inputValue.trim()) return [];
+    return suggestions.filter(
+      s => s.toLowerCase().includes(inputValue.toLowerCase()) && !value.includes(s)
+    );
   }, [inputValue, suggestions, value]);
+  const shouldShowSuggestions = showSuggestions && filteredSuggestions.length > 0;
 
   const addTag = (tag: string) => {
     const trimmedTag = tag.trim().toLowerCase();
@@ -77,7 +72,11 @@ export default function TagInput({ value, onChange, suggestions = [], maxTags = 
           ref={inputRef}
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setInputValue(nextValue);
+            setShowSuggestions(Boolean(nextValue.trim()));
+          }}
           onKeyDown={handleKeyDown}
           onFocus={() => inputValue && setShowSuggestions(filteredSuggestions.length > 0)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
@@ -93,7 +92,7 @@ export default function TagInput({ value, onChange, suggestions = [], maxTags = 
         </div>
       )}
 
-      {showSuggestions && (
+      {shouldShowSuggestions && (
         <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-48 overflow-y-auto">
           {filteredSuggestions.map((suggestion) => (
             <button

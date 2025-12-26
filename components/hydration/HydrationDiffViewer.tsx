@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { hydrationDebugger, HydrationMismatch } from '@/lib/utils/hydrationDebugger';
 import { htmlDiffer, HtmlComparisonResult } from '@/lib/utils/htmlDiffer';
 import { Button } from "@/components/ui/button";
@@ -11,17 +11,11 @@ interface HydrationDiffViewerProps {
 }
 
 const HydrationDiffViewer: React.FC<HydrationDiffViewerProps> = ({ isOpen, onClose }) => {
-  const [mismatches, setMismatches] = useState<HydrationMismatch[]>([]);
+  const [mismatches, setMismatches] = useState<HydrationMismatch[]>(() => hydrationDebugger.getMismatches());
   const [selectedMismatch, setSelectedMismatch] = useState<HydrationMismatch | null>(null);
-  const [comparisonResult, setComparisonResult] = useState<HtmlComparisonResult | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'diff' | 'raw'>('overview');
 
   useEffect(() => {
-    if (!isOpen) return;
-
-    // Load initial mismatches
-    setMismatches(hydrationDebugger.getMismatches());
-
     // Listen for new mismatches
     const handleMismatch = (event: CustomEvent<HydrationMismatch>) => {
       setMismatches(prev => [...prev, event.detail]);
@@ -34,13 +28,11 @@ const HydrationDiffViewer: React.FC<HydrationDiffViewerProps> = ({ isOpen, onClo
     };
   }, [isOpen]);
 
-  useEffect(() => {
+  const comparisonResult: HtmlComparisonResult | null = useMemo(() => {
     if (selectedMismatch && selectedMismatch.serverHTML && selectedMismatch.clientHTML) {
-      const result = htmlDiffer.compareHtml(selectedMismatch.serverHTML, selectedMismatch.clientHTML);
-      setComparisonResult(result);
-    } else {
-      setComparisonResult(null);
+      return htmlDiffer.compareHtml(selectedMismatch.serverHTML, selectedMismatch.clientHTML);
     }
+    return null;
   }, [selectedMismatch]);
 
   const handleSelectMismatch = (mismatch: HydrationMismatch) => {

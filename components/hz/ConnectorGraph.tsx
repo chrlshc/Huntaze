@@ -133,6 +133,18 @@ export default function ConnectorGraph({
   );
 }
 
+const ICON_BY_ID: Record<string, typeof Camera> = {
+  instagram: Camera,
+  tiktok: Music,
+  reddit: MessageSquare,
+  analytics: BarChart3,
+  overview: BarChart3,
+  revenue: BarChart3,
+  acquisition: BarChart3,
+  compliance: Shield,
+  payments: HandCoins,
+};
+
 function Node({ def, status, hideStatus, hideActions, cardWidth }: { def: NodeDef; status?: Status; hideStatus?: boolean; hideActions?: boolean; cardWidth?: number }) {
   const width = cardWidth ?? 180;
   const style: React.CSSProperties = {
@@ -152,7 +164,7 @@ function Node({ def, status, hideStatus, hideActions, cardWidth }: { def: NodeDe
     );
   }
 
-  const Icon = pickIcon(def.id);
+  const Icon = ICON_BY_ID[def.id] ?? MessageSquare;
   const badgeCls = hideStatus ? undefined : (status ? `hz-badge hz-badge--${status === "connected" ? "success" : status === "error" ? "critical" : status === "loading" ? "attention" : "attention"}` : undefined);
   const badgeText = hideStatus ? undefined : (status === "connected" ? "Connected" : status === "error" ? "Error" : status === "loading" ? "Loading" : undefined);
 
@@ -174,26 +186,4 @@ function Node({ def, status, hideStatus, hideActions, cardWidth }: { def: NodeDe
       </Card>
     </div>
   );
-}
-
-function pickIcon(id: string) {
-  switch (id) {
-    case "instagram":
-      return Camera;
-    case "tiktok":
-      return Music;
-    case "reddit":
-      return MessageSquare;
-    case "analytics":
-    case "overview":
-    case "revenue":
-    case "acquisition":
-      return BarChart3;
-    case "compliance":
-      return Shield;
-    case "payments":
-      return HandCoins;
-    default:
-      return MessageSquare;
-  }
 }

@@ -12,39 +12,164 @@ import {
   TrendingUp, TrendingDown, Users, DollarSign, MessageSquare, 
   Clock, Target, Award, BarChart3, PieChart, Activity 
 } from 'lucide-react';
-import { analyticsManager, seedMockAnalytics } from '@/lib/of/analytics-manager';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 import type { FanAnalytics } from '@/lib/types/onlyfans';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { useAuthSession } from '@/hooks/useAuthSession';
+
+type OnlyFansFanItem = {
+  id: string;
+  name: string;
+  username?: string;
+  totalSpent: number;
+  lastMessageAt?: string;
+  subscribedAt?: string;
+};
+
+type OnlyFansFansResponse = {
+  success?: boolean;
+  data?: {
+    items?: OnlyFansFanItem[];
+  };
+};
+
+function buildSegments(fans: OnlyFansFanItem[] = []) {
+  const totalFans = fans.length || 1;
+
+  const segments = [
+    {
+      segment: 'Whales ($500+)',
+      fans: fans.filter(f => f.totalSpent >= 500),
+    },
+    {
+      segment: 'Big Spenders ($100-$499)',
+      fans: fans.filter(f => f.totalSpent >= 100 && f.totalSpent < 500),
+    },
+    {
+      segment: 'Regular Spenders ($20-$99)',
+      fans: fans.filter(f => f.totalSpent >= 20 && f.totalSpent < 100),
+    },
+    {
+      segment: 'Low Spenders ($1-$19)',
+      fans: fans.filter(f => f.totalSpent >= 1 && f.totalSpent < 20),
+    },
+    {
+      segment: 'Non-Spenders ($0)',
+      fans: fans.filter(f => f.totalSpent === 0),
+    },
+    {
+      segment: 'Active (7d)',
+      fans: fans.filter(f => {
+        const last = f.lastMessageAt ? new Date(f.lastMessageAt).getTime() : 0;
+        return last > 0 && Date.now() - last <= 7 * 24 * 60 * 60 * 1000;
+      }),
+    },
+    {
+      segment: 'Silent (7-30d)',
+      fans: fans.filter(f => {
+        const last = f.lastMessageAt ? new Date(f.lastMessageAt).getTime() : 0;
+        const age = Date.now() - last;
+        return last > 0 && age > 7 * 24 * 60 * 60 * 1000 && age <= 30 * 24 * 60 * 60 * 1000;
+      }),
+    },
+    {
+      segment: 'Inactive (30d+)',
+      fans: fans.filter(f => {
+        const last = f.lastMessageAt ? new Date(f.lastMessageAt).getTime() : 0;
+        return last > 0 && Date.now() - last > 30 * 24 * 60 * 60 * 1000;
+      }),
+    },
+  ];
+
+  return segments.map(seg => ({
+    segment: seg.segment,
+    count: seg.fans.length,
+    percentage: (seg.fans.length / totalFans) * 100,
+    avgSpend: seg.fans.length > 0
+      ? seg.fans.reduce((sum, fan) => sum + fan.totalSpent, 0) / seg.fans.length
+      : 0,
+  }));
+}
+
+function buildTopSpenders(fans: OnlyFansFanItem[] = []) {
+  return [...fans]
+    .sort((a, b) => b.totalSpent - a.totalSpent)
+    .slice(0, 5)
+    .map((fan) => ({
+      username: fan.username || fan.name || fan.id,
+      totalSpent: fan.totalSpent,
+      lastPurchase: fan.lastMessageAt || fan.subscribedAt || new Date().toISOString(),
+    }));
+}
 
 export default function OfAnalyticsPage() {
+  const { user } = useAuthSession();
   const [period, setPeriod] = useState<'24h' | '7d' | '30d' | 'all'>('30d');
   const [analytics, setAnalytics] = useState<FanAnalytics | null>(null);
   const [segments, setSegments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchAnalytics();
-  }, [period]);
+    const fetchAnalytics = async () => {
+      setLoading(true);
+      try {
+        const [analyticsData, fansResponse] = await Promise.all([
+          internalApiFetch<FanAnalytics>(`/api/integrations/onlyfans/analytics?period=${period}`),
+          internalApiFetch<OnlyFansFansResponse>('/api/onlyfans/fans?limit=200&offset=0'),
+        ]);
 
-  const fetchAnalytics = async () => {
-    setLoading(true);
-    try {
-      // Seed mock data on first load
-      if (period === '30d') {
-        seedMockAnalytics('user123');
+        const fans = fansResponse?.data?.items ?? [];
+        const enrichedAnalytics: FanAnalytics = {
+          ...analyticsData,
+          metrics: {
+            ...analyticsData.metrics,
+            topSpenders: analyticsData.metrics.topSpenders?.length
+              ? analyticsData.metrics.topSpenders
+              : buildTopSpenders(fans),
+          },
+        };
+
+        setAnalytics(enrichedAnalytics);
+        setSegments(buildSegments(fans));
+      } catch (error) {
+        console.error('Failed to fetch analytics:', error);
+        setAnalytics({
+          userId: user?.id ?? '',
+          period,
+          metrics: {
+            totalFans: 0,
+            newFans: 0,
+            expiredFans: 0,
+            activeConversations: 0,
+            revenue: {
+              subscriptions: 0,
+              tips: 0,
+              ppv: 0,
+              total: 0,
+            },
+            averageSpendPerFan: 0,
+            topSpenders: [],
+            conversionRates: {
+              freeToSaid: 0,
+              subscriberToPurchaser: 0,
+              ppvOpenRate: 0,
+            },
+          },
+        });
+        setSegments([]);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const data = await analyticsManager.getFanAnalytics('user123', period);
-      setAnalytics(data);
-
-      const segmentData = await analyticsManager.getFanSegments('user123');
-      setSegments(segmentData);
-    } catch (error) {
-      console.error('Failed to fetch analytics:', error);
-    } finally {
+    if (user?.id) {
+      fetchAnalytics();
+    } else {
       setLoading(false);
+      setAnalytics(null);
+      setSegments([]);
     }
-  };
+  }, [period, user?.id]);
 
   if (loading || !analytics) {
     return (

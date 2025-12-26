@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import SetupWizardSimple from '@/components/onboarding/huntaze-onboarding/SetupWizardSimple';
 import { ShopifyBackdrop } from '@/components/ui';
 import { Button } from "@/components/ui/button";
+import { submitOnboardingWizard } from '@/lib/services/onboarding';
 
 export default function WizardPage() {
   const router = useRouter();
@@ -30,20 +31,7 @@ export default function WizardPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/onboarding/wizard', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Service temporarily unavailable');
-      }
-
-      const config = await response.json();
+      const config = await submitOnboardingWizard(data as Record<string, unknown>);
 
       console.log('Wizard completed successfully:', config);
 

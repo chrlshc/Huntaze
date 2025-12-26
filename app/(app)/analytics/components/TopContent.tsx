@@ -2,6 +2,9 @@
 
 import { formatNumber } from '@/lib/dashboard/formatters';
 import { AnalyticsCard } from './AnalyticsCard';
+import { ShopifyEmptyState } from '@/components/ui/shopify/ShopifyEmptyState';
+import { Video } from 'lucide-react';
+import Image from 'next/image';
 
 interface TopContentItem {
   contentId: string;
@@ -59,13 +62,12 @@ export function TopContent({ content, isLoading }: TopContentProps) {
         drillDownUrl="/analytics/content"
         drillDownLabel="View all content"
       >
-        <div className="text-center py-12">
-          <span className="text-4xl mb-4 block">📹</span>
-          <p className="text-gray-500 mb-2">No viral content yet</p>
-          <p className="text-sm text-gray-400">
-            Your top performing content will appear here
-          </p>
-        </div>
+        <ShopifyEmptyState
+          icon={Video}
+          title="No viral content yet"
+          description="Your top performing content will appear here"
+          variant="compact"
+        />
       </AnalyticsCard>
     );
   }
@@ -112,9 +114,11 @@ export function TopContent({ content, isLoading }: TopContentProps) {
               {/* Thumbnail */}
               <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-200 mb-3">
                 {item.thumbnailUrl ? (
-                  <img
+                  <Image
                     src={item.thumbnailUrl}
                     alt={item.title}
+                    width={1280}
+                    height={720}
                     className="w-full h-full object-cover"
                   />
                 ) : (

@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
+import { assertMockEnabled } from '@/lib/config/mock-data';
 // Facade-free minimal implementation (no heavy imports)
 
 export async function GET() {
+  const mockDisabled = assertMockEnabled('/api/smart-onboarding/analytics/real-time-metrics');
+  if (mockDisabled) return mockDisabled;
+
   try {
     const now = new Date();
     const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);

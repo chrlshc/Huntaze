@@ -13,6 +13,11 @@ interface Stat {
   color: string;
 }
 
+const pseudoRandom = (seed: number) => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+
 const AnimatedHero: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const { scrollY } = useScroll();
@@ -31,11 +36,15 @@ const AnimatedHero: React.FC = () => {
   const unitScale = useSpring(1, { damping: 10, stiffness: 100 });
 
   useEffect(() => {
-    setMounted(true);
+    const frame = requestAnimationFrame(() => setMounted(true));
     // Animate revenue counter
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       revenueSpring.set(312);
     }, 500);
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+    };
   }, [revenueSpring]);
 
   const stats: Stat[] = [
@@ -69,13 +78,19 @@ const AnimatedHero: React.FC = () => {
       
       {/* Floating particles */}
       <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
+        {[...Array(20)].map((_, i) => {
+          const left = pseudoRandom(i + 1) * 100;
+          const top = pseudoRandom(i + 2) * 100;
+          const duration = 3 + pseudoRandom(i + 3) * 2;
+          const delay = pseudoRandom(i + 4) * 2;
+
+          return (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-white/20 rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${left}%`,
+              top: `${top}%`,
             }}
             animate={{
               y: [-20, 20],
@@ -83,13 +98,14 @@ const AnimatedHero: React.FC = () => {
               opacity: [0.2, 1, 0.2],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay,
               ease: 'easeInOut'
             }}
           />
-        ))}
+          );
+        })}
       </div>
 
       {/* Main content */}

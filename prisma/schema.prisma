@@ -198,6 +198,12 @@ model users {
   signup_method              String?               @db.VarChar(50)
   signup_completed_at        DateTime?             @db.Timestamp(6)
   first_login_at             DateTime?             @db.Timestamp(6)
+  // OnlyFans connection
+  of_cookies                 String?               @db.Text
+  of_user_agent              String?               @db.Text
+  of_session_token           String?               @db.VarChar(500)
+  of_auth_id                 String?               @db.VarChar(100)
+  of_linked_at               DateTime?             @db.Timestamp(6)
   content                    content[]
   marketing_campaigns        marketing_campaigns[]
   oauth_accounts             oauth_accounts[]
@@ -567,6 +573,55 @@ model AssistantMessage {
   @@map("assistant_messages")
 }
 
+// ============================================
+// PPV Templates & Campaigns
+// ============================================
+
+/// PPV content templates for creators
+model PPVTemplate {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      Int      @map("user_id")
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  price       Float
+  mediaType   String   @default("image") @map("media_type") @db.VarChar(24) // image, video
+  mediaCount  Int      @default(1) @map("media_count")
+  thumbnail   String?  @db.Text
+  status      String   @default("draft") @db.VarChar(24) // draft, ready, archived
+  tags        String[]
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  campaigns PPVCampaign[]
+
+  @@index([userId, status], map: "idx_ppv_template_user_status")
+  @@index([userId, createdAt(sort: Desc)], map: "idx_ppv_template_user_created")
+  @@map("ppv_templates")
+}
+
+/// PPV campaign sends
+model PPVCampaign {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          Int      @map("user_id")
+  templateId      String   @map("template_id") @db.Uuid
+  price           Float
+  status          String   @default("scheduled") @db.VarChar(24) // scheduled, sending, sent, failed
+  recipientsCount Int      @default(0) @map("recipients_count")
+  sentCount       Int      @default(0) @map("sent_count")
+  openedCount     Int      @default(0) @map("opened_count")
+  purchaseCount   Int      @default(0) @map("purchase_count")
+  revenue         Float    @default(0)
+  sentAt          DateTime? @map("sent_at") @db.Timestamptz(6)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  template PPVTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status], map: "idx_ppv_campaign_user_status")
+  @@index([templateId, sentAt(sort: Desc)], map: "idx_ppv_campaign_template")
+  @@map("ppv_campaigns")
+}
+
 model KnowledgeBaseItem {
   id          String         @id @default(cuid())
   status      KnowledgeStatus @default(ACTIVE)
@@ -610,4 +665,74 @@ model KnowledgeBaseItem {
   @@index([creatorId, kind, status])
   @@index([kind, niche, platform, status])
   @@index([score])
+}
+
+
+// ============================================================
+// OnlyFans Messages - Local cache for fast UI reads
+// ============================================================
+
+/// OF conversation threads (cached from OF API)
+model OFThread {
+  id                 String   @id                    // OF thread ID
+  userId             Int      @map("user_id")        // Our creator user ID
+  ofUserId           String   @map("of_user_id")     // OF user ID of the fan
+  fanName            String   @map("fan_name") @db.VarChar(255)
+  fanUsername        String   @map("fan_username") @db.VarChar(100)
+  fanAvatar          String?  @map("fan_avatar") @db.Text
+  lastMessageAt      DateTime @map("last_message_at") @db.Timestamptz(6)
+  lastMessagePreview String   @map("last_message_preview") @db.Text
+  unreadCount        Int      @default(0) @map("unread_count")
+  isOnline           Boolean  @default(false) @map("is_online")
+  isPinned           Boolean  @default(false) @map("is_pinned")
+  isMuted            Boolean  @default(false) @map("is_muted")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  messages OFMessage[]
+
+  @@unique([id, userId], name: "id_userId")
+  @@index([userId, lastMessageAt(sort: Desc)], map: "idx_of_thread_user_last")
+  @@index([userId, unreadCount], map: "idx_of_thread_user_unread")
+  @@index([userId, isPinned, lastMessageAt(sort: Desc)], map: "idx_of_thread_pinned")
+  @@map("of_threads")
+}
+
+/// OF messages (cached from OF API)
+model OFMessage {
+  id         String   @id                    // OF message ID
+  threadId   String   @map("thread_id")      // OF thread ID
+  userId     Int      @map("user_id")        // Our creator user ID
+  senderId   String   @map("sender_id")      // OF user ID of sender
+  senderType String   @map("sender_type") @db.VarChar(20) // 'creator' | 'fan'
+  content    String   @db.Text
+  mediaIds   String[] @map("media_ids")
+  price      Float?                          // PPV price if applicable
+  isPaid     Boolean  @default(false) @map("is_paid")
+  isRead     Boolean  @default(false) @map("is_read")
+  sentAt     DateTime @map("sent_at") @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  thread OFThread @relation(fields: [threadId, userId], references: [id, userId], onDelete: Cascade)
+
+  @@unique([id, userId], name: "id_userId")
+  @@index([threadId, userId, sentAt], map: "idx_of_message_thread_sent")
+  @@index([userId, isRead, senderType], map: "idx_of_message_unread")
+  @@map("of_messages")
+}
+
+/// Sync status tracking
+model OFSyncStatus {
+  id            String   @id @default(cuid())
+  userId        Int      @unique @map("user_id")
+  lastSyncAt    DateTime? @map("last_sync_at") @db.Timestamptz(6)
+  lastSyncType  String?  @map("last_sync_type") @db.VarChar(50) // 'full' | 'incremental'
+  syncInProgress Boolean @default(false) @map("sync_in_progress")
+  threadCount   Int      @default(0) @map("thread_count")
+  messageCount  Int      @default(0) @map("message_count")
+  errorMessage  String?  @map("error_message") @db.Text
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("of_sync_status")
 }

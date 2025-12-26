@@ -19,12 +19,16 @@ import React from 'react';
 export function lazyLoadComponent<P extends object>(
   importFn: () => Promise<{ default: ComponentType<P> }>,
   options?: {
-    loading?: ComponentType;
+    loading?: ComponentType<any>;
     ssr?: boolean;
   }
 ) {
+  const Loading = options?.loading;
+
   return dynamic(importFn, {
-    loading: options?.loading || (() => React.createElement('div', { className: 'animate-pulse bg-gray-200 h-32 rounded' })),
+    loading: Loading
+      ? (loadingProps) => React.createElement(Loading, loadingProps)
+      : () => React.createElement('div', { className: 'animate-pulse bg-gray-200 h-32 rounded' }),
     ssr: options?.ssr ?? true,
   });
 }

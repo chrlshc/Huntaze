@@ -15,7 +15,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useSWRConfig } from 'swr';
-import type { Message } from '@/lib/services/crmData';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 
 // ============================================================================
 // Types
@@ -27,7 +27,8 @@ interface MarkMessageReadParams {
 
 interface MarkMessageReadResponse {
   success: boolean;
-  message?: Message;
+  conversationId?: number;
+  markedCount?: number;
   error?: string;
   correlationId?: string;
 }
@@ -104,17 +105,13 @@ export function useMarkMessageRead(): UseMarkMessageReadReturn {
       );
 
       // Make API request
-      const response = await fetch(`/api/messages/${threadId}/read`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const data = await internalApiFetch<MarkMessageReadResponse>(
+        `/api/messages/${threadId}/read`,
+        { method: 'PATCH' }
+      );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || `HTTP ${response.status}`);
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to mark messages as read');
       }
 
       // Update last marked ID
@@ -129,7 +126,8 @@ export function useMarkMessageRead(): UseMarkMessageReadReturn {
 
       return {
         success: true,
-        message: data.message,
+        conversationId: data.conversationId,
+        markedCount: data.markedCount,
         correlationId: data.correlationId,
       };
 

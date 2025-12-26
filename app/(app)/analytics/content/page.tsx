@@ -11,9 +11,11 @@ import useSWR from 'swr';
 import { AnalyticsCard } from '../components/AnalyticsCard';
 import { AnalyticsToolbar } from '../components/AnalyticsToolbar';
 import { ShopifyCard } from '@/components/ui/shopify/ShopifyCard';
+import { ShopifyEmptyState } from '@/components/ui/shopify/ShopifyEmptyState';
 import { formatNumber, formatPercentage } from '@/lib/dashboard/formatters';
 import { fetchAcquisitionData, getErrorMessage } from '@/lib/dashboard/api';
 import type { DateRange } from '@/lib/dashboard/types';
+import { AlertTriangle, FileText } from 'lucide-react';
 
 function formatShortDate(value?: string) {
   if (!value) return '—';
@@ -61,20 +63,12 @@ export default function ContentDetailPage() {
         />
         <div className="px-6 py-6">
           <ShopifyCard>
-            <div className="text-center py-12">
-              <div className="text-4xl mb-4">⚠️</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Data temporarily unavailable
-              </h3>
-              <p className="text-sm text-gray-600 mb-4">{getErrorMessage(error)}</p>
-              <button
-                type="button"
-                onClick={() => void mutate()}
-                className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                Retry
-              </button>
-            </div>
+            <ShopifyEmptyState
+              icon={AlertTriangle}
+              title="Data temporarily unavailable"
+              description={getErrorMessage(error)}
+              action={{ label: 'Retry', onClick: () => void mutate() }}
+            />
           </ShopifyCard>
         </div>
       </div>
@@ -94,22 +88,12 @@ export default function ContentDetailPage() {
         />
         <div className="px-6 py-6">
           <ShopifyCard>
-            <div className="text-center py-12">
-              <div className="text-4xl mb-4">📄</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No content data available
-              </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Try selecting a different date range.
-              </p>
-              <button
-                type="button"
-                onClick={() => void mutate()}
-                className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                Retry
-              </button>
-            </div>
+            <ShopifyEmptyState
+              icon={FileText}
+              title="No content data available"
+              description="Try selecting a different date range."
+              action={{ label: 'Retry', onClick: () => void mutate() }}
+            />
           </ShopifyCard>
         </div>
       </div>

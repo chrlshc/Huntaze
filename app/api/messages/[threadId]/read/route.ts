@@ -10,8 +10,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { crmData, Message } from '@/lib/services/crmData';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { MessagesRepository, ConversationsRepository } from '@/lib/db/repositories';
+import { resolveUserId } from '@/app/api/crm/_lib/auth';
 
 // ============================================================================
 // Types
@@ -19,7 +19,8 @@ import { getUserFromRequest } from '@/lib/auth/request';
 
 interface MessageReadResponse {
   success: boolean;
-  message?: Message;
+  conversationId?: number;
+  markedCount?: number;
   error?: string;
   correlationId?: string;
   timestamp: string;
@@ -76,23 +77,14 @@ function createErrorResponse(
 /**
  * Get authenticated user ID from request
  */
-async function getUserId(request: NextRequest): Promise<string | null> {
+async function getUserId(request: NextRequest): Promise<number | null> {
   try {
-    const user = await getUserFromRequest(request);
-    return user?.userId || null;
+    const { userId } = await resolveUserId(request);
+    return userId ?? null;
   } catch (error) {
     console.error('[Messages API] Auth error:', error);
     return null;
   }
-}
-
-/**
- * Validate thread ID format
- */
-function validateThreadId(threadId: string): boolean {
-  // UUID v4 format validation
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(threadId);
 }
 
 // ============================================================================
@@ -129,7 +121,8 @@ export async function PATCH(
       );
     }
 
-    if (!validateThreadId(threadId)) {
+    const conversationId = parseInt(threadId, 10);
+    if (Number.isNaN(conversationId)) {
       return createErrorResponse(
         'Invalid thread ID format',
         'INVALID_THREAD_ID',
@@ -151,32 +144,22 @@ export async function PATCH(
     }
 
     // 3. Mark message as read
-    let updated: Message | undefined;
-    
+    let markedCount = 0;
     try {
-      updated = crmData.markMessageRead(userId, threadId);
+      markedCount = await MessagesRepository.markConversationRead(userId, conversationId);
+      await ConversationsRepository.resetUnreadCount(userId, conversationId);
     } catch (error) {
       console.error('[Messages API] Database error:', {
         error: error instanceof Error ? error.message : 'Unknown error',
         userId,
-        threadId,
+        conversationId,
         correlationId,
       });
 
       return createErrorResponse(
-        'Failed to update message',
+        'Failed to update messages',
         'DATABASE_ERROR',
         500,
-        correlationId
-      );
-    }
-
-    // 4. Handle not found
-    if (!updated) {
-      return createErrorResponse(
-        'Message not found or access denied',
-        'MESSAGE_NOT_FOUND',
-        404,
         correlationId
       );
     }
@@ -185,15 +168,16 @@ export async function PATCH(
     const duration = Date.now() - startTime;
     const response: MessageReadResponse = {
       success: true,
-      message: updated,
+      conversationId,
+      markedCount,
       correlationId,
       timestamp: new Date().toISOString(),
     };
 
     console.log('[Messages API] Success:', {
       userId,
-      threadId,
-      messageId: updated.id,
+      conversationId,
+      markedCount,
       duration,
       correlationId,
     });
@@ -225,3 +209,5 @@ export async function PATCH(
     );
   }
 }
+
+export const PUT = PATCH;

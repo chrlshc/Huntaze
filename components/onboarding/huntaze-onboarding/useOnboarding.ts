@@ -11,6 +11,7 @@
 
 import { useState, useCallback } from 'react';
 import { OnboardingStep, StepStatus } from './types';
+import { fetchOnboardingSteps, updateOnboardingStep } from '@/lib/services/onboarding';
 
 interface UseOnboardingOptions {
   userId: string;
@@ -108,20 +109,7 @@ export function useOnboarding({
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const params = new URLSearchParams();
-      if (market) params.append('market', market);
-
-      const response = await fetch(`/api/onboarding?${params.toString()}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch onboarding: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = await fetchOnboardingSteps({ market: market ?? undefined });
 
       setState({
         steps: data.steps || [],
@@ -164,20 +152,7 @@ export function useOnboarding({
       }));
 
       try {
-        const response = await fetch(`/api/onboarding/steps/${stepId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || `Failed to update step: ${response.statusText}`);
-        }
-
-        const data = await response.json();
+        const data = await updateOnboardingStep(stepId, status);
 
         // Update with server response
         setState((prev) => ({

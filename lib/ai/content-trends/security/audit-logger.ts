@@ -15,6 +15,7 @@ import {
   UserRole,
   DataClassification,
 } from './types';
+import { externalFetch } from '@/lib/services/external/http';
 
 // ============================================================================
 // Audit Logger Configuration
@@ -348,7 +349,9 @@ export class AuditLogger {
 
     const url = `https://${backend.workspaceId}.ods.opinsights.azure.com/api/logs?api-version=2016-04-01`;
 
-    await fetch(url, {
+    await externalFetch(url, {
+      service: 'azure-monitor',
+      operation: 'audit.log',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -357,6 +360,10 @@ export class AuditLogger {
         Authorization: `SharedKey ${backend.workspaceId}:${signature}`,
       },
       body,
+      cache: 'no-store',
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, retryMethods: ['POST'] },
+      throwOnHttpError: true,
     });
   }
 

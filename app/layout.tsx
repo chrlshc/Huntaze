@@ -10,6 +10,8 @@ import "@/components/accessibility/skip-link.css"; // Phase 8: Accessibility
 import { NextAuthProvider } from "@/components/auth/NextAuthProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { PolarisProvider } from "@/components/providers/PolarisProvider";
+import { MockApiProvider } from "@/components/providers/MockApiProvider";
+import { SWRProvider } from "@/components/providers/SWRProvider";
 import "@/lib/config/chartConfig"; // Register Chart.js components
 
 
@@ -69,15 +71,19 @@ export default function RootLayout({
         style={{ backgroundColor: '#F1F2F4' }}
         suppressHydrationWarning
       >
-        <ThemeProvider>
-          <PolarisProvider>
-            <NextAuthProvider>
-              <div className="app-wrapper flex min-h-screen flex-col">
-                {children}
-              </div>
-            </NextAuthProvider>
-          </PolarisProvider>
-        </ThemeProvider>
+        <MockApiProvider>
+          <ThemeProvider>
+            <PolarisProvider>
+              <NextAuthProvider>
+                <SWRProvider>
+                  <div className="app-wrapper flex min-h-screen flex-col">
+                    {children}
+                  </div>
+                </SWRProvider>
+              </NextAuthProvider>
+            </PolarisProvider>
+          </ThemeProvider>
+        </MockApiProvider>
       </body>
     </html>
   );

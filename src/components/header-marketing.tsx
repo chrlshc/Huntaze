@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { events } from '@/src/lib/analytics'
@@ -84,7 +85,7 @@ export default function HeaderMarketing() {
           <div className="hidden lg:flex items-center gap-8">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 mr-12">
-              <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-8 h-8" />
+              <Image src="/huntaze-logo-icon.svg" alt="Beta" width={32} height={32} className="w-8 h-8" />
               <span className="text-lg font-semibold text-white">Beta</span>
             </Link>
             
@@ -162,7 +163,7 @@ export default function HeaderMarketing() {
           {/* Mobile: Logo and menu button */}
           <div className="lg:hidden flex items-center justify-between w-full">
             <Link href="/" className="flex items-center gap-2">
-              <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-7 h-7" />
+              <Image src="/huntaze-logo-icon.svg" alt="Beta" width={28} height={28} className="w-7 h-7" />
               <span className="text-lg font-semibold text-white">Beta</span>
             </Link>
             <Button 

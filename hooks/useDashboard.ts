@@ -2,7 +2,8 @@
 
 import useSWR from 'swr';
 import { getConfigForEndpoint } from '@/lib/swr/config';
-import { standardFetcher } from '@/lib/swr';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import { dashboardResponseSchema } from '@/lib/schemas/api-responses';
 
 export interface DashboardSummary {
   totalRevenue: {
@@ -53,15 +54,21 @@ export interface DashboardData {
   };
   recentActivity: ActivityItem[];
   quickActions: QuickAction[];
-  metadata?: {
-    sources?: {
-      onlyfans?: boolean;
-      instagram?: boolean;
-      tiktok?: boolean;
-      reddit?: boolean;
+  connectedIntegrations: {
+    onlyfans: boolean;
+    instagram: boolean;
+    tiktok: boolean;
+    reddit: boolean;
+  };
+  metadata: {
+    sources: {
+      onlyfans: boolean;
+      instagram: boolean;
+      tiktok: boolean;
+      reddit: boolean;
     };
-    hasRealData?: boolean;
-    generatedAt?: string;
+    hasRealData: boolean;
+    generatedAt: string;
   };
 }
 
@@ -71,6 +78,11 @@ export interface DashboardOptions {
   to?: string;
   include?: string[];
   refetchInterval?: number;
+}
+
+interface DashboardResponse {
+  success: boolean;
+  data: DashboardData;
 }
 
 /**
@@ -99,7 +111,10 @@ export function useDashboard(options: DashboardOptions = {}) {
     refreshInterval: refetchInterval, // Allow user override
   };
 
-  return useSWR<{ success: boolean; data: DashboardData }>(url, standardFetcher, swrConfig);
+  const fetcher = (endpoint: string) =>
+    internalApiFetch<DashboardResponse>(endpoint, { schema: dashboardResponseSchema });
+
+  return useSWR<DashboardResponse>(url, fetcher, swrConfig);
 }
 
 /**

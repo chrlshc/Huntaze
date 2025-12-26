@@ -9,6 +9,106 @@ export interface AtomicBackgroundProps {
   particleSpeed?: number;
 }
 
+type ParticleConfig = {
+  particleSpeed: number;
+  colors: {
+    purple: string;
+    pink: string;
+    violet: string;
+  };
+};
+
+class Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  opacity: number;
+  color: string;
+  glowRadius: number;
+  pulsePhase: number;
+  pulseSpeed: number;
+
+  private canvas: HTMLCanvasElement;
+  private config: ParticleConfig;
+  private getRandomColor: () => string;
+
+  constructor(canvas: HTMLCanvasElement, config: ParticleConfig, getRandomColor: () => string) {
+    this.canvas = canvas;
+    this.config = config;
+    this.getRandomColor = getRandomColor;
+
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * config.particleSpeed;
+    this.vy = (Math.random() - 0.5) * config.particleSpeed;
+    this.radius = Math.random() * 3 + 1;
+    this.opacity = Math.random() * 0.5 + 0.3;
+    this.color = this.getRandomColor();
+    this.glowRadius = Math.random() * 20 + 10;
+    this.pulsePhase = Math.random() * Math.PI * 2;
+    this.pulseSpeed = Math.random() * 0.02 + 0.01;
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+
+    const canvasWidth = this.canvas.width;
+    const canvasHeight = this.canvas.height;
+
+    if (this.x < 0 || this.x > canvasWidth) {
+      this.vx *= -1;
+      this.x = Math.max(0, Math.min(canvasWidth, this.x));
+    }
+    if (this.y < 0 || this.y > canvasHeight) {
+      this.vy *= -1;
+      this.y = Math.max(0, Math.min(canvasHeight, this.y));
+    }
+
+    this.pulsePhase += this.pulseSpeed;
+  }
+
+  draw(context: CanvasRenderingContext2D) {
+    const currentGlowRadius = this.glowRadius + Math.sin(this.pulsePhase) * 5;
+    const currentOpacity = this.opacity + Math.sin(this.pulsePhase) * 0.2;
+
+    const gradient = context.createRadialGradient(
+      this.x, this.y, 0,
+      this.x, this.y, currentGlowRadius
+    );
+    const hexToRgba = (hex: string, alpha: number) => {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
+    gradient.addColorStop(0, hexToRgba(this.config.colors.purple, currentOpacity * 0.8));
+    gradient.addColorStop(0.4, hexToRgba(this.config.colors.pink, currentOpacity * 0.3));
+    gradient.addColorStop(1, 'transparent');
+
+    context.save();
+    context.fillStyle = gradient;
+    context.fillRect(
+      this.x - currentGlowRadius,
+      this.y - currentGlowRadius,
+      currentGlowRadius * 2,
+      currentGlowRadius * 2
+    );
+    context.restore();
+
+    context.save();
+    context.beginPath();
+    context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    context.fillStyle = this.color;
+    context.shadowColor = this.color;
+    context.shadowBlur = 10;
+    context.fill();
+    context.restore();
+  }
+}
+
 /**
  * Atomic particle background effect with connections
  * Features:
@@ -34,7 +134,7 @@ export default function AtomicBackground({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let particles: Particle[] = [];
+    const particles: Particle[] = [];
     let animationId: number;
 
     // Get colors from CSS custom properties
@@ -42,7 +142,7 @@ export default function AtomicBackground({
       return getComputedStyle(document.documentElement).getPropertyValue(property).trim();
     };
 
-    const config = {
+    const config: ParticleConfig = {
       particleCount,
       connectionDistance,
       particleSpeed,
@@ -66,96 +166,6 @@ export default function AtomicBackground({
       const colors = [config.colors.purple, config.colors.pink, config.colors.violet];
       return colors[Math.floor(Math.random() * colors.length)];
     };
-
-    // Particle class
-    class Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-      opacity: number;
-      color: string;
-      glowRadius: number;
-      pulsePhase: number;
-      pulseSpeed: number;
-
-      constructor() {
-        this.x = Math.random() * (canvas?.width || 0);
-        this.y = Math.random() * (canvas?.height || 0);
-        this.vx = (Math.random() - 0.5) * config.particleSpeed;
-        this.vy = (Math.random() - 0.5) * config.particleSpeed;
-        this.radius = Math.random() * 3 + 1;
-        this.opacity = Math.random() * 0.5 + 0.3;
-        this.color = getRandomColor();
-        this.glowRadius = Math.random() * 20 + 10;
-        this.pulsePhase = Math.random() * Math.PI * 2;
-        this.pulseSpeed = Math.random() * 0.02 + 0.01;
-      }
-
-      update() {
-        // Update position
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // Bounce off edges
-        const canvasWidth = canvas?.width || 0;
-        const canvasHeight = canvas?.height || 0;
-        
-        if (this.x < 0 || this.x > canvasWidth) {
-          this.vx *= -1;
-          this.x = Math.max(0, Math.min(canvasWidth, this.x));
-        }
-        if (this.y < 0 || this.y > canvasHeight) {
-          this.vy *= -1;
-          this.y = Math.max(0, Math.min(canvasHeight, this.y));
-        }
-
-        // Pulse effect
-        this.pulsePhase += this.pulseSpeed;
-      }
-
-      draw(context: CanvasRenderingContext2D) {
-        const currentGlowRadius = this.glowRadius + Math.sin(this.pulsePhase) * 5;
-        const currentOpacity = this.opacity + Math.sin(this.pulsePhase) * 0.2;
-
-        // Draw glow using design token colors
-        const gradient = context.createRadialGradient(
-          this.x, this.y, 0,
-          this.x, this.y, currentGlowRadius
-        );
-        // Convert hex to rgba for gradient
-        const hexToRgba = (hex: string, alpha: number) => {
-          const r = parseInt(hex.slice(1, 3), 16);
-          const g = parseInt(hex.slice(3, 5), 16);
-          const b = parseInt(hex.slice(5, 7), 16);
-          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-        };
-        gradient.addColorStop(0, hexToRgba(config.colors.purple, currentOpacity * 0.8));
-        gradient.addColorStop(0.4, hexToRgba(config.colors.pink, currentOpacity * 0.3));
-        gradient.addColorStop(1, 'transparent');
-
-        context.save();
-        context.fillStyle = gradient;
-        context.fillRect(
-          this.x - currentGlowRadius,
-          this.y - currentGlowRadius,
-          currentGlowRadius * 2,
-          currentGlowRadius * 2
-        );
-        context.restore();
-
-        // Draw center particle
-        context.save();
-        context.beginPath();
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        context.fillStyle = this.color;
-        context.shadowColor = this.color;
-        context.shadowBlur = 10;
-        context.fill();
-        context.restore();
-      }
-    }
 
     // Draw connections between particles
     const drawConnections = () => {
@@ -200,7 +210,7 @@ export default function AtomicBackground({
 
     // Initialize particles
     for (let i = 0; i < config.particleCount; i++) {
-      particles.push(new Particle());
+      particles.push(new Particle(canvas, config, getRandomColor));
     }
 
     // Animation loop

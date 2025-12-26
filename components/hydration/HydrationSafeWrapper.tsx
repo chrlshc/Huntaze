@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode, useEffect, useState } from 'react';
+import { useIsClient } from '@/hooks/useIsClient';
 
 /**
  * HydrationSafeWrapper Component
@@ -39,11 +40,7 @@ export function HydrationSafeWrapper({
   id,
   onHydrationError,
 }: HydrationSafeWrapperProps) {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const isClient = useIsClient();
 
   const wrap = (content: ReactNode, suppress = false) => {
     const shouldSuppress = suppress || suppressWarning || suppressHydrationWarning;
@@ -81,11 +78,7 @@ export function HydrationSafeWrapper({
  * Simpler version that only renders on client, no fallback
  */
 export function ClientOnly({ children }: { children: ReactNode }) {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const isClient = useIsClient();
 
   return isClient ? <>{children}</> : null;
 }
@@ -106,11 +99,7 @@ interface SafeBrowserAPIProps {
 }
 
 export function SafeBrowserAPI({ children, fallback = null }: SafeBrowserAPIProps) {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const isClient = useIsClient();
 
   if (!isClient || typeof window === 'undefined') {
     return <>{fallback}</>;
@@ -134,12 +123,9 @@ export function SafeBrowserAPI({ children, fallback = null }: SafeBrowserAPIProp
  * Renders current year with hydration safety
  */
 export function SafeCurrentYear({ fallback }: { fallback?: ReactNode } = {}) {
-  const [year, setYear] = useState<number | null>(null);
+  const isClient = useIsClient();
   const fallbackValue = fallback ?? new Date().getFullYear();
-
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
+  const year = isClient ? new Date().getFullYear() : null;
 
   // Server-side: render placeholder
   if (year === null) {
@@ -161,11 +147,20 @@ interface SafeRandomContentProps {
 }
 
 export function SafeRandomContent({ options, fallback }: SafeRandomContentProps) {
+  const isClient = useIsClient();
   const [content, setContent] = useState<string | null>(null);
 
   useEffect(() => {
-    setContent(options[Math.floor(Math.random() * options.length)]);
-  }, [options]);
+    const timer = window.setTimeout(() => {
+      if (!isClient || options.length === 0) {
+        setContent(null);
+        return;
+      }
+      const selected = options[Math.floor(Math.random() * options.length)];
+      setContent(selected);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [isClient, options]);
 
   // Server-side: render fallback
   if (content === null) {
@@ -192,11 +187,8 @@ export function SafeConditionalRender({
   children,
   fallback = null,
 }: SafeConditionalRenderProps) {
-  const [shouldRender, setShouldRender] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    setShouldRender(condition());
-  }, [condition]);
+  const isClient = useIsClient();
+  const shouldRender = isClient ? condition() : null;
 
   // Server-side: render fallback
   if (shouldRender === null) {

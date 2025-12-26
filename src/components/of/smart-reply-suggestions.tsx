@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from '@/components/ui/card';
@@ -42,9 +42,9 @@ export function SmartReplySuggestions({
     }, 500); // 500ms debounce
 
     return () => clearTimeout(timeoutId);
-  }, [fanMessage]);
+  }, [fanMessage, searchSuggestions]);
 
-  const searchSuggestions = async () => {
+  const searchSuggestions = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch suggestions from API instead of direct import
@@ -80,7 +80,7 @@ export function SmartReplySuggestions({
     } finally {
       setLoading(false);
     }
-  };
+  }, [fanMessage, niche, userId]);
 
   const generateSuggestedReply = (payload: any, fanMessage: string): string => {
     // Extract the response pattern from the playbook

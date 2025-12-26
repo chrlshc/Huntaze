@@ -14,6 +14,7 @@ import '@/styles/polaris-analytics.css';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { DashboardErrorState } from '@/components/ui/DashboardLoadingState';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 import {
   MessageSquare,
   Users,
@@ -33,7 +34,14 @@ interface OnlyFansStats {
   messages: { total: number; unread: number; responseRate: number; avgResponseTime: number };
   fans: { total: number; active: number; new: number };
   ppv: { totalRevenue: number; totalSales: number; conversionRate: number };
-  connection: { isConnected: boolean; lastSync: Date | null; status: 'connected' | 'disconnected' | 'error' };
+  connection: { isConnected: boolean; lastSync: string | null; status: 'connected' | 'disconnected' | 'error' };
+}
+
+interface OnlyFansStatsResponse {
+  success: boolean;
+  stats: OnlyFansStats | null;
+  connection?: OnlyFansStats['connection'];
+  error?: string;
 }
 
 // Polaris Card Component
@@ -77,17 +85,31 @@ export default function OnlyFansPage() {
 
   const loadDashboardData = async () => {
     try {
-      const response = await fetch('/api/onlyfans/stats');
-      const data = await response.json().catch(() => null);
+      setError(null);
+      const data = await internalApiFetch<OnlyFansStatsResponse>('/api/onlyfans/stats');
 
-      if (!response.ok) {
+      if (!data?.success) {
         setStats(null);
-        setError((data && typeof data === 'object' && 'error' in data && data.error) ? String((data as any).error) : 'Failed to load OnlyFans stats');
+        setError(data?.error || 'Failed to load OnlyFans stats');
         return;
       }
 
-      setError(null);
-      setStats(data?.stats ?? null);
+      const connection = data?.stats?.connection ?? data?.connection ?? {
+        isConnected: false,
+        lastSync: null,
+        status: 'disconnected' as const,
+      };
+
+      if (data?.stats) {
+        setStats({ ...data.stats, connection });
+      } else {
+        setStats({
+          messages: { total: 0, unread: 0, responseRate: 0, avgResponseTime: 0 },
+          fans: { total: 0, active: 0, new: 0 },
+          ppv: { totalRevenue: 0, totalSales: 0, conversionRate: 0 },
+          connection,
+        });
+      }
     } catch (e) {
       setStats(null);
       setError(e instanceof Error ? e.message : 'Failed to load OnlyFans stats');

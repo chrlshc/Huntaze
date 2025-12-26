@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 
 interface ContentItem {
@@ -62,9 +63,11 @@ export function TopContentGrid({ content, loading = false }: TopContentGridProps
           >
             {item.thumbnail && (
               <div className="aspect-video bg-gray-100">
-                <img
+                <Image
                   src={item.thumbnail}
                   alt={item.title}
+                  width={1280}
+                  height={720}
                   className="w-full h-full object-cover"
                 />
               </div>

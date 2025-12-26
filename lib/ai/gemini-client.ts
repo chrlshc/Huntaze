@@ -97,7 +97,7 @@ export async function generateTextRaw(
     });
 
     // Extract text from response
-    let text = response.text as string;
+    const text = response.text as string;
 
     // Requirement 10.3: Parse JSON automatically if structured output
     if (params.config?.response_mime_type === 'application/json') {

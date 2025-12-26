@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
 
@@ -26,11 +26,7 @@ export default function TagAnalytics({ userId }: TagAnalyticsProps) {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<'frequency' | 'combinations' | 'cloud'>('frequency');
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [userId]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`/api/content/tags/analytics?userId=${userId}`);
@@ -43,7 +39,11 @@ export default function TagAnalytics({ userId }: TagAnalyticsProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   if (loading) {
     return <div className="text-center py-8 text-gray-500">Loading analytics...</div>;

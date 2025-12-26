@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { X, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
@@ -30,43 +30,40 @@ export default function FeatureTour({
   onDismiss
 }: FeatureTourProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
   const currentStep = steps[currentStepIndex];
   const isLastStep = currentStepIndex === steps.length - 1;
   const isFirstStep = currentStepIndex === 0;
 
+  const tooltipPosition = useMemo(() => {
+    if (!isOpen || !currentStep?.targetElement || typeof document === 'undefined') {
+      return { top: 0, left: 0 };
+    }
+
+    const element = document.querySelector(currentStep.targetElement);
+    if (!element) return { top: 0, left: 0 };
+
+    const rect = element.getBoundingClientRect();
+    const position = currentStep.position || 'bottom';
+
+    switch (position) {
+      case 'top':
+        return { top: rect.top - 20, left: rect.left + rect.width / 2 };
+      case 'bottom':
+        return { top: rect.bottom + 20, left: rect.left + rect.width / 2 };
+      case 'left':
+        return { top: rect.top + rect.height / 2, left: rect.left - 20 };
+      case 'right':
+        return { top: rect.top + rect.height / 2, left: rect.right + 20 };
+      default:
+        return { top: rect.bottom + 20, left: rect.left + rect.width / 2 };
+    }
+  }, [currentStep, isOpen]);
+
   useEffect(() => {
     if (isOpen && currentStep?.targetElement) {
       const element = document.querySelector(currentStep.targetElement);
       if (element) {
-        const rect = element.getBoundingClientRect();
-        const position = currentStep.position || 'bottom';
-        
-        let top = 0;
-        let left = 0;
-
-        switch (position) {
-          case 'top':
-            top = rect.top - 20;
-            left = rect.left + rect.width / 2;
-            break;
-          case 'bottom':
-            top = rect.bottom + 20;
-            left = rect.left + rect.width / 2;
-            break;
-          case 'left':
-            top = rect.top + rect.height / 2;
-            left = rect.left - 20;
-            break;
-          case 'right':
-            top = rect.top + rect.height / 2;
-            left = rect.right + 20;
-            break;
-        }
-
-        setTooltipPosition({ top, left });
-        
         // Highlight the target element
         element.classList.add('tour-highlight');
         

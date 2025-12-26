@@ -2,6 +2,8 @@
 
 import { formatCurrency, formatPercentage } from '@/lib/dashboard/formatters';
 import { AnalyticsCard } from './AnalyticsCard';
+import { ShopifyEmptyState } from '@/components/ui/shopify/ShopifyEmptyState';
+import { DollarSign } from 'lucide-react';
 
 interface RevenueBreakdownData {
   subscriptions: number;
@@ -51,10 +53,11 @@ export function RevenueBreakdown({ breakdown, isLoading }: RevenueBreakdownProps
         drillDownUrl="/analytics/revenue/breakdown"
         drillDownLabel="View detailed breakdown"
       >
-        <div className="text-center py-12">
-          <span className="text-4xl mb-4 block">💰</span>
-          <p className="text-gray-500">No revenue data available</p>
-        </div>
+        <ShopifyEmptyState
+          icon={DollarSign}
+          title="No revenue data available"
+          variant="compact"
+        />
       </AnalyticsCard>
     );
   }

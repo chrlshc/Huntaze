@@ -19,7 +19,7 @@ export default defineConfig(() => ({
     name: 'beta-ui-system',
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./tests/setup.tsx'],
+    setupFiles: ['./vitest.setup.ts', './tests/setup.tsx'],
     // Only include beta-related tests
     include: [
       'tests/unit/beta-landing-page.test.tsx',

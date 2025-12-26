@@ -7,6 +7,8 @@
  */
 
 import type { InsightsValidationResult, TokenUsage } from './types';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 const INSIGHTS_TIMEOUT_MS = 10000;
 
@@ -52,19 +54,17 @@ export class InsightsValidator {
     const startTime = Date.now();
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), INSIGHTS_TIMEOUT_MS);
-
-      const response = await fetch(this.apiUrl, {
+      const response = await externalFetch(this.apiUrl, {
+        service: 'ai-insights',
+        operation: 'validate',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ metrics }),
-        signal: controller.signal,
+        timeoutMs: INSIGHTS_TIMEOUT_MS,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
-
-      clearTimeout(timeoutId);
 
       const responseTimeMs = Date.now() - startTime;
 
@@ -79,7 +79,10 @@ export class InsightsValidator {
         };
       }
 
-      const data: InsightsAPIResponse = await response.json();
+      const data: InsightsAPIResponse = await response.json().catch(() => ({
+        success: false,
+        insights: [],
+      } as InsightsAPIResponse));
 
       // Validate response structure
       const hasRequiredFields = this.validateResponseStructure(data);
@@ -95,7 +98,7 @@ export class InsightsValidator {
     } catch (error) {
       const responseTimeMs = Date.now() - startTime;
 
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error) && error.code === 'TIMEOUT') {
         return {
           success: false,
           responseTimeMs,

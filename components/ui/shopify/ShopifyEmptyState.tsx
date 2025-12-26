@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { ShopifyButton } from './ShopifyButton';
 import { LucideIcon } from 'lucide-react';
@@ -92,9 +93,11 @@ export function ShopifyEmptyState({
         {/* Icon or Illustration */}
         {illustration ? (
           <div className="mb-6">
-            <img
+            <Image
               src={illustration}
               alt=""
+              width={200}
+              height={200}
               className="mx-auto max-w-[200px] h-auto"
               role="presentation"
             />

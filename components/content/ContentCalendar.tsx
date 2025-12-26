@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek } from 'date-fns';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
@@ -27,11 +28,7 @@ export default function ContentCalendar({ userId, onReschedule, onContentClick }
   const [loading, setLoading] = useState(true);
   const [draggedContent, setDraggedContent] = useState<ScheduledContent | null>(null);
 
-  useEffect(() => {
-    fetchScheduledContent();
-  }, [currentDate, view, userId]);
-
-  const fetchScheduledContent = async () => {
+  const fetchScheduledContent = useCallback(async () => {
     setLoading(true);
     try {
       const startDate = startOfMonth(currentDate);
@@ -50,7 +47,11 @@ export default function ContentCalendar({ userId, onReschedule, onContentClick }
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentDate, userId]);
+
+  useEffect(() => {
+    fetchScheduledContent();
+  }, [fetchScheduledContent, view]);
 
   const getContentForDate = (date: Date) => {
     return scheduledContent.filter(content => 
@@ -210,9 +211,11 @@ export default function ContentCalendar({ userId, onReschedule, onContentClick }
                       <div className="text-xs line-clamp-2">{content.text}</div>
                       {content.media.length > 0 && (
                         <div className="mt-1">
-                          <img 
+                          <Image 
                             src={content.media[0].thumbnail_url} 
                             alt="Preview" 
+                            width={400}
+                            height={64}
                             className="w-full h-16 object-cover rounded"
                           />
                         </div>
@@ -276,9 +279,11 @@ export default function ContentCalendar({ userId, onReschedule, onContentClick }
                     >
                       <div className="flex items-start gap-3">
                         {content.media.length > 0 && (
-                          <img 
+                          <Image 
                             src={content.media[0].thumbnail_url} 
                             alt="Preview" 
+                            width={80}
+                            height={80}
                             className="w-20 h-20 object-cover rounded"
                           />
                         )}

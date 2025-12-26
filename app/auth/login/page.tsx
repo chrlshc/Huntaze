@@ -2,25 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { signIn } from 'next-auth/react';
-import { Eye, EyeOff } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Card } from '@/components/ui/card';
+import { Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
+import { ShopifyCard } from '@/components/ui/shopify/ShopifyCard';
+import { ShopifyButton } from '@/components/ui/shopify/ShopifyButton';
+import { isMockApiMode } from '@/config/api-mode';
+import '@/styles/shopify-tokens.css';
 
-/**
- * User Login Page
- * 
- * Implements the Beta Launch UI System login flow with:
- * - Email and password authentication
- * - Email verification check before allowing login
- * - Professional black theme with rainbow accents
- * - Accessible form with proper labels and ARIA attributes
- * - Session management with NextAuth.js
- * - Secure, httpOnly cookies
- * - Remember me functionality
- * 
- * Requirements: 4.5, 16.4
- */
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -33,9 +22,10 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check for error messages in URL params
   const urlError = searchParams.get('error');
   const loggedOut = searchParams.get('loggedOut');
+  const registered = searchParams.get('registered');
+  const registeredEmail = searchParams.get('email');
   const callbackUrl = searchParams.get('callbackUrl') || '/home';
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,20 +34,29 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Attempt login with NextAuth
+      if (isMockApiMode()) {
+        router.push(callbackUrl);
+        router.refresh();
+        return;
+      }
+
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
         rememberMe: formData.rememberMe.toString(),
         redirect: false,
+        callbackUrl,
       });
 
-      if (result?.error) {
-        // Handle different error types
+      if (!result) {
+        setError('Authentication failed. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (result.error || result.ok === false) {
         if (result.error === 'CredentialsSignin') {
           setError('Invalid email or password');
-        } else if (result.error === 'EmailNotVerified') {
-          setError('Please verify your email before logging in');
         } else {
           setError('Authentication failed. Please try again.');
         }
@@ -65,14 +64,13 @@ export default function LoginPage() {
         return;
       }
 
-      // Clean up legacy localStorage tokens
       if (typeof window !== 'undefined') {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('access_token');
       }
 
-      // Redirect to callback URL or home page
-      router.push(callbackUrl);
+      const nextUrl = result.url && !result.url.includes('/auth/login') ? result.url : callbackUrl;
+      router.push(nextUrl);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
@@ -81,330 +79,300 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-container">
-      <Card>
-        <div className="auth-header">
-          <img src="/logo.svg" alt="Huntaze" className="logo" />
-          <h1>Welcome Back</h1>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-header">
+          <Image src="/logo.svg" alt="Huntaze" width={56} height={56} className="login-logo" />
+          <h1>Welcome back</h1>
           <p>Sign in to your Huntaze account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          {loggedOut && !error && !urlError && (
-            <div className="success-message" role="status">
-              You have been signed out.
-            </div>
-          )}
+        <ShopifyCard>
+          <form onSubmit={handleSubmit} className="login-form">
+            {registered && !error && !urlError && (
+              <div className="alert alert-success">
+                <CheckCircle size={16} />
+                <span>Account created{registeredEmail ? ` for ${registeredEmail}` : ''}. You can sign in now.</span>
+              </div>
+            )}
 
-          {(error || urlError) && (
-            <div className="error-message" role="alert">
-              {error ||
-                (urlError === 'session_expired' || urlError === 'SessionExpired'
-                  ? 'Your session has expired. Please log in again.'
-                  : 'Authentication error. Please try again.')}
-            </div>
-          )}
+            {loggedOut && !error && !urlError && (
+              <div className="alert alert-info">
+                <CheckCircle size={16} />
+                <span>You have been signed out.</span>
+              </div>
+            )}
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="creator@example.com"
-              required
-              className="input"
-              aria-required="true"
-              aria-describedby="email-hint"
-            />
-            <span id="email-hint" className="sr-only">
-              Enter your email address
-            </span>
-          </div>
+            {(error || urlError) && (
+              <div className="alert alert-error">
+                <AlertCircle size={16} />
+                <span>
+                  {error ||
+                    (urlError === 'session_expired' || urlError === 'SessionExpired'
+                      ? 'Your session has expired. Please log in again.'
+                      : 'Authentication error. Please try again.')}
+                </span>
+              </div>
+            )}
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <div className="password-input-wrapper">
+            <div className="form-field">
+              <label htmlFor="email">Email</label>
               <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="Enter your password"
+                type="email"
+                id="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="you@example.com"
                 required
-                className="input"
-                aria-required="true"
-                aria-describedby="password-hint"
+                autoComplete="email"
               />
-              <Button 
-                variant="primary" 
-                onClick={() => setShowPassword(!showPassword)} 
-                type="button"
-                className="password-toggle"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </Button>
             </div>
-            <span id="password-hint" className="sr-only">
-              Enter your password
-            </span>
-          </div>
 
-          <div className="form-options">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={formData.rememberMe}
-                onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
-                className="checkbox"
-              />
-              <span>Remember me for 30 days</span>
-            </label>
-            <a href="/auth/forgot-password" className="link">
-              Forgot password?
-            </a>
-          </div>
+            <div className="form-field">
+              <label htmlFor="password">Password</label>
+              <div className="password-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder="Enter your password"
+                  required
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
 
-          <Button variant="primary" disabled={isLoading} type="submit" aria-busy={isLoading}>
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </Button>
+            <div className="form-options">
+              <label className="checkbox-wrapper">
+                <input
+                  type="checkbox"
+                  checked={formData.rememberMe}
+                  onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+                />
+                <span>Remember me for 30 days</span>
+              </label>
+              <a href="/auth/forgot-password" className="forgot-link">
+                Forgot password?
+              </a>
+            </div>
 
-          <p className="form-footer">
-            Don't have an account?{' '}
-            <a href="/auth/register" className="link">Create one</a>
-          </p>
-        </form>
-      </Card>
+            <ShopifyButton type="submit" variant="primary" fullWidth loading={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign in'}
+            </ShopifyButton>
+          </form>
+        </ShopifyCard>
+
+        <p className="signup-link">
+          Don't have an account? <a href="/auth/register">Create one</a>
+        </p>
+      </div>
 
       <style jsx>{`
-        .auth-container {
+        .login-page {
           min-height: 100vh;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: var(--bg-app);
-          padding: var(--space-4);
+          background: var(--shopify-bg-surface-secondary, #f6f6f7);
+          padding: 24px;
         }
 
-        .auth-card {
+        .login-container {
           width: 100%;
-          max-width: 400px;
-          background: var(--bg-card);
-          border: 1px solid var(--border-default);
-          border-radius: var(--radius-lg);
-          padding: var(--space-8);
+          max-width: 420px;
         }
 
-        .auth-header {
+        .login-header {
           text-align: center;
-          margin-bottom: var(--space-6);
+          margin-bottom: 24px;
         }
 
-        .logo {
-          width: 48px;
-          height: 48px;
-          margin: 0 auto var(--space-4);
-        }
-
-        .auth-header h1 {
-          font-size: var(--text-2xl);
-          font-weight: 700;
-          color: var(--text-primary);
-          margin-bottom: var(--space-2);
-        }
-
-        .auth-header p {
-          font-size: var(--text-sm);
-          color: var(--text-secondary);
-        }
-
-        .auth-form {
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-4);
-        }
-
-        .error-message {
-          padding: var(--space-3);
-          background: rgba(239, 68, 68, 0.1);
-          border: 1px solid rgba(239, 68, 68, 0.3);
-          border-radius: var(--radius-md);
-          color: var(--accent-error);
-          font-size: var(--text-sm);
-        }
-
-        .success-message {
-          padding: var(--space-3);
-          background: rgba(34, 197, 94, 0.1);
-          border: 1px solid rgba(34, 197, 94, 0.3);
-          border-radius: var(--radius-md);
-          color: var(--accent-success);
-          font-size: var(--text-sm);
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-2);
-        }
-
-        .form-group label {
-          font-size: var(--text-sm);
+        .login-header h1 {
+          font-size: 24px;
           font-weight: 600;
-          color: var(--text-primary);
+          color: var(--shopify-text, #202223);
+          margin: 16px 0 8px;
         }
 
-        .input {
+        .login-header p {
+          font-size: 14px;
+          color: var(--shopify-text-subdued, #6d7175);
+          margin: 0;
+        }
+
+        .login-form {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .alert {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 12px 14px;
+          border-radius: 8px;
+          font-size: 13px;
+          line-height: 1.4;
+        }
+
+        .alert svg {
+          flex-shrink: 0;
+          margin-top: 1px;
+        }
+
+        .alert-success {
+          background: #e3f1df;
+          color: #1a5c1a;
+          border: 1px solid #b3d7a8;
+        }
+
+        .alert-info {
+          background: #e0f0ff;
+          color: #0055a6;
+          border: 1px solid #a8d4ff;
+        }
+
+        .alert-error {
+          background: #fbeae5;
+          color: #c4320a;
+          border: 1px solid #f5c4b8;
+        }
+
+        .form-field {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .form-field label {
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--shopify-text, #202223);
+        }
+
+        .form-field input {
           width: 100%;
-          padding: var(--space-3);
-          background: var(--bg-input);
-          border: 1px solid var(--border-default);
-          border-radius: var(--radius-md);
-          color: var(--text-primary);
-          font-size: var(--text-base);
-          transition: all 0.2s;
+          padding: 10px 12px;
+          font-size: 14px;
+          border: 1px solid var(--shopify-border, #c9cccf);
+          border-radius: 8px;
+          background: #fff;
+          color: var(--shopify-text, #202223);
+          transition: border-color 0.15s, box-shadow 0.15s;
         }
 
-        .input:focus {
+        .form-field input:focus {
           outline: none;
-          border-color: var(--brand-primary);
-          box-shadow: var(--brand-glow);
+          border-color: var(--shopify-interactive, #2c6ecb);
+          box-shadow: 0 0 0 2px rgba(44, 110, 203, 0.2);
         }
 
-        .input::placeholder {
-          color: var(--text-muted);
+        .form-field input::placeholder {
+          color: var(--shopify-text-subdued, #6d7175);
         }
 
-        .password-input-wrapper {
+        .password-wrapper {
           position: relative;
         }
 
-        .password-input-wrapper .input {
-          padding-right: var(--space-10);
+        .password-wrapper input {
+          padding-right: 44px;
         }
 
         .password-toggle {
           position: absolute;
-          right: var(--space-3);
+          right: 10px;
           top: 50%;
           transform: translateY(-50%);
           background: none;
           border: none;
-          color: var(--text-secondary);
+          padding: 4px;
           cursor: pointer;
-          padding: var(--space-1);
+          color: var(--shopify-text-subdued, #6d7175);
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: color 0.2s;
+          border-radius: 4px;
+          transition: color 0.15s;
         }
 
         .password-toggle:hover {
-          color: var(--text-primary);
-        }
-
-        .password-toggle:focus {
-          outline: none;
-          box-shadow: var(--brand-glow);
-          border-radius: var(--radius-sm);
+          color: var(--shopify-text, #202223);
         }
 
         .form-options {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: var(--space-2);
+          gap: 12px;
         }
 
-        .checkbox-label {
+        .checkbox-wrapper {
           display: flex;
           align-items: center;
-          gap: var(--space-2);
-          font-size: var(--text-sm);
-          color: var(--text-secondary);
+          gap: 8px;
+          font-size: 13px;
+          color: var(--shopify-text-subdued, #6d7175);
           cursor: pointer;
         }
 
-        .checkbox {
+        .checkbox-wrapper input[type="checkbox"] {
           width: 16px;
           height: 16px;
-          border-radius: var(--radius-sm);
-          border: 1px solid var(--border-default);
+          border-radius: 4px;
+          border: 1px solid var(--shopify-border, #c9cccf);
           cursor: pointer;
-          accent-color: var(--brand-primary);
+          accent-color: var(--shopify-interactive, #2c6ecb);
         }
 
-        .checkbox:focus {
-          outline: none;
-          box-shadow: var(--brand-glow);
-        }
-
-        .btn-primary {
-          width: 100%;
-          padding: var(--space-3) var(--space-4);
-          background: var(--brand-gradient);
-          background-size: 200% 200%;
-          border: none;
-          border-radius: var(--radius-md);
-          color: white;
-          font-size: var(--text-base);
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-          background-position: right center;
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-lg);
-        }
-
-        .btn-primary:focus {
-          outline: none;
-          box-shadow: var(--brand-glow-strong);
-        }
-
-        .btn-primary:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .form-footer {
-          text-align: center;
-          font-size: var(--text-sm);
-          color: var(--text-secondary);
-        }
-
-        .link {
-          color: var(--brand-primary);
+        .forgot-link {
+          font-size: 13px;
+          color: var(--shopify-interactive, #2c6ecb);
           text-decoration: none;
-          font-weight: 600;
-          font-size: var(--text-sm);
-          transition: color 0.2s;
+          font-weight: 500;
         }
 
-        .link:hover {
-          color: var(--brand-secondary);
+        .forgot-link:hover {
+          text-decoration: underline;
         }
 
-        .link:focus {
-          outline: none;
-          box-shadow: var(--brand-glow);
-          border-radius: var(--radius-sm);
+        .signup-link {
+          text-align: center;
+          margin-top: 20px;
+          font-size: 14px;
+          color: var(--shopify-text-subdued, #6d7175);
         }
 
-        .sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          white-space: nowrap;
-          border-width: 0;
+        .signup-link a {
+          color: var(--shopify-interactive, #2c6ecb);
+          text-decoration: none;
+          font-weight: 500;
+        }
+
+        .signup-link a:hover {
+          text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+          .login-page {
+            padding: 16px;
+          }
+
+          .form-options {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
         }
       `}</style>
     </div>

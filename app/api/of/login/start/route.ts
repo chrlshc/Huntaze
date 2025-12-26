@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from '@/lib/auth';
+import { assertMockEnabled } from '@/lib/config/mock-data';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const mockDisabled = assertMockEnabled('/api/of/login/start');
+  if (mockDisabled) return mockDisabled;
+
   try {
     const session = await getServerSession();
     

@@ -311,7 +311,7 @@ export class OfferAnalyticsService {
   /**
    * Calculate redemption metrics from data
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   private calculateRedemptionMetrics(
     redemptions: any[],
     totalViews: number

@@ -1,83 +1,37 @@
-// Using native fetch instead of axios
-// Always call our internal Next.js route handlers under /api to leverage cookies and avoid CORS
-const API_BASE_URL = '/api';
+// Unified internal API client (handles base URL, auth cookies, timeouts, errors)
+import { apiClient, type InternalApiRequestOptions } from '@/lib/api/client/internal-api-client';
 
 class ApiClient {
-  private baseURL: string;
-
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
+  request<T = any>(path: string, options: InternalApiRequestOptions<T> = {}) {
+    return apiClient.request<T>(path, options);
   }
 
-  private async request(path: string, options: RequestInit = {}) {
-    const headers = {
-      ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
-      ...options.headers,
-    } as Record<string, string>;
-
-    try {
-      const response = await fetch(`${this.baseURL}${path.startsWith('/') ? '' : '/'}${path}`, {
-        ...options,
-        headers,
-        credentials: 'include',
-      });
-
-      if (response.status === 401) {
-        if (typeof window !== 'undefined') {
-          const callbackUrl = encodeURIComponent(
-            `${window.location.pathname}${window.location.search}`,
-          );
-          window.location.href = `/auth/login?error=session_expired&callbackUrl=${callbackUrl}`;
-        }
-        throw new Error('Unauthorized');
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+  get<T = any>(path: string, options?: InternalApiRequestOptions<T>) {
+    return apiClient.get<T>(path, options);
   }
 
-  get(path: string) {
-    return this.request(path, { method: 'GET' });
+  post<T = any>(path: string, data?: any, options?: InternalApiRequestOptions<T>) {
+    return apiClient.post<T>(path, data, options);
   }
 
-  post(path: string, data?: any, options?: RequestInit) {
-    return this.request(path, {
-      method: 'POST',
-      body: data instanceof FormData ? data : data !== undefined ? JSON.stringify(data) : undefined,
-      ...options,
-    });
+  put<T = any>(path: string, data?: any, options?: InternalApiRequestOptions<T>) {
+    return apiClient.put<T>(path, data, options);
   }
 
-  put(path: string, data?: any, options?: RequestInit) {
-    return this.request(path, {
-      method: 'PUT',
-      body: data !== undefined ? JSON.stringify(data) : undefined,
-      ...options,
-    });
+  patch<T = any>(path: string, data?: any, options?: InternalApiRequestOptions<T>) {
+    return apiClient.patch<T>(path, data, options);
   }
 
-  delete(path: string, options?: RequestInit) {
-    return this.request(path, {
-      method: 'DELETE',
-      ...options,
-    });
+  delete<T = any>(path: string, options?: InternalApiRequestOptions<T>) {
+    return apiClient.delete<T>(path, options);
   }
 }
 
-export const api = new ApiClient(API_BASE_URL);
+export const api = new ApiClient();
 
 export const onlyFansApi = {
   // Import endpoints
-  importCSV: (data: FormData) => 
-    api.post('/onlyfans/import', data, {
-      headers: { 'Content-Type': undefined } as any // Let browser set boundary for FormData
-    }),
+  importCSV: (data: FormData) => api.post('/onlyfans/import', data),
   
   previewCSV: (type: string, csvContent: string) =>
     api.post('/onlyfans/preview', { type, csvContent }),

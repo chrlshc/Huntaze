@@ -13,7 +13,7 @@ export interface SendResult {
 async function loadChromium() {
   try {
     // Use indirection to avoid static resolution during bundling
-    // eslint-disable-next-line no-new-func
+     
     const dynImport: (m: string) => Promise<any> = new Function('m', 'return import(m)') as any;
     try {
       const core = await dynImport('playwright-core');

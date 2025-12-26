@@ -22,7 +22,7 @@ import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 import { 
   Plus, 
   Sparkles, 
-  Image,
+  Image as ImageIcon,
   Video,
   FileText,
   Copy,
@@ -279,7 +279,7 @@ export default function ContentTemplatesPage() {
                   {/* Header */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      {template.mediaType === 'image' && <Image className="h-4 w-4 text-[var(--color-text-sub)]" />}
+                      {template.mediaType === 'image' && <ImageIcon className="h-4 w-4 text-[var(--color-text-sub)]" />}
                       {template.mediaType === 'video' && <Video className="h-4 w-4 text-[var(--color-text-sub)]" />}
                       {template.mediaType === 'text' && <FileText className="h-4 w-4 text-[var(--color-text-sub)]" />}
                       {template.aiGenerated && (

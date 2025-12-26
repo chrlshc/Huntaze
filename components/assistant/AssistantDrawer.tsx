@@ -5,6 +5,7 @@ import { useAssistant } from "@/contexts/AssistantContext";
 import ChatClient from "./ChatClient";
 import { X, ChevronDown, Trash2 } from "lucide-react";
 import { useAssistantConversations } from "@/hooks/useAssistantConversations";
+import { useIsClient } from "@/hooks/useIsClient";
 
 export default function AssistantDrawer() {
   const { isOpen, closeAssistant } = useAssistant();
@@ -17,15 +18,13 @@ export default function AssistantDrawer() {
     fetchConversations,
   } = useAssistantConversations();
 
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const drawerRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const lastFocusedElementRef = useRef<HTMLElement | null>(null);
   const wasOpenRef = useRef(false);
-
-  useEffect(() => setMounted(true), []);
 
   // Close dropdown on outside click
   useEffect(() => {

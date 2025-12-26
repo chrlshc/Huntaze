@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useId } from 'react';
 import { cn } from '@/lib/utils';
 
 interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -21,7 +21,8 @@ export function FormInput({
   variant = 'standard',
   ...props
 }: FormInputProps) {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
 
   return (
     <div className="mb-[var(--spacing-4)]">
@@ -116,7 +117,8 @@ export function FormTextarea({
   id,
   ...props
 }: FormTextareaProps) {
-  const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const textareaId = id ?? generatedId;
 
   return (
     <div className="mb-[var(--spacing-4)]">
@@ -214,7 +216,8 @@ export function FormSelect({
   variant = 'standard',
   ...props
 }: FormSelectProps) {
-  const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const selectId = id ?? generatedId;
 
   return (
     <div className="mb-[var(--spacing-4)]">
@@ -311,7 +314,8 @@ export function FormCheckbox({
   id,
   ...props
 }: FormCheckboxProps) {
-  const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const checkboxId = id ?? generatedId;
 
   return (
     <div className="mb-[var(--spacing-4)]">

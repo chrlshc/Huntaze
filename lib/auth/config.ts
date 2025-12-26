@@ -60,6 +60,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         const startTime = Date.now();
+        console.log('[AUTH DEBUG] authorize called with:', { email: credentials?.email, hasPassword: !!credentials?.password });
         
         try {
           // E2E mode: allow a deterministic credentials login without DB access.
@@ -78,8 +79,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               email.toLowerCase() === expectedEmail.toLowerCase() &&
               password === expectedPassword
             ) {
+              const rawUserId = process.env.E2E_TEST_USER_ID ?? '1';
+              const parsedUserId = Number.parseInt(rawUserId, 10);
+              const resolvedUserId = Number.isFinite(parsedUserId) ? String(parsedUserId) : '1';
               return {
-                id: 'e2e-user',
+                id: resolvedUserId,
                 email,
                 name: 'E2E User',
                 onboardingCompleted: true,
@@ -113,10 +117,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           // Query user from database (including onboarding_completed)
           // Use LOWER() to match case-insensitive email (same as registration)
+          console.log('[AUTH DEBUG] Querying database for:', credentials.email);
           const result = await query(
             'SELECT id, email, name, password, email_verified, onboarding_completed FROM users WHERE LOWER(email) = LOWER($1)',
             [credentials.email]
           );
+          console.log('[AUTH DEBUG] Query result rows:', result.rows.length);
 
           if (result.rows.length === 0) {
             logger.warn('Authorization failed: User not found', {
@@ -128,10 +134,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const user = result.rows[0];
 
           // Verify password
+          console.log('[AUTH DEBUG] Comparing password for user:', user.id);
           const isValidPassword = await bcrypt.compare(
             credentials.password as string,
             user.password
           );
+          console.log('[AUTH DEBUG] Password valid:', isValidPassword);
 
           if (!isValidPassword) {
             logger.warn('Authorization failed: Invalid password', {
@@ -170,6 +178,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           };
         } catch (error) {
           const duration = Date.now() - startTime;
+          console.log('[AUTH DEBUG] Error in authorize:', error);
           logger.error('Authorization error', error as Error, {
             duration,
             email: credentials?.email,

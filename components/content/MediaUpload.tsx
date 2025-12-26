@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { uploadMedia } from '@/hooks/useContent';
 import { Button } from "@/components/ui/button";
 
@@ -32,7 +33,7 @@ export function MediaUpload({
   const [errors, setErrors] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const validateFile = (file: File): string | null => {
+  const validateFile = useCallback((file: File): string | null => {
     // Check file size
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
     if (file.size > maxSizeInBytes) {
@@ -54,7 +55,7 @@ export function MediaUpload({
     }
 
     return null;
-  };
+  }, [acceptedTypes, maxSizeInMB]);
 
   const handleFiles = useCallback(
     async (files: FileList | null) => {
@@ -145,7 +146,7 @@ export function MediaUpload({
         onUploadComplete(allMediaIds);
       }
     },
-    [uploadedFiles, maxFiles, onUploadComplete]
+    [uploadedFiles, maxFiles, onUploadComplete, validateFile]
   );
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -377,9 +378,11 @@ export function MediaUpload({
                 {/* Preview */}
                 <div className="aspect-square flex items-center justify-center bg-gray-100 dark:bg-gray-900">
                   {file.type.startsWith('image/') ? (
-                    <img
+                    <Image
                       src={file.url}
                       alt={file.name}
+                      width={512}
+                      height={512}
                       className="w-full h-full object-cover"
                     />
                   ) : file.type.startsWith('video/') ? (

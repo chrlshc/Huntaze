@@ -56,6 +56,16 @@ export function HydrationNotificationSystem({
   const effectiveConfig = { ...defaultConfig, ...config };
   const [notifications, setNotifications] = useState<HydrationNotification[]>([]);
 
+  // Supprimer une notification
+  const removeNotification = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  }, []);
+
+  // Supprimer toutes les notifications
+  const clearAllNotifications = useCallback(() => {
+    setNotifications([]);
+  }, []);
+
   // Ajouter une notification
   const addNotification = useCallback((notification: Omit<HydrationNotification, 'id' | 'timestamp'>) => {
     const newNotification: HydrationNotification = {
@@ -76,17 +86,7 @@ export function HydrationNotificationSystem({
         removeNotification(newNotification.id);
       }, effectiveConfig.hideDelay);
     }
-  }, [effectiveConfig.maxNotifications, effectiveConfig.autoHide, effectiveConfig.hideDelay]);
-
-  // Supprimer une notification
-  const removeNotification = useCallback((id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  }, []);
-
-  // Supprimer toutes les notifications
-  const clearAllNotifications = useCallback(() => {
-    setNotifications([]);
-  }, []);
+  }, [effectiveConfig.maxNotifications, effectiveConfig.autoHide, effectiveConfig.hideDelay, removeNotification]);
 
   // Gérer les alertes d'hydratation
   const handleHydrationAlert = useCallback((alert: HydrationAlert) => {

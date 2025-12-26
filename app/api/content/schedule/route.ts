@@ -1,161 +1,157 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { NextResponse } from 'next/server';
+import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withRateLimit } from '@/lib/api/middleware/rate-limit';
+import { contentService } from '@/lib/api/services/content.service';
+import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { contentId, scheduledAt, platforms } = body;
+export const POST = withRateLimit(
+  withAuth(async (request: AuthenticatedRequest) => {
+    try {
+      const body = await request.json().catch(() => ({}));
+      const { contentId, scheduledAt, platforms } = body ?? {};
+      const userId = Number.parseInt(request.user.id, 10);
 
-    if (!contentId) {
-      return NextResponse.json(
-        { error: 'Content ID is required' },
-        { status: 400 }
-      );
-    }
+      if (!Number.isFinite(userId)) {
+        return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+      }
 
-    if (!scheduledAt) {
-      return NextResponse.json(
-        { error: 'Scheduled date/time is required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate that scheduled time is at least 5 minutes in the future
-    const scheduledDate = new Date(scheduledAt);
-    const now = new Date();
-    const minScheduleTime = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes from now
-
-    if (scheduledDate < minScheduleTime) {
-      return NextResponse.json(
-        { error: 'Scheduled time must be at least 5 minutes in the future' },
-        { status: 400 }
-      );
-    }
-
-    // Update content item status to scheduled
-    await db.query(
-      `UPDATE content_items 
-       SET status = 'scheduled', 
-           scheduled_at = $1,
-           updated_at = NOW()
-       WHERE id = $2`,
-      [scheduledDate, contentId]
-    );
-
-    // Update platform associations if provided
-    if (platforms && Array.isArray(platforms)) {
-      // Delete existing platform associations
-      await db.query(
-        'DELETE FROM content_platforms WHERE content_id = $1',
-        [contentId]
-      );
-
-      // Insert new platform associations
-      for (const platform of platforms) {
-        await db.query(
-          `INSERT INTO content_platforms (content_id, platform)
-           VALUES ($1, $2)
-           ON CONFLICT (content_id, platform) DO NOTHING`,
-          [contentId, platform]
+      if (!contentId || typeof contentId !== 'string') {
+        return NextResponse.json(
+          { error: 'Content ID is required' },
+          { status: 400 }
         );
       }
-    }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Content scheduled successfully',
-      scheduledAt: scheduledDate.toISOString()
-    });
-  } catch (error) {
-    console.error('Scheduling error:', error);
-    return NextResponse.json(
-      { error: 'Failed to schedule content' },
-      { status: 500 }
-    );
-  }
-}
+      if (!scheduledAt) {
+        return NextResponse.json(
+          { error: 'Scheduled date/time is required' },
+          { status: 400 }
+        );
+      }
 
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
+      const scheduledDate = new Date(scheduledAt);
+      if (Number.isNaN(scheduledDate.getTime())) {
+        return NextResponse.json(
+          { error: 'Scheduled date/time is invalid' },
+          { status: 400 }
+        );
+      }
 
-    if (!userId) {
+      // Validate that scheduled time is at least 5 minutes in the future
+      const now = new Date();
+      const minScheduleTime = new Date(now.getTime() + 5 * 60 * 1000);
+
+      if (scheduledDate < minScheduleTime) {
+        return NextResponse.json(
+          { error: 'Scheduled time must be at least 5 minutes in the future' },
+          { status: 400 }
+        );
+      }
+
+      const updateData: any = {
+        status: 'scheduled',
+        scheduledAt: scheduledDate,
+      };
+
+      if (Array.isArray(platforms) && platforms.length > 0 && typeof platforms[0] === 'string') {
+        updateData.platform = platforms[0];
+      }
+
+      const content = await contentService.updateContent(userId, contentId, updateData);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Content scheduled successfully',
+        scheduledAt: scheduledDate.toISOString(),
+        data: content,
+      });
+    } catch (error) {
+      console.error('Scheduling error:', error);
       return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
+        { error: 'Failed to schedule content' },
+        { status: 500 }
       );
     }
+  })
+);
 
-    let query = `
-      SELECT 
-        ci.id,
-        ci.text,
-        ci.scheduled_at,
-        ci.status,
-        ci.created_at,
-        COALESCE(
-          json_agg(
-            DISTINCT jsonb_build_object(
-              'platform', cp.platform,
-              'published_url', cp.published_url,
-              'published_at', cp.published_at
-            )
-          ) FILTER (WHERE cp.platform IS NOT NULL),
-          '[]'
-        ) as platforms,
-        COALESCE(
-          json_agg(
-            DISTINCT jsonb_build_object(
-              'id', ma.id,
-              'type', ma.type,
-              'thumbnail_url', ma.thumbnail_url
-            )
-          ) FILTER (WHERE ma.id IS NOT NULL),
-          '[]'
-        ) as media
-      FROM content_items ci
-      LEFT JOIN content_platforms cp ON ci.id = cp.content_id
-      LEFT JOIN content_media cm ON ci.id = cm.content_id
-      LEFT JOIN media_assets ma ON cm.media_id = ma.id
-      WHERE ci.user_id = $1 AND ci.status = 'scheduled'
-    `;
+export const GET = withRateLimit(
+  withAuth(async (request: AuthenticatedRequest) => {
+    try {
+      const { searchParams } = new URL(request.url);
+      const userIdParam = searchParams.get('userId');
+      const startDate = searchParams.get('startDate');
+      const endDate = searchParams.get('endDate');
+      const userId = Number.parseInt(request.user.id, 10);
 
-    const params: any[] = [userId];
-    let paramIndex = 2;
+      if (!Number.isFinite(userId)) {
+        return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+      }
 
-    if (startDate) {
-      query += ` AND ci.scheduled_at >= $${paramIndex}`;
-      params.push(new Date(startDate));
-      paramIndex++;
+      if (userIdParam && userIdParam !== request.user.id) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+
+      const scheduledAtFilter: { gte?: Date; lte?: Date } = {};
+      if (startDate) {
+        const parsedStart = new Date(startDate);
+        if (Number.isNaN(parsedStart.getTime())) {
+          return NextResponse.json(
+            { error: 'Invalid start date' },
+            { status: 400 }
+          );
+        }
+        scheduledAtFilter.gte = parsedStart;
+      }
+
+      if (endDate) {
+        const parsedEnd = new Date(endDate);
+        if (Number.isNaN(parsedEnd.getTime())) {
+          return NextResponse.json(
+            { error: 'Invalid end date' },
+            { status: 400 }
+          );
+        }
+        scheduledAtFilter.lte = parsedEnd;
+      }
+
+      const where: Record<string, any> = {
+        user_id: userId,
+        status: 'scheduled',
+      };
+
+      if (Object.keys(scheduledAtFilter).length > 0) {
+        where.scheduled_at = scheduledAtFilter;
+      }
+
+      const items = await prisma.content.findMany({
+        where,
+        orderBy: { scheduled_at: 'asc' },
+      });
+
+      const scheduledContent = items
+        .filter((item) => item.scheduled_at)
+        .map((item) => ({
+          id: item.id,
+          text: item.text ?? item.title,
+          scheduled_at: item.scheduled_at?.toISOString(),
+          status: item.status,
+          platforms: item.platform ? [{ platform: item.platform }] : [],
+          media: [],
+        }));
+
+      return NextResponse.json({
+        success: true,
+        scheduledContent,
+      });
+    } catch (error) {
+      console.error('Error fetching scheduled content:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch scheduled content' },
+        { status: 500 }
+      );
     }
-
-    if (endDate) {
-      query += ` AND ci.scheduled_at <= $${paramIndex}`;
-      params.push(new Date(endDate));
-      paramIndex++;
-    }
-
-    query += `
-      GROUP BY ci.id
-      ORDER BY ci.scheduled_at ASC
-    `;
-
-    const result = await db.query(query, params);
-
-    return NextResponse.json({
-      success: true,
-      scheduledContent: result.rows
-    });
-  } catch (error) {
-    console.error('Error fetching scheduled content:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch scheduled content' },
-      { status: 500 }
-    );
-  }
-}
+  })
+);

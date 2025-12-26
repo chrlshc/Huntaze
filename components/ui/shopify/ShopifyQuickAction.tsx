@@ -10,7 +10,7 @@ export interface ShopifyQuickActionProps {
    * Passing a component type avoids "Objects are not valid as a React child"
    * when icons are forwardRef objects (e.g. lucide-react).
    */
-  icon: React.ReactNode | React.ElementType;
+  icon: React.ReactNode | React.ElementType<{ className?: string; 'aria-hidden'?: boolean }>;
   iconColor?: string;
   title: string;
   description: string;
@@ -35,8 +35,8 @@ export function ShopifyQuickAction({
 
     // Handle component types (including forwardRef icons from lucide-react).
     if (typeof icon === 'function' || (typeof icon === 'object' && icon !== null && '$$typeof' in (icon as any))) {
-      const IconComponent = icon as React.ElementType;
-      return <IconComponent className="w-5 h-5" aria-hidden="true" />;
+      const IconComponent = icon as React.ElementType<{ className?: string; 'aria-hidden'?: boolean }>;
+      return <IconComponent className="w-5 h-5" aria-hidden={true} />;
     }
 
     return icon;

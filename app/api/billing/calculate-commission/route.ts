@@ -61,7 +61,7 @@ async function handler(request: NextRequest) {
 
     // Calculate commission based on tier
     let commission = 0;
-    let breakdown = {
+    const breakdown = {
       basePrice: 0,
       commission: 0,
       total: 0,

@@ -290,10 +290,12 @@ export function SettingsCalloutCard({
 // Exports
 // ============================================================================
 
-export default {
+const SettingsLayout = {
   Item: SettingsItem,
   ToggleItem: SettingsToggleItem,
   List: SettingsList,
   Section: SettingsSection,
   CalloutCard: SettingsCalloutCard
 };
+
+export default SettingsLayout;
